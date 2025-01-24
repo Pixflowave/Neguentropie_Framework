@@ -4,7 +4,7 @@ title: Néguentropie
 ---
 
 <div class="hero">
-  <h1>Néguentropie</h1>
+  <h1> Néguentropie </h1>
 </div>
 
 
