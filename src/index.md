@@ -1,6 +1,5 @@
 ---
 toc: false
-title: Néguentropie
 ---
 
 <div class="hero">
