@@ -429,8 +429,8 @@ Plot.plot({
 ```js
 const Humus = [
   "Humus/Laurie Dufrenne",
-  "Humus/Erwan Bozec",
   "Humus/Laurie Pailler",
+  "Humus/Erwan Bozec",
 ]
 ```
 
