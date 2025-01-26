@@ -184,8 +184,8 @@ Plot.plot({
 ```js
 const NéguentropieFrontiére = [
   "Néguentropie Frontiére/Mélissa Plet-Whyckhuyse",
-  "Néguentropie Frontiére/Erwan Bozec",
   "Néguentropie Frontiére/Aline Perdereau",
+  "Néguentropie Frontiére/Erwan Bozec",
 ]
 ```
 
