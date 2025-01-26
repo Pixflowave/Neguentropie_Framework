@@ -61,9 +61,9 @@ Cette recherche se décline concrètement par l'aménagement scénographique et 
 ```js
 const Néguentropie = [
   "Néguentropie/Aline Perdereau",
-  "Néguentropie/Philippe Rivière",
-  "Néguentropie/Aline Perdereau",
   "Néguentropie/Erwan Bozec",
+  "Néguentropie/Philippe Rivière",
+  "Néguentropie/Luc Léger",
   ]
 ```
 
@@ -73,7 +73,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 120,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -84,7 +84,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(Néguentropie, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
+    Plot.tree(Néguentropie, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
   ]
     })
          
@@ -166,7 +166,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 150,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -177,7 +177,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(NéguentropieFrontiére, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1, strokeOpacity: 0.5, stroke: "url(#gradient)", curve: curveBumpX()}),
+    Plot.tree(NéguentropieFrontiére, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)", curve: curveBumpX()}),
   ]
 })
 ```
@@ -198,7 +198,7 @@ Plot.plot({
   margin: 75,
   height: 250,
   width: 1000,
-  marginRight: 150,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 75,
   marks: [
@@ -209,7 +209,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(NéguentropieLaFabriqueDeBlois2021, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5, stroke: "url(#gradient)",curve: curveBumpX()}),
+    Plot.tree(NéguentropieLaFabriqueDeBlois2021, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
   ]
     })
     
@@ -233,7 +233,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 120,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -244,7 +244,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(NéguentropieLaFabriqueDeBlois, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
+    Plot.tree(NéguentropieLaFabriqueDeBlois, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
   ]
     })
          
@@ -269,9 +269,9 @@ Plot.plot({
   margin: 75,
   height: 250,
   width: 1000,
-  marginRight: 150,
-  marginLeft: 250,
-  marginBottom: 75,
+  marginRight: 0,
+  marginLeft: 150,
+  marginBottom: 25,
   marks: [
     () => htl.svg`<defs>
       <linearGradient id="gradient" gradientTransform="rotate(90)">
@@ -280,7 +280,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(Néguanthropique, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5,stroke: "url(#gradient)",curve: curveBumpX()}),
+    Plot.tree(Néguanthropique, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
   ]
     })
 ```
@@ -301,7 +301,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 150,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -312,7 +312,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(MétaHumus, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
+    Plot.tree(MétaHumus, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
   ]
     })
          
@@ -320,11 +320,10 @@ Plot.plot({
 
 ```js
 const MétaHumus = [
-  "Méta-Humus/Jean-Paul Thibeau",
-  "Méta-Humus/Erwan Bozec",
   "Méta-Humus/Anne Alombert",
+  "Méta-Humus/Erwan Bozec",
+  "Méta-Humus/Jean-Paul Thibeau",
   "Méta-Humus/Luc Léger",
-  
 ]
 ```
 
@@ -338,7 +337,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 150,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -349,7 +348,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(Néguanthropocéne, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
+    Plot.tree(Néguanthropocéne, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
   ]
     })
          
@@ -357,11 +356,11 @@ Plot.plot({
 
 ```js
 const Néguanthropocéne = [
+  "Néguanthropocène/Camille Guyon Taillens",
   "Néguanthropocène/Jean-Paul Thibeau",
   "Néguanthropocène/Erwan Bozec",
   "Néguanthropocène/Philippe Carré",
   "Néguanthropocène/Manuel Herreno",
-  "Néguanthropocène/Camille Guyon Taillens",
   "Néguanthropocène/Olivier Heinry",
 ]
 ```
@@ -374,7 +373,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 150,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -385,7 +384,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(Habitus, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5,stroke: "url(#gradient)",curve: curveBumpX()}),
+    Plot.tree(Habitus, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
   ]
     })
     
@@ -395,10 +394,10 @@ Plot.plot({
 
 ```js
 const Habitus = [
-  "Habitus/Jean-Paul Thibeau",
-  "Habitus/Erwan Bozec",
   "Habitus/Julia Nivan",
   "Habitus/Camille Guyon Taillens",
+  "Habitus/Jean-Paul Thibeau",
+  "Habitus/Erwan Bozec",
   "Habitus/Benjamin Cadon",
 ]
 ```
@@ -411,7 +410,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 150,
+  marginRight: 0,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -422,7 +421,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(Humus, {dx: 5, dy: 0, fontSize:12, strokeWidth: 1,stroke: "grey",strokeOpacity: 0.5,stroke: "url(#gradient)",curve: curveBumpX()}),
+    Plot.tree(Humus, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
   ]
     })
 ```
