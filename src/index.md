@@ -328,10 +328,7 @@ const MétaHumus = [
 
 ## Bifurcations émergentes 
 
-### [Néguanthropocène](https://observablehq.com/@pixflowave/neguanthropocene) - 2021
-
 ### [Néguanthropocène](neguanthropocene) - 2021
-
 
 ```js
 Plot.plot({
