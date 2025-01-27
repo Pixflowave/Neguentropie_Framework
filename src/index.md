@@ -7,40 +7,39 @@ toc: false
 </div>
 
 ```html
-<div class="card">
   <img src=${await FileAttachment("Neguentropie.png").url()}>
   <figcaption><span>Image <a href="https://pixflowave.fr/">Erwan Bozec</a> réalisé avec <a href="https://www.blender.org/">Blender</a></span></figcaption>
-</div>
 ```
 ## Œuvre
 
-L'Installation artistique ***Néguentropie*** se base sur la notion d'art en tant qu'expérience à vivre. C’est une invitation à la recherche du point gris.
-
->" Paul Klee dit de même, dans un autre langage, que le monde naît du point gris par lui-même chaos. « Le moment cosmogénétique est là : la fixation d’un point gris dans le chaos. » "
->
-> — Henri Maldiney L’esthétique des rythmes
-
-Cette recherche se décline concrètement par l'aménagement scénographique et mobilier d'un espace propice à l'expérimentation.
-
->" L’ouvrage peut ouvrir le monde d’un petit jardin, plus ou moins secret, qui constitue un espace singulier par quelqu’un qui y produit ce >que, dans un langage scientifique, on appellerait de la néguentropie – de la diversification, de la bifurcation, de l’inattendu, de l’improbable, de l’inespéré. "
->
-> — B. Stiegler, L’Emploi est mort, vive le travail
-
+```html
+  <div class="card">
+    <p>L'Installation artistique <strong><em>Néguentropie</em></strong> se base sur la notion d'art en tant qu'expérience à vivre. C’est une invitation à la recherche du point gris.
+    <blockquote>
+    <cite>" Paul Klee dit de même, dans un autre langage, que le monde naît du point gris par lui-même chaos. « Le moment cosmogénétique est là : la fixation d’un point gris dans le chaos. » "</cite>
+    
+    <footer>— Henri Maldiney L’esthétique des rythmes</footer>
+    </blockquote>
+    Cette recherche se décline concrètement par l'aménagement scénographique et mobilier d'un espace propice à l'expérimentation.
+    
+    <blockquote><cite>" L’ouvrage peut ouvrir le monde d’un petit jardin, plus ou moins secret, qui constitue un espace singulier par quelqu’un qui y produit ce que, dans un langage scientifique, on appellerait de la néguentropie – de la diversification, de la bifurcation, de l’inattendu, de l’improbable, de l’inespéré. "</cite>
+    
+    <footer>— B. Stiegler, L’Emploi est mort, vive le travail</footer>
+    </blockquote>
+    </p>
+  </div>
+```
 
 ### [Reboute](https://tube.futuretic.fr/c/reboutelatechnologie/videos)
 
 ```html
-<div class="card">
 <iframe title="RB_07 Le projet Néguentropie" width="100%" height="500" src="https://tube.futuretic.fr/videos/embed/c44a1628-d1ba-4f47-a5f4-db6e137e0443" frameborder="0" allowfullscreen="" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
-</div>
 ```
 ### Projections icosaédriques | Icosahedral projections
 
 ```html
-<div class="card">
 <iframe width="100%" height="594" frameborder="0" style="background: transparent;"
   src="https://observablehq.com/embed/@fil/triangular-tiling-of-icosahedron?cells=viewof+bucky%2Cmap"></iframe>
-</div>
 ```  
 
 ### Schéma partiel du pharmakon ***Néguentropie***
@@ -331,6 +330,9 @@ const MétaHumus = [
 
 ### [Néguanthropocène](https://observablehq.com/@pixflowave/neguanthropocene) - 2021
 
+### [Néguanthropocène](neguanthropocene.md) - 2021
+
+
 ```js
 Plot.plot({
   axis: null,
@@ -449,7 +451,9 @@ const Humus = [
 ## Co-auteur | Néguantropologue
 
 ### Erwan Bozec
-Artiste | Néguanthropologue d'expériences collectives favorisant “l’être-au-monde” et l’autonomie du citoyen.[Pixflowave](https://pixflowave.fr/)
+Artiste | Néguanthropologue d'expériences collectives favorisant “l’être-au-monde” et l’autonomie du citoyen.
+
+[Pixflowave](https://pixflowave.fr/)
 
 ### Aline Perdereau
 #### Conduite de projet culturel, ingénierie pédagogique
@@ -459,7 +463,9 @@ Formée en Arts plastiques à l’université de Rennes, elle fut à la tête d�
 ### Philippe Rivière
 #### journalisme, code, cartographie
 
-Journaliste et programmeur, il s’intéresse désormais à la cartographie et à la visualisation de données. Il anime le site Internet de réflexion sur les représentations du monde, [visionscarto.net](https://visionscarto.net/).
+Journaliste et programmeur, il s’intéresse désormais à la cartographie et à la visualisation de données. Il anime le site Internet de réflexion sur les représentations du monde, 
+
+[visionscarto.net](https://visionscarto.net/).
 
 ### Luc Léger
 #### Créateur numérique et modélisation
