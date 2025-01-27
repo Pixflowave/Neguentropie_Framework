@@ -330,7 +330,7 @@ const MétaHumus = [
 
 ### [Néguanthropocène](https://observablehq.com/@pixflowave/neguanthropocene) - 2021
 
-### [Néguanthropocène](neguanthropocene.md) - 2021
+### [Néguanthropocène](neguanthropocene) - 2021
 
 
 ```js
