@@ -2,6 +2,10 @@
 title: Néguanthropocène
 ---
 
+<div class="hero">
+  <h1> Néguanthropocène </h1>
+</div>
+
 ## Une démarche participative pour interroger l’activité humaine et s'émanciper par le collectif.
 ---
 ***Erwan Bozec - Philippe Carré - Manuel Herreno - Jean-Paul Thibeau  - Camille Guyon Taillens - Olivier Heinry - Néguanthropocène, 2021 - œuvre commune***
