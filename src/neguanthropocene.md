@@ -7,17 +7,19 @@ title: Néguanthropocène
 </div>
 
 ## Une démarche participative pour interroger l’activité humaine et s'émanciper par le collectif.
----
+
+<div class="card">
+
 ***Erwan Bozec - Philippe Carré - Manuel Herreno - Jean-Paul Thibeau  - Camille Guyon Taillens - Olivier Heinry - Néguanthropocène, 2021 - œuvre commune***
 
-***Erwan Bozec - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 - oeuvre initiale 
-Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la Licence Art Libre http://www.artlibre.org***
+*Erwan Bozec - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 - oeuvre initiale 
+Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la Licence Art Libre http://www.artlibre.org*
 
----
+</div>
 
 ## équipe & partenaire
 
-* Erwan Bozec - [Artiste-Technè d’expériences collectives favorisant “l’être-au-monde” et l’autonomie du citoyen. - Coopérateur Artéfacts](https://pixflowave.fr/)
+* Erwan Bozec - Artiste | Néguanthropologue d’expériences collectives favorisant “l’être-au-monde” et l’autonomie du citoyen. - [Coopérateur Artéfacts](https://pixflowave.fr/)
 * Philippe Carré - [illustrateur 3D](https://philcarre.fr/) - Coopérateur Artéfacts
 * Manuel Herreno - Artiste peintre sérigraphiste ébéniste linograveur - Coopérateur Artéfacts
 * Jean-Paul Thibeau - méta-artiste, coordinateur des Protocoles Méta, des méta-ateliers et des méta-skholé.
@@ -29,8 +31,7 @@ Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modif
 * Marianne Vigneulle - Chargée de mission Culture Santé en appui aux établissements de santé et médico-sociaux Programme Culture Santé (DRAC et ARS Centre Val de Loire)/ partenariat réseau Culture Santé
 
 ## Origine 
-
-**Néguanthropocène** s'inscrit dans une réflexion sur le rapport entre Humain, Société et Environnement, s'appuyant notamment sur les travaux de recherche de Jean-Paul Thibeau sur les Protocoles-Méta (expérimentation artistiques et sociales), Bernard Stiegler, Alain Supiot, Henry Maldiney, des Makers, sur la pratique de l'Open-Data et des Licences Libres (cf annexe Travaux de recherche).<sup>[[1](#footnote1)]</sup>
+***Néguanthropocène*** s'inscrit dans une réflexion sur le rapport entre Humain, Société et Environnement, s'appuyant notamment sur les travaux de recherche de Jean-Paul Thibeau sur les *"Protocoles-Méta"* [^2] (expérimentation artistiques et sociales), Bernard Stiegler, Alain Supiot, Henry Maldiney, des Makers, sur la pratique de l'Open-Data et des Licences Libres.
 
 Trop souvent exploité, utilisé dans une recherche de gains, de profits financiers immédiats, l’Humain est réifié : il est devenu un outil, un produit commercial, un objet interchangeable dépouillé de son pouvoir d’agir. L'activité humaine est spécifique à chaque individu puisqu'elle lui est propre (en fonction de son histoire, de son vécu, de ses expériences). L'Humain avant d'agir passe par une phase de réflexion où il s'approprie son environnement pour pouvoir interagir sur celui-ci. Pour stimuler cet agir il est donc nécessaire de favoriser les conditions de participation et d'identifier le partage des savoirs et des expériences par un accompagnement idoine. 
 
@@ -58,7 +59,7 @@ Les problèmes posés sont les suivants :
 
 ## Pour commencer
 
-Le projet **Néguanthropocène** se construit a partir de l'oeuvre-lieu **Néguentropie** qui est une maison de mots, un habitat de discours, une "écologie" qui accueille un atelier de [paper planet](https://visionscarto.net/la-recette-des-planetes-de-papier) pour s'autoriser à imaginer d'autre monde. Avec ce projet nous poursuivons l'objectif d'élaborer une méthode participative de co-création par les publics ; Ce que nous appelons le "Méta-atelier de capacitation" en relation avec les "protocole-méta"<sup>[[2](#footnote2)]</sup>, expérimentation de pratiques attentionnelles et d’écologie de la perception (atelier partagé de pratiques, d’outils, d’expériences et de réflexions). C'est au travers d'ateliers que cette méthode sera co-créé.
+Le projet **Néguanthropocène** se construit a partir de l'oeuvre-lieu **Néguentropie** qui est une maison de mots, un habitat de discours, une "écologie" qui accueille un atelier de [paper planet](https://visionscarto.net/la-recette-des-planetes-de-papier) pour s'autoriser à imaginer d'autre monde. Avec ce projet nous poursuivons l'objectif d'élaborer une méthode participative de co-création par les publics ; Ce que nous appelons le "Méta-atelier de capacitation" en relation avec les "protocole-méta", expérimentation de pratiques attentionnelles et d’écologie de la perception (atelier partagé de pratiques, d’outils, d’expériences et de réflexions). C'est au travers d'ateliers que cette méthode sera co-créé.
 
 Atelier de [paper planet](https://visionscarto.net/la-recette-des-planetes-de-papier)
 
@@ -306,41 +307,42 @@ Le BIM ainsi créé lors du processus de projet de construction peut être utili
 
 ---
 
-1. [^](#paragraph1)***Travaux de recherche***
-  - [Association des Amis de la Génération Thunberg-Ars Industrialis](https://generation-thunberg.org/accueil)
-  - [internation.world](https://internation.world)
-  - [L’économie de la contribution | Design industriel et contributif des plateformes numériques mises au service de savoirs territorialisés comme communs | Les communs urbains](https://enmi-conf.org/wp/enmi19/session-4/#t=2416.825)
-  - [Entropie, Économie Contributive et Gestion des (Biens) Communs - 2018](https://iri-ressources.org/video-736.html#t=1101.672)
-  - [projectco3.org](https://www.projectco3.eu/fr/)
-  - [Alain Supiot - Le travail n'est pas une marchandise](https://www.college-de-france.fr/media/collections-de-livres/UPL6670766458633663704_Fiche_diffusion_LC_17_Supiot.pdf)
-  - [Recherche contributive](https://recherchecontributive.org/)
-  - [sciences participatives dans les domaines de la culture](https://www.participarc.net/)
-  - [sciences participatives](https://eu-citizen.science/)
-  - [SCIC-Tetris Transition Écologique Territoriale par la Recherche et l’Innovation Sociale](http://scic-tetris.org/)
-  - [institutgodin](https://institutgodin.com/)
-  - [ETI (Expérimenter une Transformation Institutionnelle) est un projet qui se propose d’expérimenter des transformations institutionnelles à travers l’art](http://eti-europe.eu/a-propos/)
-  - [ReaLsMs (Real Smart Cities)](http://realsms.eu/)
-  - [edubim](https://www.minnd.fr/edubim/edubim-2021/)
-  - [Buildingsmartfrance-mediaconstruct](https://buildingsmartfrance-mediaconstruct.fr/)
-  - [Open Data](https://www.mission-open-data.fr/)
-  - [Jean-Paul Thibeau - Protocoles-Méta](https://hackmd.io/@Erwan/Protocoles-Meta)
-  - [Henri Maldiney - L’esthétique des rythmes](https://rhuthmos.eu/spip.php?article477)
-  - [Cosmo-Localization](https://wiki.p2pfoundation.net/Cosmo-Localization)
-  - [remondialisation](https://iri-ressources.org/collections/collection-29.html)
-  - [Rob Hopkins](https://transitionnetwork.org/people/rob_hopkins/)
-  - [Tiers-lieux : des infrastructures civiques de résilience](https://www.banquedesterritoires.fr/processus-tiers-lieux-des-infrastructures-civiques-de-resilience)
-  - [Licence Libre](https://fr.wikipedia.org/wiki/Licence_libre)`
+## Travaux de recherche :
 
+- [Association des Amis de la Génération Thunberg-Ars Industrialis](https://generation-thunberg.org/accueil)
+- [internation.world](https://internation.world)
+- [L’économie de la contribution | Design industriel et contributif des plateformes numériques mises au service de savoirs territorialisés comme communs | Les communs urbains](https://enmi-conf.org/wp/enmi19/session-4/#t=2416.825)
+- [Entropie, Économie Contributive et Gestion des (Biens) Communs - 2018](https://iri-ressources.org/video-736.html#t=1101.672)
+- [projectco3.org](https://www.projectco3.eu/fr/)
+- [Alain Supiot - Le travail n'est pas une marchandise](https://www.college-de-france.fr/media/collections-de-livres/UPL6670766458633663704_Fiche_diffusion_LC_17_Supiot.pdf)
+- [Recherche contributive](https://recherchecontributive.org/)
+- [sciences participatives dans les domaines de la culture](https://www.participarc.net/)
+- [sciences participatives](https://eu-citizen.science/)
+- [SCIC-Tetris Transition Écologique Territoriale par la Recherche et l’Innovation Sociale](http://scic-tetris.org/)
+- [institutgodin](https://institutgodin.com/)
+- [ETI (Expérimenter une Transformation Institutionnelle) est un projet qui se propose d’expérimenter des transformations institutionnelles à travers l’art](http://eti-europe.eu/a-propos/)
+- [ReaLsMs (Real Smart Cities)](http://realsms.eu/)
+- [edubim](https://www.minnd.fr/edubim/edubim-2021/)
+- [Buildingsmartfrance-mediaconstruct](https://buildingsmartfrance-mediaconstruct.fr/)
+- [Open Data](https://www.mission-open-data.fr/)
+- [Jean-Paul Thibeau - Protocoles-Méta](https://hackmd.io/@Erwan/Protocoles-Meta)
+- [Henri Maldiney - L’esthétique des rythmes](https://rhuthmos.eu/spip.php?article477)
+- [Cosmo-Localization](https://wiki.p2pfoundation.net/Cosmo-Localization)
+- [remondialisation](https://iri-ressources.org/collections/collection-29.html)
+- [Rob Hopkins](https://transitionnetwork.org/people/rob_hopkins/)
+- [Tiers-lieux : des infrastructures civiques de résilience](https://www.banquedesterritoires.fr/processus-tiers-lieux-des-infrastructures-civiques-de-resilience)
+- [Licence Libre](https://fr.wikipedia.org/wiki/Licence_libre)
+</ul>
 
-3. [^](#paragraph3):La métadisciplinarité est un nouveau concept de méthodologie, apparu au cours des vingt dernières années dans la communauté scientifique, qui concerne aussi bien les sciences humaines que les sciences expérimentales, Il s'inscrit dans la continuité de la remise en cause depuis le milieu du XXe siècle du classement monolithique des disciplines de la connaissance et du savoir hérité de Descartes, qui estimait que l'on devait séparer les difficultés pour les traiter séparément, utilisé dans la période dite « moderne. »
+[^4]:La métadisciplinarité est un nouveau concept de méthodologie, apparu au cours des vingt dernières années dans la communauté scientifique, qui concerne aussi bien les sciences humaines que les sciences expérimentales, Il s'inscrit dans la continuité de la remise en cause depuis le milieu du XXe siècle du classement monolithique des disciplines de la connaissance et du savoir hérité de Descartes, qui estimait que l'on devait séparer les difficultés pour les traiter séparément, utilisé dans la période dite « moderne. »
 Le concept de métadisciplinarité est un concept scientifique correspondant aux necessités de la période dite « post-moderne » dans laquelle nous serions entrés à la fin du siècle dernier. Dans la batterie de concepts utilisés par la communauté scientifique pour qualifier ses méthodes de travail, la métadisciplinarité — au côté d'autres notions comme la multidisciplinarité, la pluridisciplinarité, l'interdisciplinarité, la polydisciplinarité ou encore la transdisciplinarité — apporte ses nuances dans le vaste mouvement de remise en cause de la compartimentation des savoirs. Elle concourt à la définition d'une nouvelle méthodologie scientifique.
 
-("paragraph2", 2, "« Protocoles Méta » : « méta » est un préfixe qui exprime ici, la participation, la succession, le changement ; il suggère des déplacements et diverses déclinaisons - méta-sujet, méta-activité, méta-lieu, méta-conférence… Le préfixe méta associé à un autre terme permet ainsi un écart, un décalage avec le sens usuel de ce terme. C’est un opérateur étrange et quelque peu désorientant… Depuis 1994, les protocoles de jeux avec les termes et les formes infiltrés, traversés par l’usage « méta» constituent un agencement d’outils d’expérimentations. Cependant les Protocoles Méta n’ont pas de définition à priori : c’est un dispositif et processus en réglage continue et tâtonnant… La notion de protocole, est prise comme une procédure, une proposition initiale qui doit être adaptée plutôt qu’adoptée (c’est plus une proposition ouverte qu’une consigne ou une règle stricte) et transformée, détournée par l’usage de chacun. Donc les protocoles ici n’ont rien de rigides, ni d’obsessionnels d’autant qu’ils sont qualifiés de méta, ce bel agent de déplacements.")
+[^2]:« Protocoles Méta » : « méta » est un préfixe qui exprime ici, la participation, la succession, le changement ; il suggère des déplacements et diverses déclinaisons - méta-sujet, méta-activité, méta-lieu, méta-conférence… Le préfixe méta associé à un autre terme permet ainsi un écart, un décalage avec le sens usuel de ce terme. C’est un opérateur étrange et quelque peu désorientant… Depuis 1994, les protocoles de jeux avec les termes et les formes infiltrés, traversés par l’usage « méta» constituent un agencement d’outils d’expérimentations. Cependant les Protocoles Méta n’ont pas de définition à priori : c’est un dispositif et processus en réglage continue et tâtonnant… La notion de protocole, est prise comme une procédure, une proposition initiale qui doit être adaptée plutôt qu’adoptée (c’est plus une proposition ouverte qu’une consigne ou une règle stricte) et transformée, détournée par l’usage de chacun. Donc les protocoles ici n’ont rien de rigides, ni d’obsessionnels d’autant qu’ils sont qualifiés de méta, ce bel agent de déplacements.")
 
 « Abîme » dit Cézanne. Paul Klee dit : « Chaos. » L’abîme est l’ouvert du chaos, qui est béance. La première réponse à l’abîme est le vertige. Dans le vertige nous sommes en proie à tout l’espace, lui-même abîmé en lui-même dans une dérobade universelle autour de nous et en nous. Le vertige est une inversion et une contamination du proche et du lointain. Pour l’homme pris de vertige dans une paroi, l’amont, côté protecteur et proche, se redresse jusqu’à devenir surplombant et vibre d’un mouvement d’expulsion sans fin, tandis que l’aval là-bas se creuse encore davantage dans un lointain de plus en plus profond et qui commence sous ses pieds. Le ciel bascule avec la terre dans un tournoiement sans prise. Ni l’homme n’est le centre, ni l’espace le lieu. Il n’y a plus de là. Le vertige est l’automouvement du chaos. Dans une de ses leçons de base au Bauhaus, Paul Klee appelle le chaos un « non-concept ». Il n’est en balance avec rien, il reste éternellement sans poids ni mesure. « Étant néant ou néant étant », ignorant la loi des contradictions, « son symbole graphique est le point qui n’est pas proprement un point : le point mathématique. Son symbole sensible est le gris. » Le chaos est le point gris qui n’est ni blanc ni noir, ni chaud ni froid, ni en haut ni en bas, « point non dimensionnel, perdu entre les dimensions ». Hegel l’appelle la nuit du concept et il ajoute cette chose étrange : que le concept est, dans sa nuit, « le secret créateur de sa naissance » Paul Klee dit de même, dans un autre langage, que le monde naît du point gris par lui-même chaos. « Le moment cosmogénétique est là : la fixation d’un point gris dans le chaos. » Ainsi le même point qui représente le chaos est à l’origine du monde. Où donc est la différence ? Klee la formule ainsi : « Un point dans le chaos : le point gris établi saute par-dessus lui-même dans le champ où il crée l’ordre... De lui rayonne l’ordre, ainsi éveillé, dans toutes les dimensions ». Entre ce faisceau embrouillé de lignes aberrantes où le regard est sans prises, par quoi Paul Klee illustre le chaos, et le rayonnement de l’espace à partir d’une origine instaurée dans un saut, il n’y a rien d’autre que le Rythme. C’est par lui que s’opère le passage du chaos à l’ordre. « Au commencement était le rythme » dit Hans von Bülow. Le Rythme est la seconde réponse à l’abîme.`
 
 ### Le développement des capacités (ou « capacitation ») se distingue de l’acquisition de compétences. 
-    * Les compétences à acquérir précèdent l’individu qui est censé les acquérir : elles correspondent à des standards comportementaux prédéterminés auxquels l’individu doit se conformer (deux individus peuvent acquérir individuellement des compétences identiques, ils deviennent dès lors interchangeables). L’emploi repose sur la mise en œuvre de compétences préalablement acquises : les compétences sont acquises en vue de l’employabilité.
+* Les compétences à acquérir précèdent l’individu qui est censé les acquérir : elles correspondent à des standards comportementaux prédéterminés auxquels l’individu doit se conformer (deux individus peuvent acquérir individuellement des compétences identiques, ils deviennent dès lors interchangeables). L’emploi repose sur la mise en œuvre de compétences préalablement acquises : les compétences sont acquises en vue de l’employabilité.
     * Les capacités correspondent au contraire aux possibilités d’existence singulières de chaque individu, que celui-ci ne peut exercer et actualiser qu’à partir du moment où il s’individue collectivement, c’est-à-dire, à partir du moment où il pratique et partage des savoirs avec d’autres individus, et s’encapacite ainsi (les capacités sont des expressions de la singularité des individus, mais elles supposent, pour se développer, la pratique collective d’un savoir). Les capacités se développent au cours des activités de travail.
     * Compléments : automatismes (compétences) et désautomatisation (capacitation)
 S’il ne fait qu’appliquer des règles préétablies ou répéter des comportements acquis, l’individu n’exerce pas un savoir ni ne développe des capacités, mais met en œuvre des automatismes et des compétences. Ceux-ci sont évidemment nécessaires à la pratique du savoir, néanmoins, ils ne sont pas suffisants : pour qu’il y ait véritablement pratique de savoir ou développement des capacités (et non seulement application de compétences), il faut que l’individu puisse inventer, créer, produire de la nouveauté (et non pas répéter le même). Le savoir se définit avant tout par la possibilité de désautomatiser les automatismes acquis et d’inventer des capacités nouvelles, et non par le seul exercice de ces automatismes ou la seule mise en œuvre de compétences.
@@ -350,3 +352,45 @@ Pour réaliser cette enquête nous proposons de coconstruire avec des publics un
 Coconstruction du Méta-Atelier de capacitation
 Un temps de rencontre de l'équipe métadisciplinaire sera organisé pour coconstruire le méta-atelier de capacitation et son protocol-Méta.
 
+<style>
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--sans-serif);
+  margin: 4rem 0 4rem;
+  text-wrap: balance;
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 1rem 0;
+  padding: 1rem 0;
+  max-width: none;
+  font-size: 14vw;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(30deg, var(--theme-foreground-focus), currentColor);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero h2 {
+  margin: 0;
+  max-width: 34em;
+  font-size: 20px;
+  font-style: initial;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--theme-foreground-muted);
+}
+
+@media (min-width: 640px) {
+  .hero h1 {
+    font-size: 90px;
+  }
+}
+
+</style>
