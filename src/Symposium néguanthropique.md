@@ -7,12 +7,8 @@ title: Symposium Néguanthropique
   <h1>Symposium Néguanthropique</h1>
 </div>
 
-<div
-  class="polis"
-  data-page_id="PAGE_ID"
-  data-site_id="polis_site_id_RZOblYb8jTMIOjNPlk">
-</div>
-<script async src="https://pol.is/embed.js"></script>
+<div class='polis' data-conversation_id='2f5mfrhdp4'></div>
+<script async src='https://pol.is/embed.js'></script>
 
 <style>
 
