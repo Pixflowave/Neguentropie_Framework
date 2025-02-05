@@ -9,6 +9,13 @@ title: exemple index
   <a href="https://observablehq.com/framework/getting-started">Get started<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a>
 </div>
 
+<div
+  class="polis"
+  data-page_id="PAGE_ID"
+  data-site_id="polis_site_id_RZOblYb8jTMIOjNPlk">
+</div>
+<script async src="https://pol.is/embed.js"></script>
+
 <div class="grid grid-cols-2" style="grid-auto-rows: 504px;">
   <div class="card">${
     resize((width) => Plot.plot({
