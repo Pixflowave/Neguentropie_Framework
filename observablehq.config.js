@@ -9,8 +9,8 @@ export default {
   // lets you organize them into sections and have unlisted pages.
    
        pages: [
-         {name: "neguanthropocene", path: "/neguanthropocene"},
-         {name: "Symposium néguanthropique", path: "/Symposium néguanthropique"}
+         {name: "Néguanthropocène", path: "/néguanthropocène"},
+         {name: "Symposium néguanthropique", path: "/Symposium_néguanthropique"}
    ],
   
   // Content to add to the head of the page, e.g. for a favicon:
