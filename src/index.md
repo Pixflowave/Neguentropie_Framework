@@ -38,9 +38,9 @@ toc: false
 ### Projections icosaédriques | Icosahedral projections
 
 ```html
-<iframe width="100%" height="594" frameborder="0" style="background: transparent;"
-  src="https://observablehq.com/embed/@fil/triangular-tiling-of-icosahedron?cells=viewof+bucky%2Cmap"></iframe>
-```  
+<iframe width="100%" height="564" frameborder="0"
+  src="https://observablehq.com/embed/@pixflowave/airocean-attracteur-de-lorentz@710?cells=dual"></iframe>
+```
 
 ### Schéma partiel du pharmakon ***Néguentropie***
 #### Cartographie de bifurcations Noétiques
