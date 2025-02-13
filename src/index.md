@@ -285,44 +285,15 @@ Plot.plot({
       dx: -5,
       dy: -10,
       fontSize: 12,
+      textLayout: 'normal',
       treeAnchor: 'right',
       strokeWidth: 2,
       stroke: "grey",
       strokeOpacity: 0.5,
       stroke: "url(#gradient)",
-      curve: curveBumpX(),
-      // Utiliser une fonction de rendu personnalisée pour ajuster l'alignement du texte
-      render: (data) => {
-        return data.map(node => {
-          const textAnchor = node.depth === 0 ? 'start' : 'end';
-          const xOffset = node.depth === 0 ? 10 : -10;
-
-          // Créer un élément de texte SVG
-          const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
-          textElement.setAttribute("text-anchor", textAnchor);
-          textElement.setAttribute("x", node.x + xOffset);
-          textElement.setAttribute("y", node.y);
-          textElement.textContent = node.name;
-
-          // Retourner un nouvel objet de nœud avec l'élément de texte
-          return {
-            ...node,
-            element: textElement
-          };
-        });
-      }
-    }),
-    // Ajouter les éléments de texte au DOM
-    (nodes) => {
-      const svg = document.querySelector('svg');
-      nodes.forEach(node => {
-        if (node.element) {
-          svg.appendChild(node.element);
-        }
-      });
-    }
+      curve: curveBumpX()}),
   ]
-})
+    })
 ```
 
 ```js
