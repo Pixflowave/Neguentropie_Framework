@@ -314,16 +314,15 @@ Plot.plot({
     }),
     // Ajouter les éléments de texte au DOM
     (nodes) => {
+      const svg = document.querySelector('svg');
       nodes.forEach(node => {
         if (node.element) {
-          document.querySelector('svg').appendChild(node.element);
+          svg.appendChild(node.element);
         }
       });
     }
   ]
 })
-
-
 ```
 
 ```js
