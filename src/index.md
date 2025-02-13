@@ -30,12 +30,7 @@ toc: false
   </div>
 ```
 
-### [Reboute](https://tube.futuretic.fr/c/reboutelatechnologie/videos)
-
-```html
-<iframe title="RB_07 Le projet Néguentropie" width="100%" height="500" src="https://tube.futuretic.fr/videos/embed/c44a1628-d1ba-4f47-a5f4-db6e137e0443" frameborder="0" allowfullscreen="" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
-```
-### Projections icosaédriques | Icosahedral projections
+### Projections Aireocean | Attracteur étrange de Lorentz
 
 ```html
 <iframe width="100%" height="564" frameborder="0"
@@ -49,6 +44,13 @@ toc: false
 <iframe width="100%" height="1012" frameborder="0" style="background: transparent;"
   src="https://observablehq.com/embed/@pixflowave/neguentropie?cells=chartz"></iframe>
 ```
+
+### [Reboute](https://tube.futuretic.fr/c/reboutelatechnologie/videos)
+
+```html
+<iframe title="RB_07 Le projet Néguentropie" width="100%" height="500" src="https://tube.futuretic.fr/videos/embed/c44a1628-d1ba-4f47-a5f4-db6e137e0443" frameborder="0" allowfullscreen="" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
+```
+
 ---
 
 
