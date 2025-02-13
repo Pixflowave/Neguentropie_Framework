@@ -449,7 +449,7 @@ const Humus = [
 ---
 ## Co-auteur | Néguantropologue
 
-### Erwan Bozec
+### [Erwan Bozec](https://www.artefacts.coop/cooperataires/pixflowave-erwan-bozec/)
 Artiste | Néguanthropologue d'expériences collectives favorisant “l’être-au-monde” et l’autonomie du citoyen.
 
 [Pixflowave](https://pixflowave.fr/)
@@ -459,19 +459,19 @@ Artiste | Néguanthropologue d'expériences collectives favorisant “l’être-
 
 Formée en Arts plastiques à l’université de Rennes, elle fut à la tête d’un service de l’architecture et du patrimoine pendant 5 ans. Dans la coopérative Artefacts jusqu’en 2020, elle a construit et mené plusieurs ateliers d’arts plastiques avec différents publics. Elle a assuré pendant 2 ans la coordination pédagogique de l’école d’art de Blois.
 
-### Philippe Rivière
+### [Philippe Rivière](https://www.artefacts.coop/cooperataires/philippe-riviere/)
 #### journalisme, code, cartographie
 
 Journaliste et programmeur, il s’intéresse désormais à la cartographie et à la visualisation de données. Il anime le site Internet de réflexion sur les représentations du monde, 
 
 [visionscarto.net](https://visionscarto.net/)
 
-### Luc Léger
+### [Luc Léger](https://www.artefacts.coop/cooperataires/luc-leger/)
 #### Créateur numérique et modélisation
 
 De formation initiale en développement informatique, il utilise depuis plus de 10 ans des outils de modélisation 3D. Son parcours mixe à la fois la création d’applications numériques et la réalisation d’objets interactifs.
 
-[Luc Léger](https://www.artefacts.coop/cooperataires/luc-leger/)
+
 
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 
 Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
