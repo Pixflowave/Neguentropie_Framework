@@ -462,7 +462,7 @@ Formée en Arts plastiques à l’université de Rennes, elle fut à la tête d�
 ### [Philippe Rivière](https://www.artefacts.coop/cooperataires/philippe-riviere/)
 #### journalisme, code, cartographie
 
-Journaliste et programmeur, il s’intéresse désormais à la cartographie et à la visualisation de données. Il anime le site Internet de réflexion sur les représentations du monde, 
+Journaliste et programmeur, il s’intéresse désormais à la cartographie et à la visualisation de données. Il anime le site Internet de réflexion sur les représentations du monde.
 
 [visionscarto.net](https://visionscarto.net/)
 
