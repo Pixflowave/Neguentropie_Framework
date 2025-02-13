@@ -281,17 +281,18 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(Néguanthropique, {dx: -5, dy: -10, fontSize:12, textAnchor: (d) => (d.depth === 0 ? 'start' : 'end'), treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX(),}),
-
-    // Ajouter une marque pour ajuster l'alignement du texte
-    Plot.text(Néguanthropique, {
-      x: (d) => d.depth === 0 ? 10 : -10, // Ajuster la position x
-      y: (d) => d.y,
-      text: (d) => d.name,
-      textAnchor: (d) => d.depth === 0 ? 'start' : 'end',
-      fontSize: 12,
-      fill: 'black',
-    })
+    Plot.tree(Néguanthropique, {dx: -5, dy: -10, fontSize:12, treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX(),
+    // Ajoutez une fonction pour manipuler les nœuds après leur création
+      transform: ({ data }) => {
+        data.forEach(node => {
+          // Ajuster l'alignement du texte pour chaque nœud
+          node.textAnchor = node.depth === 0 ? 'start' : 'end';
+          // Vous pouvez également ajuster la position x du texte ici si nécessaire
+          node.x += node.depth === 0 ? 10 : -10; // Exemple d'ajustement
+        });
+        return data;
+      }
+    }),
   ]
 })
 ```
