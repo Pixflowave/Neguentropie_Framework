@@ -74,7 +74,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -167,7 +167,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -199,7 +199,7 @@ Plot.plot({
   margin: 75,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 75,
   marks: [
@@ -234,7 +234,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -268,9 +268,9 @@ const NéguentropieLaFabriqueDeBlois = [
 Plot.plot({
   axis: null,
   margin: 75,
-  height: 250,
+  height: 150,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -312,7 +312,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -348,7 +348,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -384,7 +384,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
@@ -421,7 +421,7 @@ Plot.plot({
   margin: 25,
   height: 250,
   width: 1000,
-  marginRight: 0,
+  marginRight: 10,
   marginLeft: 150,
   marginBottom: 25,
   marks: [
