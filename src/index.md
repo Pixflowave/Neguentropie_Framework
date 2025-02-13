@@ -312,8 +312,17 @@ Plot.plot({
         });
       }
     }),
+    // Ajouter les éléments de texte au DOM
+    (nodes) => {
+      nodes.forEach(node => {
+        if (node.element) {
+          document.querySelector('svg').appendChild(node.element);
+        }
+      });
+    }
   ]
 })
+
 
 ```
 
