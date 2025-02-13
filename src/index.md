@@ -296,19 +296,25 @@ Plot.plot({
         return data.map(node => {
           const textAnchor = node.depth === 0 ? 'start' : 'end';
           const xOffset = node.depth === 0 ? 10 : -10;
+
+          // Créer un élément de texte SVG
+          const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          textElement.setAttribute("text-anchor", textAnchor);
+          textElement.setAttribute("x", node.x + xOffset);
+          textElement.setAttribute("y", node.y);
+          textElement.textContent = node.name;
+
+          // Retourner un nouvel objet de nœud avec l'élément de texte
           return {
             ...node,
-            attributes: {
-              ...node.attributes,
-              transform: `translate(${node.x + xOffset},${node.y})`,
-              'text-anchor': textAnchor
-            }
+            element: textElement
           };
         });
       }
     }),
   ]
 })
+
 ```
 
 ```js
