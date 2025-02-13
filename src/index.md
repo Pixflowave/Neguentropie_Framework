@@ -30,7 +30,7 @@ toc: false
   </div>
 ```
 
-### Projections Aireocean | Attracteur étrange de Lorentz
+### Projection Aireocean | Attracteur étrange de Lorentz
 
 ```html
 <iframe width="100%" height="564" frameborder="0"
