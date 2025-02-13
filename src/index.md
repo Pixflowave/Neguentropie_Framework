@@ -464,12 +464,14 @@ Formée en Arts plastiques à l’université de Rennes, elle fut à la tête d�
 
 Journaliste et programmeur, il s’intéresse désormais à la cartographie et à la visualisation de données. Il anime le site Internet de réflexion sur les représentations du monde, 
 
-[visionscarto.net](https://visionscarto.net/).
+[visionscarto.net](https://visionscarto.net/)
 
 ### Luc Léger
 #### Créateur numérique et modélisation
 
 De formation initiale en développement informatique, il utilise depuis plus de 10 ans des outils de modélisation 3D. Son parcours mixe à la fois la création d’applications numériques et la réalisation d’objets interactifs.
+
+[Luc Léger](https://www.artefacts.coop/cooperataires/luc-leger/)
 
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 
 Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
