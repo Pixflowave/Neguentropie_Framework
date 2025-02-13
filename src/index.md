@@ -281,7 +281,7 @@ Plot.plot({
         <stop offset="100%" stop-color="gold" />
       </linearGradient>
     </defs>`,
-    Plot.tree(Néguanthropique, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
+    Plot.tree(Néguanthropique, {dx: -5, dy: -10, fontSize:12, textAnchor: (d) => (d.depth === 0 ? 'start' : 'end'), treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
   ]
     })
 ```
