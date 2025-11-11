@@ -10,7 +10,9 @@ export default {
    
        pages: [
          {name: "Néguanthropocène", path: "/néguanthropocène"},
+         {name: "Graph Noodiversité", path: "/Graph_Noodiversité"},
          {name: "Symposium néguanthropique", path: "/Symposium_néguanthropique"}
+
    ],
   
   // Content to add to the head of the page, e.g. for a favicon:
