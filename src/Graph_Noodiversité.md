@@ -2,6 +2,8 @@
 title: Graphique Noodiversité
 ---
 
+### Graphe réticulé
+
 ```html
 <iframe width="100%" height="1236" frameborder="0" style="background: transparent;"
   src="https://observablehq.com/embed/@pixflowave/graph_neguentropie?cells=chartR"></iframe>
