@@ -40,6 +40,17 @@ id,url,source,target,type
 
 <div class="input-section">
 
+### 📖 Titre du livre source (optionnel)
+
+Si cette bibliographie provient d'un livre spécifique, indiquez son titre. Tous les auteurs seront liés à ce livre.
+
+```js
+const sourceBookTitle = view(Inputs.text({
+  placeholder: "Ex: Néguentropie et capitalisme computationnel",
+  width: "100%"
+}));
+```
+
 ### 📝 Collez votre bibliographie ici
 
 ```js
@@ -50,6 +61,26 @@ const bibInput = view(Inputs.textarea({
   submit: false
 }));
 ```
+
+### 🔗 URLs extraites
+
+```js
+function extractURLs(text) {
+  if (!text) return [];
+  const urlRegex = /(https?:\/\/[^\s,)"']+)/g;
+  const matches = text.match(urlRegex) || [];
+  return [...new Set(matches)]; // Remove duplicates
+}
+
+const extractedURLs = extractURLs(bibInput);
+```
+
+${extractedURLs.length > 0 ? html`<div class="url-list">
+  <p><strong>${extractedURLs.length} URL(s) trouvée(s) :</strong></p>
+  <ul>
+    ${extractedURLs.map(url => html`<li><a href="${url}" target="_blank">${url}</a></li>`)}
+  </ul>
+</div>` : html`<p class="empty-state-small">Aucune URL détectée dans la bibliographie.</p>`}
 
 </div>
 
