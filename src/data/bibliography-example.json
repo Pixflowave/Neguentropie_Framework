@@ -1,0 +1,32 @@
+{
+  "nodes": [
+    {
+      "id": "La gouvernance par les nombres",
+      "url": "https://www.fayard.fr/livre/la-gouvernance-par-les-nombres-9782213681092/"
+    },
+    {
+      "id": "Alain Supiot",
+      "url": "https://www.college-de-france.fr/fr/chaire/alain-supiot-etat-social-et-mondialisation-analyse-juridique-des-solidarites-chaire-statutaire"
+    },
+    {
+      "id": "Essai sur le don",
+      "url": "https://fr.wikipedia.org/wiki/Essai_sur_le_don"
+    },
+    {
+      "id": "Marcel Mauss",
+      "url": "https://fr.wikipedia.org/wiki/Marcel_Mauss"
+    }
+  ],
+  "edges": [
+    {
+      "source": "Alain Supiot",
+      "target": "La gouvernance par les nombres",
+      "type": "Livre"
+    },
+    {
+      "source": "Marcel Mauss",
+      "target": "Essai sur le don",
+      "type": "Livre"
+    }
+  ]
+}

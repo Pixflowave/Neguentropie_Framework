@@ -11,7 +11,8 @@ export default {
        pages: [
          {name: "Néguanthropocène", path: "/néguanthropocène"},
          {name: "Graph Noodiversité", path: "/Graph_Noodiversité"},
-         {name: "Symposium néguanthropique", path: "/Symposium_néguanthropique"}
+         {name: "Symposium néguanthropique", path: "/Symposium_néguanthropique"},
+         {name: "Convertisseur Bibliographie", path: "/bibliographie-converter"}
 
    ],
   
