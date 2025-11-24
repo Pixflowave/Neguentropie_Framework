@@ -10,46 +10,42 @@ toc: false
 
 <div class="converter-container">
 
-## Format CSV attendu
+## Format de Bibliographie
 
-Collez vos données au format CSV avec les colonnes suivantes :
-- **id** : Identifiant unique (ex: "Titre du livre")
-- **url** : URL de référence (optionnel)
-- **source** : Nœud source pour la relation (optionnel)
-- **target** : Nœud cible pour la relation (optionnel)
-- **type** : Type de relation (ex: "Livre", "Individu", "Discipline", etc.)
+Collez votre bibliographie directement ! Le convertisseur accepte deux formats :
 
-### Exemples de formats acceptés
+### Format 1 : Bibliographie Académique (Recommandé)
 
-**Format 1 - Nœuds uniquement :**
+Collez simplement votre liste de références bibliographiques au format standard :
+
 ```
-id,url
-"La gouvernance par les nombres","https://www.fayard.fr/livre/..."
-"Essai sur le don","https://fr.wikipedia.org/wiki/Essai_sur_le_don"
+Auteur, Titre, Éditeur, Année.
+A. Alombert, Schizophrénie numérique, Paris, Allia, 2023.
+B. Stiegler, La Société automatique, Paris, Fayard, 2015.
 ```
 
-**Format 2 - Relations uniquement :**
-```
-source,target,type
-"Alain Supiot","La gouvernance par les nombres","Livre"
-"Marcel Mauss","Essai sur le don","Livre"
-```
+Le parser détectera automatiquement :
+- **Auteur(s)** : Créé comme nœud "Individu"
+- **Titre** : Créé comme nœud "Livre"
+- **Relation** : Auteur → Livre
 
-**Format 3 - Complet (nœuds + relations) :**
-```
+### Format 2 : CSV Structuré
+
+Pour plus de contrôle, utilisez le format CSV :
+
+```csv
 id,url,source,target,type
 "La gouvernance par les nombres","https://www.fayard.fr/livre/...","Alain Supiot","La gouvernance par les nombres","Livre"
-"Essai sur le don","https://fr.wikipedia.org/wiki/...","Marcel Mauss","Essai sur le don","Livre"
 ```
 
 <div class="input-section">
 
-### 📝 Collez vos données CSV ici
+### 📝 Collez votre bibliographie ici
 
 ```js
-const csvInput = view(Inputs.textarea({
-  placeholder: `Exemple:\nid,url\n"La gouvernance par les nombres","https://www.fayard.fr/livre/..."\n"Essai sur le don","https://fr.wikipedia.org/wiki/..."`,
-  rows: 12,
+const bibInput = view(Inputs.textarea({
+  placeholder: `Exemple:\nA. Alombert, Schizophrénie numérique, Paris, Allia, 2023.\nB. Stiegler, La Société automatique, Paris, Fayard, 2015.\n\nOu format CSV:\nid,url\n"Titre","https://..."`,
+  rows: 15,
   width: "100%",
   submit: false
 }));
@@ -60,55 +56,206 @@ const csvInput = view(Inputs.textarea({
 ```js
 import {csvParse} from "d3-dsv";
 
-// Parse CSV and convert to JSON structure
-function convertToGraphJSON(csvText) {
-  if (!csvText || csvText.trim() === "") {
+// Parse bibliography entry (Author, Title, Publisher, Year format)
+function parseBibliographyEntry(line) {
+  // Skip empty lines and lines that are just dashes or special characters
+  if (!line || line.trim() === '' || /^[-—–\s*]+$/.test(line.trim())) {
+    return null;
+  }
+  
+  // Remove leading dashes and clean up
+  line = line.replace(/^[-—–]\s*/, '').trim();
+  
+  // Extract year (usually at the end, 4 digits)
+  const yearMatch = line.match(/,?\s*(\d{4})[.,\s]*$/);
+  const year = yearMatch ? yearMatch[1] : null;
+  let withoutYear = year ? line.substring(0, line.lastIndexOf(year)).trim() : line;
+  
+  // Remove trailing punctuation
+  withoutYear = withoutYear.replace(/[.,;]+$/, '');
+  
+  // Split by comma to get parts
+  const parts = withoutYear.split(',').map(p => p.trim());
+  
+  if (parts.length < 2) {
+    return null; // Not enough information
+  }
+  
+  // First part is usually the author
+  let author = parts[0];
+  
+  // Handle special cases like "—" or "-" which means "same author as above"
+  if (author === '—' || author === '-' || author === '→') {
+    return null; // We'll handle this by keeping track of last author
+  }
+  
+  // Find where the title ends - look for common patterns
+  // Common publisher cities in French bibliography
+  const publisherCities = ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Bordeaux', 'Lille', 
+                           'Londres', 'London', 'New York', 'Cambridge', 'Oxford', 
+                           'Chicago', 'Boston', 'Princeton', 'Berlin', 'Limoges',
+                           'Bry-sur-Marne'];
+  
+  let titleEndIndex = 1; // Start with second part (after author)
+  
+  // Look for where publisher info starts (usually a city name)
+  for (let i = 2; i < parts.length; i++) {
+    const part = parts[i].trim();
+    // Check if this part looks like a publisher city or location
+    const isCity = publisherCities.some(city => part.startsWith(city));
+    // Check if it looks like a publisher (often starts with capital letter and is short)
+    const isPublisher = /^[A-Z]/.test(part) && part.length < 40 && !part.includes('.');
+    
+    if (isCity) {
+      titleEndIndex = i - 1;
+      break;
+    }
+  }
+  
+  // If we didn't find a city, assume title is everything except last 1-2 parts (publisher/location)
+  if (titleEndIndex === 1 && parts.length > 3) {
+    titleEndIndex = parts.length - 2;
+  }
+  
+  // Combine parts to form the title
+  let title = parts.slice(1, titleEndIndex + 1).join(', ').replace(/[«»""]/g, '"').replace(/^["']|["']$/g, '').trim();
+  
+  return {
+    author: author,
+    title: title,
+    year: year,
+    raw: line
+  };
+}
+
+// Convert bibliography text to graph JSON
+function convertToGraphJSON(inputText) {
+  if (!inputText || inputText.trim() === "") {
     return { nodes: [], edges: [] };
   }
   
-  try {
-    const data = csvParse(csvText);
+  const text = inputText.trim();
+  
+  // Check if it's CSV format (has header row with commas)
+  const firstLine = text.split('\n')[0];
+  const isCSV = firstLine.includes(',') && (
+    firstLine.toLowerCase().includes('id') || 
+    firstLine.toLowerCase().includes('source') ||
+    firstLine.toLowerCase().includes('target')
+  );
+  
+  if (isCSV) {
+    // Use CSV parser
+    try {
+      const data = csvParse(text);
+      const nodes = [];
+      const edges = [];
+      const nodeIds = new Set();
+      
+      data.forEach(row => {
+        if (row.id && !nodeIds.has(row.id)) {
+          const node = { id: row.id };
+          if (row.url) node.url = row.url;
+          nodes.push(node);
+          nodeIds.add(row.id);
+        }
+        
+        if (row.source && row.target) {
+          const edge = {
+            source: row.source,
+            target: row.target,
+            type: row.type || "relation"
+          };
+          edges.push(edge);
+          
+          if (!nodeIds.has(row.source)) {
+            nodes.push({ id: row.source });
+            nodeIds.add(row.source);
+          }
+          if (!nodeIds.has(row.target)) {
+            nodes.push({ id: row.target });
+            nodeIds.add(row.target);
+          }
+        }
+      });
+      
+      return { nodes, edges };
+    } catch (error) {
+      return { error: error.message, nodes: [], edges: [] };
+    }
+  } else {
+    // Parse as bibliography format
+    const lines = text.split('\n');
     const nodes = [];
     const edges = [];
     const nodeIds = new Set();
+    let lastAuthor = null;
     
-    data.forEach(row => {
-      // Add node if it has an id
-      if (row.id && !nodeIds.has(row.id)) {
-        const node = { id: row.id };
-        if (row.url) node.url = row.url;
-        nodes.push(node);
-        nodeIds.add(row.id);
+    lines.forEach(line => {
+      const entry = parseBibliographyEntry(line);
+      
+      // Check if this is a continuation line (starts with dash/arrow)
+      const isContinuation = line.trim().match(/^[-—–→]\s+/);
+      
+      if (!entry && !isContinuation) return;
+      
+      let author, title, year;
+      
+      if (isContinuation && lastAuthor) {
+        // This is a continuation of the previous author
+        author = lastAuthor;
+        // Parse the line after removing the leading dash
+        const cleanedLine = line.replace(/^[-—–→]\s*,?\s*/, '').trim();
+        const tempEntry = parseBibliographyEntry(cleanedLine);
+        if (!tempEntry) return;
+        title = tempEntry.title;
+        year = tempEntry.year;
+      } else if (entry) {
+        author = entry.author;
+        title = entry.title;
+        year = entry.year;
+        lastAuthor = author;
+      } else {
+        return;
       }
       
-      // Add edge if it has source and target
-      if (row.source && row.target) {
-        const edge = {
-          source: row.source,
-          target: row.target,
-          type: row.type || "relation"
-        };
-        edges.push(edge);
-        
-        // Add source and target as nodes if they don't exist
-        if (!nodeIds.has(row.source)) {
-          nodes.push({ id: row.source });
-          nodeIds.add(row.source);
-        }
-        if (!nodeIds.has(row.target)) {
-          nodes.push({ id: row.target });
-          nodeIds.add(row.target);
-        }
+      if (!author || !title) return;
+      
+      // Add author node
+      if (!nodeIds.has(author)) {
+        nodes.push({ 
+          id: author,
+          url: "" 
+        });
+        nodeIds.add(author);
       }
+      
+      // Add book/article node
+      if (!nodeIds.has(title)) {
+        const bookNode = { 
+          id: title,
+          url: ""
+        };
+        if (year) {
+          bookNode.year = year;
+        }
+        nodes.push(bookNode);
+        nodeIds.add(title);
+      }
+      
+      // Add edge from author to book
+      edges.push({
+        source: author,
+        target: title,
+        type: "Livre"
+      });
     });
     
     return { nodes, edges };
-  } catch (error) {
-    return { error: error.message, nodes: [], edges: [] };
   }
 }
 
-const graphData = convertToGraphJSON(csvInput);
+const graphData = convertToGraphJSON(bibInput);
 ```
 
 <div class="output-section">
