@@ -106,7 +106,6 @@ function extractEntriesForVerification(text) {
 
 ```js
 // Perform verification when button is clicked
-// Perform verification when button is clicked
 const verificationResults = verificationTriggered && bibInput 
   ? (async function*() {
       yield { loading: true };
