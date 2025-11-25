@@ -62,25 +62,141 @@ const bibInput = view(Inputs.textarea({
 }));
 ```
 
-### 🔗 URLs extraites
+### 🔍 Vérification bibliographique (optionnel)
 
 ```js
-function extractURLs(text) {
-  if (!text) return [];
-  const urlRegex = /(https?:\/\/[^\s,)"']+)/g;
-  const matches = text.match(urlRegex) || [];
-  return [...new Set(matches)]; // Remove duplicates
-}
-
-const extractedURLs = extractURLs(bibInput);
+import {verifyBibliography, calculateSimilarity} from "./components/bibliography-verifier.js";
 ```
 
-${extractedURLs.length > 0 ? html`<div class="url-list">
-  <p><strong>${extractedURLs.length} URL(s) trouvée(s) :</strong></p>
-  <ul>
-    ${extractedURLs.map(url => html`<li><a href="${url}" target="_blank">${url}</a></li>`)}
-  </ul>
-</div>` : html`<p class="empty-state-small">Aucune URL détectée dans la bibliographie.</p>`}
+```js
+const verifyButton = view(Inputs.button("🔍 Vérifier avec HAL + OpenLibrary + CrossRef", {
+  value: null,
+  reduce: () => "verify"
+}));
+```
+
+```js
+// State for verification results
+const verificationTriggered = verifyButton === "verify";
+```
+
+```js
+// Extract entries for verification
+function extractEntriesForVerification(text) {
+  if (!text || text.trim() === "") return [];
+  
+  const lines = text.split('\n');
+  const entries = [];
+  
+  lines.forEach(line => {
+    const entry = parseBibliographyEntry(line);
+    if (entry && entry.author && entry.title) {
+      entries.push({
+        author: entry.author,
+        title: entry.title,
+        year: entry.year,
+        originalUrl: entry.url
+      });
+    }
+  });
+  
+  return entries;
+}
+```
+
+```js
+// Perform verification when button is clicked
+// Perform verification when button is clicked
+const verificationResults = verificationTriggered && bibInput 
+  ? (async function*() {
+      yield { loading: true };
+      const results = await verifyBibliography(extractEntriesForVerification(bibInput));
+      yield { loading: false, data: results };
+    })()
+  : { loading: false, data: [] };
+```
+
+```js
+// Display verification results
+// Prepare data for table
+const verificationTableData = (verificationResults.data && verificationResults.data.length > 0)
+  ? verificationResults.data.map(r => ({
+      ...r, // Keep original data
+      "Titre original": r.original.title,
+      "Auteur original": r.original.author,
+      "Titre trouvé": r.verified?.title || "Non trouvé",
+      "ID": r.verified?.halId || r.verified?.isbn || r.verified?.doi || "-",
+      "Source": r.verified?.source || "-",
+      "Confiance": r.verified ? `${r.verified.confidence}%` : "-",
+      "Statut": r.status === 'verified' ? '✅' : r.status === 'uncertain' ? '⚠️' : '❌'
+    }))
+  : [];
+```
+
+```js
+// Display verification results table
+if (verificationResults.data && verificationResults.data.length > 0) {
+  const results = verificationResults.data;
+  
+  display(Inputs.table(verificationTableData, {
+    columns: [
+      "Statut",
+      "Confiance",
+      "Titre original",
+      "Auteur original",
+      "Titre trouvé",
+      "ID",
+      "Source"
+    ],
+    header: {
+      "Statut": "",
+      "Titre original": "Titre (Biblio)",
+      "Auteur original": "Auteur",
+      "Titre trouvé": "Suggestion API"
+    },
+    width: "100%",
+    rows: 15
+  }));
+}
+```
+
+```js
+// Display verification UI
+if (verificationResults.loading) {
+  display(html`<div class="loading-container">
+    <div class="spinner"></div>
+    <p>Vérification en cours avec HAL, OpenLibrary et CrossRef...</p>
+    <small>Cela peut prendre quelques secondes pour respecter les limites des APIs.</small>
+  </div>`);
+} else if (verificationResults.data && verificationResults.data.length > 0) {
+  const results = verificationResults.data;
+  const stats = {
+    total: results.length,
+    verified: results.filter(r => r.status === 'verified').length,
+    uncertain: results.filter(r => r.status === 'uncertain').length,
+    notFound: results.filter(r => r.status === 'not_found').length,
+    fromHAL: results.filter(r => r.verified?.source === 'HAL').length,
+    fromOpenLibrary: results.filter(r => r.verified?.source === 'OpenLibrary').length,
+    fromCrossRef: results.filter(r => r.verified?.source === 'CrossRef').length
+  };
+  
+  display(html`<div class="verification-stats">
+    <h4>📊 Résultats de la vérification</h4>
+    <div class="stats-row">
+      <span>✅ Vérifiées : <strong>${stats.verified}</strong></span>
+      <span>⚠️ Incertaines : <strong>${stats.uncertain}</strong></span>
+      <span>❌ Non trouvées : <strong>${stats.notFound}</strong></span>
+    </div>
+    <div class="stats-row" style="margin-top: 0.5rem; font-size: 0.85rem;">
+      <span>🇫🇷 HAL : ${stats.fromHAL}</span>
+      <span>📚 OpenLibrary : ${stats.fromOpenLibrary}</span>
+      <span>📄 CrossRef : ${stats.fromCrossRef}</span>
+    </div>
+  </div>`);
+  
+}
+
+```
 
 </div>
 
@@ -94,13 +210,21 @@ function parseBibliographyEntry(line) {
     return null;
   }
   
+  // Extract URL if present (before removing it from the line)
+  const urlRegex = /(https?:\/\/[^\s,)"']+)/;
+  const urlMatch = line.match(urlRegex);
+  const url = urlMatch ? urlMatch[1] : "";
+  
+  // Remove URL from line for parsing
+  let cleanLine = line.replace(urlRegex, '').trim();
+  
   // Remove leading dashes and clean up
-  line = line.replace(/^[-—–]\s*/, '').trim();
+  cleanLine = cleanLine.replace(/^[-—–]\s*/, '').trim();
   
   // Extract year (usually at the end, 4 digits)
-  const yearMatch = line.match(/,?\s*(\d{4})[.,\s]*$/);
+  const yearMatch = cleanLine.match(/,?\s*(\d{4})[.,\s]*$/);
   const year = yearMatch ? yearMatch[1] : null;
-  let withoutYear = year ? line.substring(0, line.lastIndexOf(year)).trim() : line;
+  let withoutYear = year ? cleanLine.substring(0, cleanLine.lastIndexOf(year)).trim() : cleanLine;
   
   // Remove trailing punctuation
   withoutYear = withoutYear.replace(/[.,;]+$/, '');
@@ -125,17 +249,19 @@ function parseBibliographyEntry(line) {
   const publisherCities = ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Bordeaux', 'Lille', 
                            'Londres', 'London', 'New York', 'Cambridge', 'Oxford', 
                            'Chicago', 'Boston', 'Princeton', 'Berlin', 'Limoges',
-                           'Bry-sur-Marne'];
+                           'Bry-sur-Marne', 'Genève', 'Geneva', 'Bruxelles', 'Brussels'];
   
-  let titleEndIndex = 1; // Start with second part (after author)
+  let titleEndIndex = parts.length - 1; // Default: everything except author
   
   // Look for where publisher info starts (usually a city name)
+  // Start from index 2 (third part, after author and title)
   for (let i = 2; i < parts.length; i++) {
     const part = parts[i].trim();
-    // Check if this part looks like a publisher city or location
-    const isCity = publisherCities.some(city => part.startsWith(city));
-    // Check if it looks like a publisher (often starts with capital letter and is short)
-    const isPublisher = /^[A-Z]/.test(part) && part.length < 40 && !part.includes('.');
+    
+    // Check if this part is a publisher city
+    const isCity = publisherCities.some(city => 
+      part === city || part.startsWith(city + ' ')
+    );
     
     if (isCity) {
       titleEndIndex = i - 1;
@@ -143,9 +269,15 @@ function parseBibliographyEntry(line) {
     }
   }
   
-  // If we didn't find a city, assume title is everything except last 1-2 parts (publisher/location)
-  if (titleEndIndex === 1 && parts.length > 3) {
+  // If we still have too many parts and didn't find a city, 
+  // assume last 1-2 parts are publisher info
+  if (titleEndIndex === parts.length - 1 && parts.length > 3) {
     titleEndIndex = parts.length - 2;
+  }
+  
+  // Ensure we have at least the second part as title
+  if (titleEndIndex < 1) {
+    titleEndIndex = 1;
   }
   
   // Combine parts to form the title
@@ -155,12 +287,13 @@ function parseBibliographyEntry(line) {
     author: author,
     title: title,
     year: year,
+    url: url,
     raw: line
   };
 }
 
 // Convert bibliography text to graph JSON
-function convertToGraphJSON(inputText) {
+function convertToGraphJSON(inputText, sourceBook) {
   if (!inputText || inputText.trim() === "") {
     return { nodes: [], edges: [] };
   }
@@ -215,78 +348,103 @@ function convertToGraphJSON(inputText) {
       return { error: error.message, nodes: [], edges: [] };
     }
   } else {
-    // Parse as bibliography format
-    const lines = text.split('\n');
+    // Convert bibliography to graph JSON format
     const nodes = [];
     const edges = [];
     const nodeIds = new Set();
     let lastAuthor = null;
     
-    lines.forEach(line => {
-      const entry = parseBibliographyEntry(line);
-      
-      // Check if this is a continuation line (starts with dash/arrow)
-      const isContinuation = line.trim().match(/^[-—–→]\s+/);
-      
-      if (!entry && !isContinuation) return;
-      
-      let author, title, year;
-      
-      if (isContinuation && lastAuthor) {
-        // This is a continuation of the previous author
-        author = lastAuthor;
-        // Parse the line after removing the leading dash
-        const cleanedLine = line.replace(/^[-—–→]\s*,?\s*/, '').trim();
-        const tempEntry = parseBibliographyEntry(cleanedLine);
-        if (!tempEntry) return;
-        title = tempEntry.title;
-        year = tempEntry.year;
-      } else if (entry) {
-        author = entry.author;
-        title = entry.title;
-        year = entry.year;
-        lastAuthor = author;
-      } else {
-        return;
-      }
-      
-      if (!author || !title) return;
-      
-      // Add author node
-      if (!nodeIds.has(author)) {
-        nodes.push({ 
-          id: author,
-          url: "" 
-        });
-        nodeIds.add(author);
-      }
-      
-      // Add book/article node
-      if (!nodeIds.has(title)) {
-        const bookNode = { 
-          id: title,
-          url: ""
-        };
-        if (year) {
-          bookNode.year = year;
-        }
-        nodes.push(bookNode);
-        nodeIds.add(title);
-      }
-      
-      // Add edge from author to book
-      edges.push({
-        source: author,
-        target: title,
-        type: "Livre"
+    // Add source book node if provided
+    if (sourceBook && sourceBook.trim()) {
+      const sourceTitle = sourceBook.trim();
+      nodes.push({
+        id: sourceTitle,
+        url: "",
+        type: "source"
       });
-    });
+      nodeIds.add(sourceTitle);
+    }
+    
+    if (text) {
+      const lines = text.split('\n');
+      
+      lines.forEach(line => {
+        const entry = parseBibliographyEntry(line);
+        
+        // Check if this is a continuation line (starts with dash/arrow)
+        const isContinuation = line.trim().match(/^[-—–→]\s+/);
+        
+        if (!entry && !isContinuation) return;
+        
+        let author, title, year, url;
+        
+        if (isContinuation && lastAuthor) {
+          // This is a continuation of the previous author
+          author = lastAuthor;
+          // Parse the line after removing the leading dash
+          const cleanedLine = line.replace(/^[-—–→]\s*,?\s*/, '').trim();
+          const tempEntry = parseBibliographyEntry(cleanedLine);
+          if (!tempEntry) return;
+          title = tempEntry.title;
+          year = tempEntry.year;
+          url = tempEntry.url;
+        } else if (entry) {
+          author = entry.author;
+          title = entry.title;
+          year = entry.year;
+          url = entry.url;
+          lastAuthor = author;
+        } else {
+          return;
+        }
+        
+        if (!author || !title) return;
+        
+        // Add author node
+        if (!nodeIds.has(author)) {
+          nodes.push({ 
+            id: author,
+            url: "" 
+          });
+          nodeIds.add(author);
+        }
+        
+        // Add book/article node
+        if (!nodeIds.has(title)) {
+          const bookNode = { 
+            id: title,
+            url: url || ""
+          };
+          if (year) {
+            bookNode.year = year;
+          }
+          nodes.push(bookNode);
+          nodeIds.add(title);
+        }
+        
+        // Add edge from author to book
+        edges.push({
+          source: author,
+          target: title,
+          type: "Livre"
+        });
+        
+        // If source book is provided, add edge from book to source book
+        if (sourceBook && sourceBook.trim()) {
+          edges.push({
+            source: title,
+            target: sourceBook.trim(),
+            type: "Référence"
+          });
+        }
+      });
+    }
     
     return { nodes, edges };
   }
 }
 
-const graphData = convertToGraphJSON(bibInput);
+const graphData = convertToGraphJSON(bibInput, sourceBookTitle);
 ```
 
 <div class="output-section">
@@ -523,8 +681,149 @@ h3 {
   font-weight: 600;
 }
 
+.url-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(147, 51, 234, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(147, 51, 234, 0.15);
+}
+
+.url-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.url-header p {
+  margin: 0;
+  color: var(--theme-foreground);
+}
+
+.url-header button {
+  background: linear-gradient(135deg, #9333ea, #dc2626);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.3);
+}
+
+.url-header button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.4);
+}
+
+.url-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.url-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.url-list li {
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.url-list li:hover {
+  background: rgba(147, 51, 234, 0.1);
+}
+
+.url-list a {
+  color: #9333ea;
+  text-decoration: none;
+  word-break: break-all;
+  font-size: 0.9rem;
+}
+
+.url-list a:hover {
+  text-decoration: underline;
+}
+
+.empty-state-small {
+  text-align: center;
+  padding: 1rem;
+  color: var(--theme-foreground-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.verification-stats {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(220, 38, 38, 0.05));
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(147, 51, 234, 0.2);
+}
+
+.verification-stats h4 {
+  margin: 0 0 1rem 0;
+  color: var(--theme-foreground);
+  font-size: 1.1rem;
+}
+
+.stats-row {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+}
+
+.stats-row span {
+  color: var(--theme-foreground-muted);
+}
+
+.stats-row strong {
+  color: var(--theme-foreground);
+  font-size: 1.1em;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: #dcb0ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
-  .input-section,
+  .hero h1 {
+    font-size: 2rem;
+  }
   .output-section,
   .json-section {
     padding: 1.5rem;
