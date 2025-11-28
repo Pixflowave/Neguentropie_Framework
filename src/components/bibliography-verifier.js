@@ -43,7 +43,7 @@ export function calculateSimilarity(str1, str2) {
 /**
  * Extract the last name of the first author for better search results
  */
-function extractLastName(authorString) {
+export function extractLastName(authorString) {
     if (!authorString) return '';
 
     // Take only the first author if multiple
@@ -53,20 +53,38 @@ function extractLastName(authorString) {
     // This regex looks for "X. " or "X " at the start
     firstAuthor = firstAuthor.replace(/^[A-Z]\.?\s+/, '');
 
+    // Handle "Lastname F." format (remove single letter initials at the end)
+    firstAuthor = firstAuthor.replace(/\s+[A-Z]\.?$/, '');
+
+    // Handle particles (de, van, von, etc.)
+    // We want to keep them if they are part of the last name in common usage,
+    // but often APIs index by the main part.
+    // Let's try to keep the particle if it's lowercase, but ensure we don't just get the particle.
+
     // If it's "Lastname Firstname" format (no comma, but we want to be safe)
     // usually bibliography is "Author, Title" so author string is just the name
-    // If it was "Arendt, H.", the split by comma above took "Arendt" which is good.
-    // If it was "H. Arendt", we removed "H. " so we have "Arendt".
+
+    // Check for common particles
+    const particles = ['de', 'du', 'des', 'le', 'la', 'les', 'van', 'von', 'den', 'der'];
+    const parts = firstAuthor.split(/\s+/);
+
+    if (parts.length > 1) {
+        // Check if the second to last part is a particle
+        const secondToLast = parts[parts.length - 2].toLowerCase();
+        if (particles.includes(secondToLast)) {
+            // Return "Particle Lastname"
+            return parts.slice(parts.length - 2).join(' ');
+        }
+    }
 
     // Just in case, take the last word if there are still spaces
-    const parts = firstAuthor.split(/\s+/);
     return parts[parts.length - 1];
 }
 
 /**
  * Clean title by removing subtitles and punctuation that might confuse search
  */
-function cleanTitle(title) {
+export function cleanTitle(title) {
     if (!title) return '';
 
     // Remove subtitle (text after : or . or - if surrounded by spaces)
@@ -77,6 +95,12 @@ function cleanTitle(title) {
 
     // Remove text in parentheses
     cleaned = cleaned.replace(/\([^)]*\)/g, '');
+
+    // Remove text in brackets
+    cleaned = cleaned.replace(/\[[^\]]*\]/g, '');
+
+    // Remove common volume/edition abbreviations
+    cleaned = cleaned.replace(/\b(Vol\.|Tome|Ed\.|Éd\.)\s*\d+/gi, '');
 
     // Remove trailing punctuation
     cleaned = cleaned.replace(/[.,;]+$/, '');

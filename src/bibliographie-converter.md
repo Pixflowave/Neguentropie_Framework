@@ -21,13 +21,13 @@ Collez simplement votre liste de références bibliographiques au format standar
 ```
 Auteur, Titre, Éditeur, Année.
 A. Alombert, Schizophrénie numérique, Paris, Allia, 2023.
-B. Stiegler, La Société automatique, Paris, Fayard, 2015.
+CNNum, Rapport sur l'IA générative, Paris, 2024.
 ```
 
 Le parser détectera automatiquement :
 - **Auteur(s)** : Créé comme nœud "Individu"
-- **Titre** : Créé comme nœud "Livre"
-- **Relation** : Auteur → Livre
+- **Titre** : Créé comme nœud "Livre", "Rapport", "Article", etc. selon le contexte.
+- **Relation** : Auteur → Œuvre (typée selon la nature de l'œuvre)
 
 ### Format 2 : CSV Structuré
 
@@ -35,7 +35,8 @@ Pour plus de contrôle, utilisez le format CSV :
 
 ```csv
 id,url,source,target,type
-"La gouvernance par les nombres","https://www.fayard.fr/livre/...","Alain Supiot","La gouvernance par les nombres","Livre"
+"La gouvernance par les nombres","https://...","Alain Supiot","La gouvernance par les nombres","Livre"
+"Rapport IA","https://...","CNNum","Rapport IA","Rapport"
 ```
 
 <div class="input-section">
@@ -61,6 +62,8 @@ const bibInput = view(Inputs.textarea({
   submit: false
 }));
 ```
+
+
 
 ### 🔍 Vérification bibliographique (optionnel)
 
@@ -220,41 +223,61 @@ function parseBibliographyEntry(line) {
   // Remove leading dashes and clean up
   cleanLine = cleanLine.replace(/^[-—–]\s*/, '').trim();
   
-  // Extract year (usually at the end, 4 digits)
-  const yearMatch = cleanLine.match(/,?\s*(\d{4})[.,\s]*$/);
-  const year = yearMatch ? yearMatch[1] : null;
-  let withoutYear = year ? cleanLine.substring(0, cleanLine.lastIndexOf(year)).trim() : cleanLine;
+  // Extract year (handle (1994) or 1994 at end)
+  let year = null;
+  const yearMatchParens = cleanLine.match(/\((\d{4})\)/);
+  const yearMatchEnd = cleanLine.match(/,?\s*(\d{4})[.,\s]*$/);
+  
+  if (yearMatchParens) {
+    year = yearMatchParens[1];
+    // Remove year from line to avoid confusion
+    cleanLine = cleanLine.replace(/\s*\(\d{4}\)/, '');
+  } else if (yearMatchEnd) {
+    year = yearMatchEnd[1];
+    cleanLine = cleanLine.substring(0, cleanLine.lastIndexOf(year)).trim();
+  }
   
   // Remove trailing punctuation
-  withoutYear = withoutYear.replace(/[.,;]+$/, '');
+  cleanLine = cleanLine.replace(/[.,;]+$/, '');
   
   // Split by comma to get parts
-  const parts = withoutYear.split(',').map(p => p.trim());
+  const parts = cleanLine.split(',').map(p => p.trim());
   
   if (parts.length < 2) {
     return null; // Not enough information
   }
   
-  // First part is usually the author
+  // --- Author Parsing ---
   let author = parts[0];
+  
+  // Clean author string
+  author = author.replace(/\s*\(dir\.\)|\s*\(ed\.\)|\s*\(eds\.\)/i, ''); // Remove roles
+  author = author.replace(/\s+et al\.?$/i, ''); // Remove et al
+  
+  // Handle multiple authors (keep as one string for the node, but clean it)
+  // "Author1 & Author2" or "Author1 and Author2"
   
   // Handle special cases like "—" or "-" which means "same author as above"
   if (author === '—' || author === '-' || author === '→') {
-    return null; // We'll handle this by keeping track of last author
+    return null; // We'll handle this by keeping track of last author in the main loop
   }
   
+  // --- Title Parsing ---
   // Find where the title ends - look for common patterns
   // Common publisher cities in French bibliography
   const publisherCities = ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Bordeaux', 'Lille', 
                            'Londres', 'London', 'New York', 'Cambridge', 'Oxford', 
                            'Chicago', 'Boston', 'Princeton', 'Berlin', 'Limoges',
-                           'Bry-sur-Marne', 'Genève', 'Geneva', 'Bruxelles', 'Brussels'];
+                           'Bry-sur-Marne', 'Genève', 'Geneva', 'Bruxelles', 'Brussels',
+                           'Lausanne', 'Montréal', 'Ottawa', 'Québec', 'Amsterdam',
+                           'Rome', 'Madrid', 'Barcelone', 'Milan', 'Turin', 'Vienne',
+                           'Francfort', 'Munich', 'Hambourg', 'Copenhague', 'Stockholm'];
   
   let titleEndIndex = parts.length - 1; // Default: everything except author
   
   // Look for where publisher info starts (usually a city name)
-  // Start from index 2 (third part, after author and title)
-  for (let i = 2; i < parts.length; i++) {
+  // Start from index 1 (second part, after author)
+  for (let i = 1; i < parts.length; i++) {
     const part = parts[i].trim();
     
     // Check if this part is a publisher city
@@ -280,13 +303,34 @@ function parseBibliographyEntry(line) {
   }
   
   // Combine parts to form the title
-  let title = parts.slice(1, titleEndIndex + 1).join(', ').replace(/[«»""]/g, '"').replace(/^["']|["']$/g, '').trim();
+  let title = parts.slice(1, titleEndIndex + 1).join(', ');
+  
+  // Clean title: handle quotes and subtitles
+  title = title.replace(/[«»""]/g, '"').replace(/^["']|["']$/g, '').trim();
+  
+  // --- Type Detection ---
+  let type = "Livre"; // Default
+  
+  const lowerTitle = title.toLowerCase();
+  const lowerLine = line.toLowerCase();
+  
+  if (url && (lowerTitle.includes('www') || lowerTitle.includes('http') || lowerLine.includes('consult') || lowerLine.includes('accessed'))) {
+    type = "Site Web";
+  } else if (lowerTitle.includes('rapport') || lowerTitle.includes('report') || lowerTitle.includes('white paper')) {
+    type = "Rapport";
+  } else if (lowerLine.includes('in:') || lowerLine.includes('dans:')) {
+    type = "Chapitre";
+  } else if (parts.length > 3 && (lowerLine.includes('vol.') || lowerLine.includes('no.') || lowerLine.includes('pp.'))) {
+    // Heuristic for articles: usually have Volume, Issue, Pages
+    type = "Article";
+  }
   
   return {
-    author: author,
+    author: author.trim(),
     title: title,
     year: year,
     url: url,
+    type: type,
     raw: line
   };
 }
@@ -375,7 +419,7 @@ function convertToGraphJSON(inputText, sourceBook) {
         
         if (!entry && !isContinuation) return;
         
-        let author, title, year, url;
+        let author, title, year, url, type;
         
         if (isContinuation && lastAuthor) {
           // This is a continuation of the previous author
@@ -387,11 +431,13 @@ function convertToGraphJSON(inputText, sourceBook) {
           title = tempEntry.title;
           year = tempEntry.year;
           url = tempEntry.url;
+          type = tempEntry.type;
         } else if (entry) {
           author = entry.author;
           title = entry.title;
           year = entry.year;
           url = entry.url;
+          type = entry.type;
           lastAuthor = author;
         } else {
           return;
@@ -425,7 +471,7 @@ function convertToGraphJSON(inputText, sourceBook) {
         edges.push({
           source: author,
           target: title,
-          type: "Livre"
+          type: type || "Livre"
         });
         
         // If source book is provided, add edge from book to source book
@@ -444,6 +490,38 @@ function convertToGraphJSON(inputText, sourceBook) {
 }
 
 const graphData = convertToGraphJSON(bibInput, sourceBookTitle);
+
+// Create a blob for download
+const jsonBlob = new Blob([JSON.stringify(graphData, null, 2)], {type: "application/json"});
+const jsonUrl = URL.createObjectURL(jsonBlob);
+
+// Function to save directly to disk using File System Access API
+async function saveToDisk() {
+  try {
+    const options = {
+      suggestedName: 'bibliography_graph.json',
+      types: [{
+        description: 'JSON Files',
+        accept: {'application/json': ['.json']},
+      }],
+    };
+    
+    const handle = await window.showSaveFilePicker(options);
+    const writable = await handle.createWritable();
+    await writable.write(JSON.stringify(graphData, null, 2));
+    await writable.close();
+    
+    alert("Fichier sauvegardé avec succès !");
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.error(err);
+      alert("Erreur lors de la sauvegarde : " + err.message);
+    }
+  }
+}
+
+// Check if File System Access API is supported
+const isFileSystemSupported = typeof window !== 'undefined' && 'showSaveFilePicker' in window;
 ```
 
 <div class="output-section">
