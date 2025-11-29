@@ -268,6 +268,200 @@ export async function searchHAL(title, author) {
 /**
  * Verify and enrich a list of bibliography entries
  */
+/**
+ * Search BnF (Bibliothèque nationale de France) via SRU API
+ */
+export async function searchBnF(title, author) {
+    try {
+        // Build query
+        const cleanedTitle = cleanTitle(title);
+        let query = `bib.title all "${cleanedTitle}"`;
+        if (author) {
+            const lastName = extractLastName(author);
+            query += ` and bib.author all "${lastName}"`;
+        }
+
+        const url = `https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&query=${encodeURIComponent(query)}&recordSchema=dublincore&maximumRecords=3`;
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const xmlText = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+
+        const records = xmlDoc.getElementsByTagName("srw:record");
+        if (records.length === 0) {
+            return null;
+        }
+
+        // Get best match
+        const bestRecord = records[0];
+
+        // Helper to get text content of a tag
+        const getTag = (parent, tagName) => {
+            const el = parent.getElementsByTagName(tagName)[0];
+            return el ? el.textContent : "";
+        };
+
+        const matchTitle = getTag(bestRecord, "dc:title");
+        const matchCreator = getTag(bestRecord, "dc:creator");
+        const matchDate = getTag(bestRecord, "dc:date");
+        const matchPublisher = getTag(bestRecord, "dc:publisher");
+        const matchIdentifier = getTag(bestRecord, "dc:identifier"); // Usually ISBN or URI
+
+        const similarity = calculateSimilarity(title, matchTitle);
+
+        // Clean the record identifier - it might already contain ark:/12148/
+        let recordId = bestRecord.getElementsByTagName("srw:recordIdentifier")[0]?.textContent || '';
+
+        console.log('[BnF SRU] Original recordId:', recordId);
+
+        // Remove ark:/12148/ prefix if it exists (we'll add it back)
+        recordId = recordId.replace(/^ark:\/12148\//, '');
+
+        console.log('[BnF SRU] Cleaned recordId:', recordId);
+
+        const bnfUrl = `https://catalogue.bnf.fr/ark:/12148/${recordId}`;
+
+        console.log('[BnF SRU] Final URL:', bnfUrl);
+
+        return {
+            title: matchTitle,
+            author: matchCreator || author,
+            year: matchDate,
+            isbn: matchIdentifier, // This might be a URI, but often contains ISBN
+            publisher: matchPublisher,
+            url: bnfUrl,
+            confidence: similarity,
+            source: 'BnF (SRU)',
+            found: true
+        };
+    } catch (error) {
+        console.error('BnF search error:', error);
+        return null;
+    }
+}
+
+/**
+ * Search BnF via SPARQL endpoint (data.bnf.fr)
+ * Optimized with bif:contains for full-text search performance
+ */
+export async function searchBnFSparql(title, author) {
+    try {
+        // Clean and escape for SPARQL
+        // We remove special characters that might break the query or aren't useful for search
+        const cleanForSparql = (str) => {
+            return str.replace(/["]/g, ' ')  // Remove quotes
+                .replace(/\s+/g, ' ')   // Normalize spaces
+                .trim();
+        };
+
+        const cleanedTitle = cleanForSparql(cleanTitle(title));
+        const lastName = cleanForSparql(extractLastName(author));
+
+        if (!cleanedTitle || !lastName) return null;
+
+        // Use bif:contains for fast full-text search
+        // Note: We use 'AND' implicitly in bif:contains by just listing words
+        const query = `
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        
+        SELECT DISTINCT ?work ?title ?creatorName ?date ?publisher WHERE {
+          ?work dcterms:title ?title .
+          ?title bif:contains "'${cleanedTitle}'" .
+          
+          ?work dcterms:creator ?creator .
+          ?creator foaf:name ?creatorName .
+          ?creatorName bif:contains "'${lastName}'" .
+          
+          OPTIONAL { ?work dcterms:date ?date }
+          OPTIONAL { ?work dcterms:publisher ?publisher }
+        } LIMIT 3
+        `;
+
+        const url = `https://data.bnf.fr/sparql?query=${encodeURIComponent(query)}&format=json`;
+
+        // Create a timeout promise (5 seconds)
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('SPARQL request timed out')), 5000)
+        );
+
+        // Race between fetch and timeout
+        const response = await Promise.race([
+            fetch(url),
+            timeoutPromise
+        ]);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.results?.bindings || data.results.bindings.length === 0) {
+            return null;
+        }
+
+        // Find best match
+        let bestMatch = null;
+        let maxSimilarity = 0;
+
+        for (const result of data.results.bindings) {
+            const resultTitle = result.title.value;
+            const similarity = calculateSimilarity(title, resultTitle);
+
+            if (similarity > maxSimilarity) {
+                maxSimilarity = similarity;
+
+                // Clean the BnF URL - the SPARQL endpoint sometimes returns malformed URIs
+                // with duplicate ARK prefixes like "https://catalogue.bnf.fr/ark:/12148/ark:/12148/cb412050783"
+                let workUrl = result.work.value;
+
+                console.log('[BnF SPARQL] Original URL:', workUrl);
+
+                // Remove any duplicate ark:/12148/ patterns (keep only the last occurrence)
+                // This handles cases like: /ark:/12148/ark:/12148/ -> /ark:/12148/
+                workUrl = workUrl.replace(/(ark:\/12148\/)+/g, 'ark:/12148/');
+
+                console.log('[BnF SPARQL] After dedup:', workUrl);
+
+                // If the URL is just an ARK identifier (starts with "ark:"), prepend the catalogue base
+                if (workUrl.startsWith('ark:/')) {
+                    workUrl = `https://catalogue.bnf.fr/${workUrl}`;
+                    console.log('[BnF SPARQL] Added base URL:', workUrl);
+                }
+
+                console.log('[BnF SPARQL] Final URL:', workUrl);
+
+                bestMatch = {
+                    title: resultTitle,
+                    author: result.creatorName.value,
+                    year: result.date?.value,
+                    publisher: result.publisher?.value,
+                    url: workUrl,
+                    confidence: similarity,
+                    source: 'BnF (SPARQL)',
+                    found: true
+                };
+            }
+        }
+
+        return bestMatch;
+
+    } catch (error) {
+        // Log error but don't crash, allow fallback to other methods
+        console.warn('BnF SPARQL search failed or timed out:', error.message);
+        return null;
+    }
+}
+
+/**
+ * Verify and enrich a list of bibliography entries
+ */
 export async function verifyBibliography(entries) {
     const results = [];
 
@@ -281,13 +475,31 @@ export async function verifyBibliography(entries) {
 
         let bestResult = null;
 
-        // Try HAL first (best for French academic publications)
-        const halResult = await searchHAL(entry.title, entry.author);
-        if (halResult && halResult.confidence >= 60) {
-            bestResult = halResult;
+        // 1. Try BnF SPARQL (Highest quality for French works)
+        const bnfSparqlResult = await searchBnFSparql(entry.title, entry.author);
+        if (bnfSparqlResult && bnfSparqlResult.confidence >= 70) {
+            bestResult = bnfSparqlResult;
         }
 
-        // If HAL didn't find a good match, try OpenLibrary (for books)
+        // 2. Try HAL (Best for French academic papers)
+        if (!bestResult || bestResult.confidence < 80) {
+            const halResult = await searchHAL(entry.title, entry.author);
+            if (halResult && (!bestResult || halResult.confidence > bestResult.confidence)) {
+                bestResult = halResult;
+            }
+        }
+
+        // 3. Try BnF SRU (Fallback for books if SPARQL missed)
+        if (!bestResult || bestResult.confidence < 70) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            const bnfResult = await searchBnF(entry.title, entry.author);
+
+            if (bnfResult && (!bestResult || bnfResult.confidence > bestResult.confidence)) {
+                bestResult = bnfResult;
+            }
+        }
+
+        // 4. Try OpenLibrary (General books)
         if (!bestResult || bestResult.confidence < 70) {
             await new Promise(resolve => setTimeout(resolve, 200));
             const openLibResult = await searchOpenLibrary(entry.title, entry.author);
@@ -297,7 +509,7 @@ export async function verifyBibliography(entries) {
             }
         }
 
-        // If still no good match, try CrossRef (for articles)
+        // 5. Try CrossRef (Articles)
         if (!bestResult || bestResult.confidence < 70) {
             await new Promise(resolve => setTimeout(resolve, 200));
             const crossRefResult = await searchCrossRef(entry.title, entry.author);
