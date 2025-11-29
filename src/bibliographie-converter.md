@@ -217,7 +217,7 @@ function mergeCSL(cslText, currentGraph, sourceId, verificationResults = [], use
     return { first, last, isInitial };
   }
 
-  // Helper to find matching node (handles "A. Name" vs "Anne Name" and "A.Name")
+  // Helper to find matching node (handles "A. Name" vs "Anne Name", "A.Name", and "Name, First" vs "First Name")
   function findMatchingNode(name, existingIds) {
     if (existingIds.has(name)) return name;
 
@@ -250,6 +250,34 @@ function mergeCSL(cslText, currentGraph, sourceId, verificationResults = [], use
         }
       }
     }
+    
+    // Additional check: handle "Nom, Prénom" vs "Prénom Nom" format
+    // If name contains a comma, try to match with inverted format
+    if (name.includes(',')) {
+      const parts = name.split(',').map(p => p.trim());
+      if (parts.length === 2) {
+        const [lastName, firstName] = parts;
+        const invertedName = `${firstName} ${lastName}`;
+        if (existingIds.has(invertedName)) {
+          return invertedName;
+        }
+      }
+    } else {
+      // If name doesn't have comma, check if any existing ID has comma with same parts
+      for (const id of existingIds) {
+        if (id.includes(',')) {
+          const parts = id.split(',').map(p => p.trim());
+          if (parts.length === 2) {
+            const [lastName, firstName] = parts;
+            const invertedId = `${firstName} ${lastName}`;
+            if (invertedId.toLowerCase() === name.toLowerCase()) {
+              return id;
+            }
+          }
+        }
+      }
+    }
+    
     return null;
   }
 

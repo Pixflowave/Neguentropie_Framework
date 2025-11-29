@@ -269,6 +269,37 @@ export async function searchHAL(title, author) {
  * Verify and enrich a list of bibliography entries
  */
 /**
+ * Clean author name from BnF qualifiers
+ * Removes patterns like ". Auteur du texte ", ". Éditeur scientifique ", etc.
+ */
+function cleanAuthorName(name) {
+    if (!name) return name;
+
+    // BnF returns names in format: "Nom, Prénom (dates). Auteur du texte"
+    // We want to extract: "Nom, Prénom"
+
+    // First, remove the dates in parentheses: (1980-....) or (1965-....)
+    let cleaned = name.replace(/\s*\([0-9\-\.]+\)/g, '');
+
+    // Then remove BnF qualifiers (can be at end or in middle)
+    // Pattern: ". Qualifier" or ". Qualifier " where Qualifier can be:
+    // - Auteur du texte
+    // - Éditeur scientifique
+    // - Traducteur
+    // - Directeur de publication
+    // etc.
+    // Use word boundary or end of string to match
+    cleaned = cleaned.replace(/\.\s+(Auteur du texte|Éditeur scientifique|Traducteur|Directeur de publication|Préfacier|Illustrateur|Compilateur|Compositeur)(\s+|$)/gi, '');
+
+    // Normalize spaces and trim
+    cleaned = cleaned.replace(/\s+/g, ' ').trim();
+
+    console.log('[BnF] Cleaned author name:', name, '->', cleaned);
+
+    return cleaned;
+}
+
+/**
  * Search BnF (Bibliothèque nationale de France) via SRU API
  */
 export async function searchBnF(title, author) {
@@ -330,7 +361,7 @@ export async function searchBnF(title, author) {
 
         return {
             title: matchTitle,
-            author: matchCreator || author,
+            author: cleanAuthorName(matchCreator) || author,
             year: matchDate,
             isbn: matchIdentifier, // This might be a URI, but often contains ISBN
             publisher: matchPublisher,
@@ -439,7 +470,7 @@ export async function searchBnFSparql(title, author) {
 
                 bestMatch = {
                     title: resultTitle,
-                    author: result.creatorName.value,
+                    author: cleanAuthorName(result.creatorName.value),
                     year: result.date?.value,
                     publisher: result.publisher?.value,
                     url: workUrl,
