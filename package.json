@@ -5,16 +5,21 @@
     "clean": "rimraf src/.observablehq/cache",
     "build": "observable build",
     "dev": "observable preview",
+    "dev:proxy": "node src/proxy/bibcheck-proxy.js",
+    "dev:full": "concurrently \"npm run dev\" \"npm run dev:proxy\"",
     "deploy": "observable deploy",
     "observable": "observable"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",
+    "cors": "^2.8.5",
     "d3-dsv": "^3.0.1",
     "d3-time-format": "^4.1.0",
+    "express": "^4.18.2",
     "markdown-it-footnote": "^4.0.0"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "rimraf": "^5.0.5"
   },
   "engines": {

@@ -5,7 +5,7 @@ title: Graphique Noodiversité
 ### Graphe réticulé
 
 ```html
-<iframe width="100%" height="600" frameborder="0" style="background: transparent;"
+<iframe width="100%" height="600" frameborder="0" style="border-radius: 8px; filter: invert(0.85) hue-rotate(180deg);"
   src="https://observablehq.com/embed/@pixflowave/graph_neguentropie?cells=chartR"></iframe>
 ```
 
@@ -14,7 +14,7 @@ title: Graphique Noodiversité
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 
 Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
 
-![alt text](artefacts-logo1.png)
+<img src="artefacts-logo1.png" alt="Artefacts" width="150">
 
 [https://artefacts.coop](https://artefacts.coop/)
 

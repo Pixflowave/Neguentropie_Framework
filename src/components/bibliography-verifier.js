@@ -150,7 +150,7 @@ export async function searchOpenLibrary(title, author) {
             found: true
         };
     } catch (error) {
-        console.error('OpenLibrary search error:', error);
+        // console.warn('OpenLibrary search error (handled):', error.message);
         return null;
     }
 }
@@ -170,11 +170,7 @@ export async function searchCrossRef(title, author) {
 
         const url = `https://api.crossref.org/works?query=${encodeURIComponent(query)}&rows=3`;
 
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'BibliographyConverter/1.0 (mailto:contact@example.com)'
-            }
-        });
+        const response = await fetch(url);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -208,7 +204,7 @@ export async function searchCrossRef(title, author) {
             found: true
         };
     } catch (error) {
-        console.error('CrossRef search error:', error);
+        // console.warn('CrossRef search error (handled):', error.message);
         return null;
     }
 }
@@ -485,9 +481,71 @@ export async function searchBnFSparql(title, author) {
 
     } catch (error) {
         // Log error but don't crash, allow fallback to other methods
-        console.warn('BnF SPARQL search failed or timed out:', error.message);
+        // Only warn for non-500 errors (500 is common for BnF SPARQL)
+        if (!error.message.includes('500')) {
+            console.warn('BnF SPARQL search failed or timed out:', error.message);
+        }
         return null;
     }
+}
+
+/**
+ * Verify and enrich a list of bibliography entries
+ */
+/**
+ * Verify a single bibliography entry
+ */
+export async function verifyEntry(entry) {
+    let bestResult = null;
+
+    // 1. Try BnF SPARQL (Highest quality for French works)
+    const bnfSparqlResult = await searchBnFSparql(entry.title, entry.author);
+    if (bnfSparqlResult && bnfSparqlResult.confidence >= 70) {
+        bestResult = bnfSparqlResult;
+    }
+
+    // 2. Try HAL (Best for French academic papers)
+    if (!bestResult || bestResult.confidence < 80) {
+        const halResult = await searchHAL(entry.title, entry.author);
+        if (halResult && (!bestResult || halResult.confidence > bestResult.confidence)) {
+            bestResult = halResult;
+        }
+    }
+
+    // 3. Try BnF SRU (Fallback for books if SPARQL missed)
+    if (!bestResult || bestResult.confidence < 70) {
+        // Small delay if we are chaining requests, but here we handle one entry
+        // The caller should handle delays between entries if needed
+        const bnfResult = await searchBnF(entry.title, entry.author);
+
+        if (bnfResult && (!bestResult || bnfResult.confidence > bestResult.confidence)) {
+            bestResult = bnfResult;
+        }
+    }
+
+    // 4. Try OpenLibrary (General books)
+    if (!bestResult || bestResult.confidence < 70) {
+        const openLibResult = await searchOpenLibrary(entry.title, entry.author);
+
+        if (openLibResult && (!bestResult || openLibResult.confidence > bestResult.confidence)) {
+            bestResult = openLibResult;
+        }
+    }
+
+    // 5. Try CrossRef (Articles)
+    if (!bestResult || bestResult.confidence < 70) {
+        const crossRefResult = await searchCrossRef(entry.title, entry.author);
+
+        if (crossRefResult && (!bestResult || crossRefResult.confidence > bestResult.confidence)) {
+            bestResult = crossRefResult;
+        }
+    }
+
+    return {
+        original: entry,
+        verified: bestResult,
+        status: bestResult ? (bestResult.confidence >= 70 ? 'verified' : 'uncertain') : 'not_found'
+    };
 }
 
 /**
@@ -504,59 +562,56 @@ export async function verifyBibliography(entries) {
             await new Promise(resolve => setTimeout(resolve, 200));
         }
 
-        let bestResult = null;
-
-        // 1. Try BnF SPARQL (Highest quality for French works)
-        const bnfSparqlResult = await searchBnFSparql(entry.title, entry.author);
-        if (bnfSparqlResult && bnfSparqlResult.confidence >= 70) {
-            bestResult = bnfSparqlResult;
-        }
-
-        // 2. Try HAL (Best for French academic papers)
-        if (!bestResult || bestResult.confidence < 80) {
-            const halResult = await searchHAL(entry.title, entry.author);
-            if (halResult && (!bestResult || halResult.confidence > bestResult.confidence)) {
-                bestResult = halResult;
-            }
-        }
-
-        // 3. Try BnF SRU (Fallback for books if SPARQL missed)
-        if (!bestResult || bestResult.confidence < 70) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const bnfResult = await searchBnF(entry.title, entry.author);
-
-            if (bnfResult && (!bestResult || bnfResult.confidence > bestResult.confidence)) {
-                bestResult = bnfResult;
-            }
-        }
-
-        // 4. Try OpenLibrary (General books)
-        if (!bestResult || bestResult.confidence < 70) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const openLibResult = await searchOpenLibrary(entry.title, entry.author);
-
-            if (openLibResult && (!bestResult || openLibResult.confidence > bestResult.confidence)) {
-                bestResult = openLibResult;
-            }
-        }
-
-        // 5. Try CrossRef (Articles)
-        if (!bestResult || bestResult.confidence < 70) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const crossRefResult = await searchCrossRef(entry.title, entry.author);
-
-            if (crossRefResult && (!bestResult || crossRefResult.confidence > bestResult.confidence)) {
-                bestResult = crossRefResult;
-            }
-        }
-
-        results.push({
-            original: entry,
-            verified: bestResult,
-            status: bestResult ? (bestResult.confidence >= 70 ? 'verified' : 'uncertain') : 'not_found'
-        });
+        const result = await verifyEntry(entry);
+        results.push(result);
     }
 
     return results;
+}
+
+/**
+ * Verify entries using INIST Biblio-Ref API via local proxy
+ * The proxy runs at http://localhost:3001 and bypasses CORS
+ * Start it with: npm run dev:proxy
+ */
+export async function verifyWithInist(entries) {
+    // Prepare payload: [{ id: index, value: "Citation..." }]
+    const payload = entries.map((e, i) => {
+        // Construct a citation string
+        let citation = e.title || '';
+        if (e.author) {
+            const authStr = Array.isArray(e.author)
+                ? e.author.map(a => a.family || a.literal).join(', ')
+                : e.author;
+            citation = `${authStr}. ${citation}`;
+        }
+        if (e.year) citation += ` (${e.year})`;
+
+        return {
+            id: i,
+            value: citation
+        };
+    });
+
+    // Use local proxy to bypass CORS
+    const PROXY_ENDPOINT = 'http://localhost:3001/v1/validate';
+
+    try {
+        const response = await fetch(PROXY_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            return await response.json();
+        }
+        console.warn(`INIST proxy returned ${response.status}`);
+        return null;
+    } catch (e) {
+        // Proxy not running or network error
+        console.warn('INIST proxy not available (run: npm run dev:proxy)');
+        return null;
+    }
 }
 

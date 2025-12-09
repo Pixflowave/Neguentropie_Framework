@@ -10,7 +10,7 @@ toc: false
 
 <div class="converter-container">
 
-## 🔄 Fusion CSL-JSON (AnyStyle.io)
+## 🔄 Fusion CSL-JSON [AnyStyle.io](https://anystyle.io)
 
 Importez un fichier CSL-JSON exporté depuis AnyStyle.io et fusionnez-le avec le graphe existant.
 
@@ -58,10 +58,16 @@ const cslInput = view(Inputs.textarea({
 
 ### 🔍 Vérification CSL (optionnel)
 
-Vérifiez les références avec HAL, BnF, OpenLibrary et CrossRef avant de fusionner.
+Vérifiez les références avec [BibCheck](https://services.istex.fr/validation-de-reference-bibliographique/) avant de les fusionner.
 
 ```js
-import {verifyBibliography, calculateSimilarity} from "./components/bibliography-verifier.js";
+import {verifyBibliography, verifyEntry, verifyWithInist, calculateSimilarity} from "./components/bibliography-verifier.js";
+import {
+  checkRetraction,
+  detectHallucinationRisk,
+  validateCSLFormat,
+  detectDuplicates
+} from "./components/bibcheck-enhanced.js";
 ```
 
 ```js
@@ -98,7 +104,7 @@ function extractCSLEntries(jsonText) {
         year: year,
         originalUrl: entry.URL
       };
-    }).filter(e => e.title);
+    });
   } catch (e) {
     return [];
   }
@@ -106,52 +112,386 @@ function extractCSLEntries(jsonText) {
 
 const cslVerificationResults = cslVerificationTriggered && cslInput
   ? (async function*() {
-      yield { loading: true };
+      let cslData;
+      try {
+        cslData = JSON.parse(cslInput);
+      } catch (e) {
+        yield { loading: false, data: [], error: "JSON invalide", metadata: null };
+        return;
+      }
+      
+      const total = cslData.length;
+      if (total === 0) {
+        yield { loading: false, data: [], metadata: null };
+        return;
+      }
+
+      // Initial loading state
+      yield { loading: true, progress: { current: 0, total }, message: "Initialisation..." };
+      
+      // 1. Validation du format
+      const formatValidation = validateCSLFormat(cslData);
+      
+      // 2. Détection de doublons
+      const duplicates = detectDuplicates(cslData);
+      
+      // 3. Vérification dans les bases de données (INIST via Proxy -> Fallback BnF/HAL)
       const entries = extractCSLEntries(cslInput);
-      const results = await verifyBibliography(entries);
-      yield { loading: false, data: results };
+      const verificationResults = [];
+      const BATCH_SIZE = 5; // INIST accepts batches
+      let inistAvailable = true; // Will be set to false if proxy fails
+
+      for (let i = 0; i < total; i += BATCH_SIZE) {
+        const batchEnd = Math.min(i + BATCH_SIZE, total);
+        const batch = entries.slice(i, batchEnd);
+        
+        // Yield progress update
+        yield { 
+          loading: true, 
+          progress: { current: batchEnd, total }, 
+          message: `Vérification en cours (${batchEnd}/${total})... ${!inistAvailable ? '(sans INIST)' : ''}` 
+        };
+
+        // 1. Try INIST via proxy (if available)
+        let inistResults = null;
+        if (inistAvailable) {
+            inistResults = await verifyWithInist(batch);
+            if (!inistResults) {
+                // Proxy not running, switch to local-only mode
+                inistAvailable = false;
+                yield { 
+                  loading: true, 
+                  progress: { current: batchEnd, total }, 
+                  message: `Proxy INIST non disponible. Vérification locale...` 
+                };
+            }
+        }
+        
+        // 2. Process batch entries
+        for (let idx = 0; idx < batch.length; idx++) {
+            const entry = batch[idx];
+            
+            // Handle invalid entries
+            if (!entry || !entry.title) {
+                verificationResults.push({ original: entry || {}, verified: null, status: 'error', error: 'Titre manquant' });
+                continue;
+            }
+
+            const inist = inistResults ? inistResults[idx]?.value : null;
+            
+            // If INIST found it or it's retracted, use INIST result
+            if (inist && (inist.status === 'found' || inist.status === 'retracted')) {
+                verificationResults.push({
+                    original: entry,
+                    verified: {
+                        source: 'INIST/Crossref',
+                        title: entry.title, 
+                        confidence: 100,
+                        found: true
+                    },
+                    status: inist.status === 'retracted' ? 'retracted' : 'verified',
+                    inist: inist
+                });
+                continue;
+            }
+            
+            // Fallback: Local verification (BnF, HAL, CrossRef, OpenLibrary)
+            if (verificationResults.length > 0) {
+                await new Promise(r => setTimeout(r, 500));
+            }
+            
+            yield { 
+                loading: true, 
+                progress: { current: i + idx + 1, total }, 
+                message: `Vérification: ${i + idx + 1}/${total} - ${entry.title?.substring(0, 35)}...` 
+            };
+            
+            const localResult = await verifyEntry(entry);
+            localResult.inist = inist; // Attach INIST status even if not_found
+            verificationResults.push(localResult);
+        }
+      }
+      
+      // 4. Analyse de risque d'hallucination
+      yield { loading: true, progress: { current: total, total }, message: "Analyse des hallucinations..." };
+      const hallucinationAnalysis = cslData.map((entry, i) => 
+        detectHallucinationRisk(entry || {}, verificationResults[i] || null)
+      );
+      
+      // 5. Vérification des rétractations (CrossRef API + Retraction Watch)
+      yield { loading: true, progress: { current: total, total }, message: "Vérification des rétractations..." };
+      const retractionChecks = [];
+      for (let i = 0; i < cslData.length; i++) {
+        const entry = cslData[i];
+        
+        // Check INIST result first (if proxy is running)
+        const inistStatus = verificationResults[i]?.inist?.status;
+        if (inistStatus === 'retracted') {
+            retractionChecks.push({
+                index: i,
+                retracted: true,
+                method: 'INIST PPS',
+                confidence: 100,
+                details: 'Rétractation détectée par INIST/PPS'
+            });
+            continue;
+        }
+        
+        // Use checkRetraction from bibcheck-enhanced.js (queries CrossRef)
+        const doi = entry.DOI || entry.doi;
+        const result = await checkRetraction(doi, entry.title, entry.author);
+        retractionChecks.push({
+            index: i,
+            ...result
+        });
+      }
+      
+      // 6. Enrichir les résultats de vérification avec Bibcheck + INIST
+      const enrichedResults = verificationResults.map((result, i) => {
+        if (!result) return { status: 'error', original: cslData[i] }; // Safety fallback
+
+        // Adjust hallucination risk based on INIST
+        let hAnalysis = hallucinationAnalysis[i];
+        const inistStatus = result.inist?.status;
+        
+        if (inistStatus === 'to_be_verified' || inistStatus === 'not_found') {
+             // If INIST didn't find it either, increase risk
+             if (hAnalysis.level === 'low') hAnalysis.level = 'medium';
+             hAnalysis.riskScore += 20;
+             hAnalysis.reasons.push(`Non trouvé par INIST (${inistStatus})`);
+        } else if (inistStatus === 'found') {
+             // If INIST found it, it's not a hallucination
+             hAnalysis.level = 'low';
+             hAnalysis.riskScore = 0;
+             hAnalysis.reasons = [];
+        }
+
+        return {
+            ...result,
+            bibcheck: {
+              hallucinationRisk: hAnalysis.level,
+              hallucinationScore: hAnalysis.riskScore,
+              retracted: retractionChecks[i].retracted,
+              formatIssues: formatValidation.issues.filter(issue => issue.index === i),
+              isDuplicate: duplicates.some(d => d.indices.includes(i)),
+              inistStatus: inistStatus // Expose for UI
+            }
+        };
+      });
+      
+      yield {
+        loading: false,
+        data: enrichedResults,
+        metadata: {
+          formatValidation,
+          duplicates,
+          hallucinationAnalysis,
+          retractionChecks
+        }
+      };
     })()
-  : { loading: false, data: [] };
+  : { loading: false, data: [], metadata: null };
 ```
 
 ```js
-// Display CSL verification results
+// Display Progress Bar or Results
 if (cslVerificationResults.loading) {
+  const progress = cslVerificationResults.progress;
+  const percentage = progress ? Math.round((progress.current / progress.total) * 100) : 0;
+  
   display(html`<div class="loading-container">
     <div class="spinner"></div>
-    <p>Vérification en cours avec HAL, BnF, OpenLibrary et CrossRef...</p>
+    <div style="flex: 1; margin-left: 1rem;">
+      <p style="margin-bottom: 0.5rem;">${cslVerificationResults.message || 'Vérification en cours...'}</p>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width: ${percentage}%"></div>
+      </div>
+      <div style="font-size: 0.8rem; text-align: right; color: var(--theme-foreground-muted);">
+        ${progress ? `${progress.current}/${progress.total} (${percentage}%)` : ''}
+      </div>
+    </div>
   </div>`);
+} else if (cslVerificationResults.error) {
+  display(html`<div class="error-box">❌ ${cslVerificationResults.error}</div>`);
 } else if (cslVerificationResults.data && cslVerificationResults.data.length > 0) {
   const results = cslVerificationResults.data;
+  const meta = cslVerificationResults.metadata;
   
-  const tableData = results.map(r => ({
-      "Statut": r.status === 'verified' ? '✅' : r.status === 'uncertain' ? '⚠️' : '❌',
-      "Confiance": r.verified ? `${r.verified.confidence}%` : "-",
-      "Titre original": r.original.title,
-      "Auteur original": r.original.author,
-      "Titre trouvé": r.verified?.title || "Non trouvé",
-      "Source": r.verified?.source || "-"
-  }));
-  
-  display(Inputs.table(tableData, {
-    columns: ["Statut", "Confiance", "Titre original", "Auteur original", "Titre trouvé", "Source"],
-    width: "100%",
-    rows: 10
-  }));
-
+  // --- Calcul des statistiques et du score ---
   const stats = {
     verified: results.filter(r => r.status === 'verified').length,
     uncertain: results.filter(r => r.status === 'uncertain').length,
     notFound: results.filter(r => r.status === 'not_found').length,
-    bnf: results.filter(r => r.verified?.source === 'BnF').length
+    duplicates: meta.duplicates.length,
+    retracted: meta.retractionChecks.filter(r => r.retracted).length,
+    hallucinations: meta.hallucinationAnalysis.filter(h => h.level === 'high').length,
+    formatErrors: meta.formatValidation.issues.filter(i => i.severity === 'error').length
   };
+  
+  // Calcul du score (simplifié par rapport à bibcheck-enhanced.js mais cohérent)
+  let score = 100;
+  const total = results.length;
+  
+  // Pénalités
+  score -= (stats.notFound / total) * 30; // Max 30 pts pour non trouvés
+  score -= (stats.uncertain / total) * 10; // Max 10 pts pour incertains
+  score -= stats.retracted * 20; // -20 par rétractation
+  score -= stats.hallucinations * 15; // -15 par hallucination
+  score -= stats.duplicates * 5; // -5 par doublon
+  score -= stats.formatErrors * 2; // -2 par erreur de format
+  
+  score = Math.max(0, Math.round(score));
+  const scoreEmoji = score >= 80 ? '✅' : score >= 60 ? '⚠️' : '❌';
+  const scoreText = score >= 80 ? 'Excellente qualité' : score >= 60 ? 'Qualité acceptable' : 'Corrections nécessaires';
 
-  display(html`<div class="verification-stats">
-    <div class="stats-row">
-      <span>✅ Vérifiées : <strong>${stats.verified}</strong></span>
-      <span>🏛️ BnF : <strong>${stats.bnf}</strong></span>
+  // --- Affichage des Alertes ---
+  const alerts = [];
+  
+  if (stats.retracted > 0) {
+    const retractionDetails = meta.retractionChecks.filter(r => r.retracted).map(r => {
+      const sourceLabel = r.method === 'Retraction Watch Database' 
+        ? '🔴 Retraction Watch' 
+        : r.method === 'Publisher Notice' 
+          ? '📋 Éditeur' 
+          : '🔍 Analyse titre';
+      return {
+        title: results[r.index]?.original?.title || 'Titre inconnu',
+        warnings: [
+          `Source: ${sourceLabel}`,
+          r.details || `Mot-clé: "${r.keyword || 'N/A'}"`
+        ]
+      };
+    });
+    
+    alerts.push({
+      type: 'danger',
+      icon: '🚨',
+      title: 'Articles rétractés détectés',
+      message: `${stats.retracted} article(s) potentiellement rétracté(s)`,
+      details: retractionDetails
+    });
+  }
+  
+  if (stats.hallucinations > 0) {
+    alerts.push({
+      type: 'warning',
+      icon: '⚠️',
+      title: 'Risque élevé de références hallucinées',
+      message: `${stats.hallucinations} référence(s) à risque élevé`,
+      details: meta.hallucinationAnalysis.filter(h => h.level === 'high').map((h, i) => ({
+        title: results[i].original.title,
+        warnings: h.reasons
+      }))
+    });
+  }
+  
+  if (stats.duplicates > 0) {
+    alerts.push({
+      type: 'info',
+      icon: '🔄',
+      title: 'Doublons détectés',
+      message: `${stats.duplicates} paire(s) de doublons potentiels`,
+      details: meta.duplicates.map(d => ({
+        title: `Doublon (indices ${d.indices.join(', ')})`,
+        warnings: [`Type: ${d.type}`]
+      }))
+    });
+  }
+  
+  if (stats.formatErrors > 0) {
+    alerts.push({
+      type: 'warning',
+      icon: '❌',
+      title: 'Erreurs de format CSL',
+      message: `${stats.formatErrors} erreur(s) de format`,
+      details: meta.formatValidation.issues.filter(i => i.severity === 'error').map(i => ({
+        title: `Entrée ${i.index + 1}`,
+        warnings: [i.message]
+      }))
+    });
+  }
+
+  if (alerts.length > 0) {
+    display(html`<div class="alerts-container">
+      ${alerts.map(alert => html`
+        <div class="alert alert-${alert.type}">
+          <div class="alert-header">
+            <span class="alert-icon">${alert.icon}</span>
+            <strong>${alert.title}</strong>
+          </div>
+          <p>${alert.message}</p>
+          ${alert.details && alert.details.length > 0 ? html`
+            <details>
+              <summary>Voir les détails</summary>
+              <ul>
+                ${alert.details.map(d => html`<li>
+                  <strong>${d.title}</strong>
+                  ${d.warnings ? html`<ul>${d.warnings.map(w => html`<li>${w}</li>`)}</ul>` : ''}
+                </li>`)}
+              </ul>
+            </details>
+          ` : ''}
+        </div>
+      `)}
+    </div>`);
+  } else {
+    display(html`<div class="alert alert-success">
+      ✅ Aucune alerte critique détectée
+    </div>`);
+  }
+
+  // --- Tableau de bord statistiques avec Score intégré ---
+  const inistVerified = results.filter(r => r.bibcheck?.inistStatus === 'found').length;
+
+  display(html`<div class="stats-dashboard">
+    <h3 style="display: flex; align-items: center; gap: 1rem;">
+      📊 Statistiques de vérification
+      <span style="margin-left: auto; font-size: 0.9rem; padding: 0.3rem 0.8rem; border-radius: 20px; background: ${score >= 80 ? 'rgba(75, 195, 182, 0.2)' : score >= 60 ? 'rgba(234, 179, 8, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; color: ${score >= 80 ? '#4BC3B6' : score >= 60 ? '#eab308' : '#ef4444'};">
+        ${scoreEmoji} Score: ${score}/100 — ${scoreText}
+      </span>
+    </h3>
+    <div class="stats-grid">
+      <div class="stat-card stat-verified">
+        <div class="stat-number">${stats.verified}</div>
+        <div class="stat-label">Vérifiées ✅</div>
+      </div>
+      <div class="stat-card stat-uncertain">
+        <div class="stat-number">${stats.uncertain}</div>
+        <div class="stat-label">Incertaines ⚠️</div>
+      </div>
+      <div class="stat-card stat-notfound">
+        <div class="stat-number">${stats.notFound}</div>
+        <div class="stat-label">Non trouvées ❌</div>
+      </div>
+      <div class="stat-card" style="border-color: #9333ea; background: rgba(147, 51, 234, 0.1);">
+        <div class="stat-number">${inistVerified}</div>
+        <div class="stat-label">INIST Found 🇫🇷</div>
+      </div>
     </div>
   </div>`);
+
+  // --- Tableau détaillé ---
+  const tableData = results.map((r, i) => ({
+      "Index": i + 1,
+      "Statut": r.status === 'verified' ? '✅' : r.status === 'uncertain' ? '⚠️' : '❌',
+      "Titre": r.original.title,
+      "Auteur": r.original.author,
+      "Source": r.verified?.source || "-",
+      "Confiance": r.verified ? `${r.verified.confidence}%` : "-",
+      "INIST": r.bibcheck?.inistStatus === 'found' ? '✅ Found' : 
+               r.bibcheck?.inistStatus === 'retracted' ? '🚨 Retracted' : 
+               r.bibcheck?.inistStatus === 'to_be_verified' ? '❓ To Verify' : 
+               r.bibcheck?.inistStatus === 'not_found' ? '❌ Not Found' : '-',
+      "Risque IA": meta.hallucinationAnalysis[i].level === 'high' ? '🚨 Élevé' : 
+                   meta.hallucinationAnalysis[i].level === 'medium' ? '⚠️ Moyen' : '✅ Faible',
+      "Rétracté": meta.retractionChecks[i].retracted ? '⚠️ Oui' : '✅ Non'
+  }));
+  
+  display(Inputs.table(tableData, {
+    columns: ["Index", "Statut", "Titre", "Auteur", "Source", "Confiance", "INIST", "Risque IA", "Rétracté"],
+    width: "100%",
+    rows: 15
+  }));
 }
 ```
 
@@ -164,7 +504,7 @@ const useVerifiedData = view(Inputs.toggle({label: "Utiliser les données vérif
 ```
 
 ### 3. Fusionner
-Une fois le JSON collé (et vérifié), cliquez ci-dessous pour générer le graphe fusionné.
+Une fois les données CSL collées et vérifiées, cliquez ci-dessous pour générer le fichier JSON fusionné.
 
 ```js
 const mergedGraph = (cslInput) 
@@ -182,6 +522,43 @@ function mergeCSL(cslText, currentGraph, sourceId, verificationResults = [], use
   } catch (e) {
     return { ...currentGraph, error: "Invalid JSON: " + e.message };
   }
+
+  // Enrichir chaque entrée CSL avec les métadonnées Bibcheck
+  const enrichedCSL = cslData.map((entry, i) => {
+    const verification = verificationResults[i];
+    if (!verification) return entry;
+    
+    const enrichedEntry = {
+      ...entry,
+      _bibcheck: {
+        verified: verification.status === 'verified',
+        confidence: verification.verified?.confidence || 0,
+        source: verification.verified?.source || 'none',
+        hallucinationRisk: verification.bibcheck?.hallucinationRisk || 'unknown',
+        hallucinationScore: verification.bibcheck?.hallucinationScore || 0,
+        retracted: verification.bibcheck?.retracted || false,
+        isDuplicate: verification.bibcheck?.isDuplicate || false,
+        formatIssues: verification.bibcheck?.formatIssues || []
+      }
+    };
+    
+    // Si useVerified, remplacer les données CSL par les données vérifiées
+    if (useVerified && verification.verified) {
+      enrichedEntry.title = verification.verified.title;
+      if (verification.verified.author) {
+        const authorParts = verification.verified.author.split(' ');
+        enrichedEntry.author = [{
+          family: authorParts[authorParts.length - 1],
+          given: authorParts.slice(0, -1).join(' ')
+        }];
+      }
+      if (verification.verified.url) {
+        enrichedEntry.URL = verification.verified.url;
+      }
+    }
+    
+    return enrichedEntry;
+  });
 
   // Deep copy to avoid mutating original
   const newGraph = JSON.parse(JSON.stringify(currentGraph));
@@ -298,7 +675,7 @@ function mergeCSL(cslText, currentGraph, sourceId, verificationResults = [], use
     return [name];
   }
 
-  cslData.forEach((entry, index) => {
+  enrichedCSL.forEach((entry, index) => {
     // Determine data source (Original vs Verified)
     let entryTitle = entry.title;
     let entryUrl = entry.URL || "";
@@ -727,34 +1104,18 @@ h3 {
   font-size: 0.9rem;
 }
 
-.verification-stats {
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(220, 38, 38, 0.05));
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  border: 1px solid rgba(147, 51, 234, 0.2);
-}
-
-.verification-stats h4 {
-  margin: 0 0 1rem 0;
-  color: var(--theme-foreground);
-  font-size: 1.1rem;
-}
-
-.stats-row {
+/* Bibcheck Styles */
+.quality-score-container {
   display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  font-size: 0.95rem;
-}
-
-.stats-row span {
-  color: var(--theme-foreground-muted);
-}
-
-.stats-row strong {
-  color: var(--theme-foreground);
-  font-size: 1.1em;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto;
+  gap: 1rem;
+  width: 100%;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
 }
 
 .loading-container {
@@ -762,18 +1123,17 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 3rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  margin-top: 1rem;
-  text-align: center;
+  margin: 2rem 0;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border: 4px solid rgba(255, 255, 255, 0.1);
-  border-left-color: #dcb0ff;
+  border-left-color: #9333ea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
@@ -784,18 +1144,20 @@ h3 {
   100% { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 2rem;
-  }
-  .output-section,
-  .json-section {
-    padding: 1.5rem;
-  }
-  
-  .stat-number {
-    font-size: 2rem;
-  }
+.progress-bar-container {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin: 10px 0;
+  overflow: hidden;
+  height: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #9333ea;
+  transition: width 0.3s ease;
+  border-radius: 4px;
 }
 
 </style>

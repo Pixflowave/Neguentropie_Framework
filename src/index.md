@@ -33,7 +33,7 @@ toc: false
 ### Projection Aireocean | Attracteur étrange de Lorentz
 
 ```html
-<iframe width="100%" height="564" frameborder="0"
+<iframe width="100%" height="400" frameborder="0" style="border-radius: 8px; filter: invert(0.85) hue-rotate(180deg);"
   src="https://observablehq.com/embed/@pixflowave/airocean-attracteur-de-lorentz@710?cells=dual"></iframe>
 ```
 
@@ -41,7 +41,7 @@ toc: false
 #### Cartographie de bifurcations Noétiques
 
 ```html
-<iframe width="100%" height="1012" frameborder="0" style="background: transparent;"
+<iframe width="100%" height="600" frameborder="0" style="border-radius: 8px; filter: invert(0.85) hue-rotate(180deg);"
   src="https://observablehq.com/embed/@pixflowave/neguentropie?cells=chartz"></iframe>
 ```
 
@@ -486,7 +486,7 @@ De formation initiale en développement informatique, il utilise depuis plus de 
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 
 Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
 
-![alt text](artefacts-logo1.png)
+<img src="artefacts-logo1.png" alt="Artefacts" width="150">
 
 [https://artefacts.coop](https://artefacts.coop/)
 
