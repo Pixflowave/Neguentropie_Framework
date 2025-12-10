@@ -29,6 +29,248 @@ export function cleanDOI(doi) {
     return cleaned || null;
 }
 
+// =====================================================
+// INIST-style Verification (Port from Python algorithm)
+// =====================================================
+
+/**
+ * Remove accents and normalize text for comparison
+ * Equivalent to INIST's uniformize() function
+ */
+function uniformize(text) {
+    if (!text || typeof text !== 'string') return '';
+
+    // Normalize unicode and remove accents
+    const normalized = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    // Remove punctuation, keep only letters and spaces
+    const cleaned = normalized.replace(/[^\p{L}\s]/gu, ' ');
+
+    return cleaned.toLowerCase().split(/\s+/).filter(Boolean).join(' ');
+}
+
+/**
+ * Simplified fuzzy matching similar to fuzz.partial_ratio
+ * Uses Levenshtein-based similarity for partial string matching
+ */
+function partialRatio(str1, str2) {
+    if (!str1 || !str2) return 0;
+
+    const s1 = uniformize(str1);
+    const s2 = uniformize(str2);
+
+    if (!s1 || !s2) return 0;
+
+    // Check if shorter string is contained in longer
+    const shorter = s1.length < s2.length ? s1 : s2;
+    const longer = s1.length >= s2.length ? s1 : s2;
+
+    if (longer.includes(shorter)) {
+        return 1.0;
+    }
+
+    // Use word overlap for partial matching
+    const words1 = s1.split(' ');
+    const words2 = s2.split(' ');
+
+    const commonWords = words1.filter(w => words2.includes(w));
+    const minWords = Math.min(words1.length, words2.length);
+
+    if (minWords === 0) return 0;
+
+    return commonWords.length / minWords;
+}
+
+/**
+ * Build a reference string from CSL entry for matching
+ */
+function buildRefString(entry) {
+    const parts = [];
+
+    // Authors - ensure it's an array before mapping
+    if (entry.author && Array.isArray(entry.author)) {
+        const authorStr = entry.author.map(a =>
+            [a.family, a.given].filter(Boolean).join(' ')
+        ).join(', ');
+        if (authorStr) parts.push(authorStr);
+    } else if (entry.author && typeof entry.author === 'string') {
+        parts.push(entry.author);
+    }
+
+    // Year
+    if (entry.issued?.['date-parts']?.[0]?.[0]) {
+        parts.push(String(entry.issued['date-parts'][0][0]));
+    }
+
+    // Title
+    if (entry.title) parts.push(entry.title);
+
+    // Container/Journal
+    if (entry['container-title']) parts.push(entry['container-title']);
+
+    // Publisher
+    if (entry.publisher) parts.push(entry.publisher);
+
+    return parts.join(' ');
+}
+
+/**
+ * Extract DOI from text using regex (INIST-style)
+ */
+function findDOI(text) {
+    if (!text) return null;
+
+    // Remove line breaks for DOI detection
+    const cleanedText = text.replace(/\s+/g, '');
+
+    const doiRegex = /10\.\d{4,}\/[^\s,]+/;
+    const match = cleanedText.match(doiRegex);
+
+    if (match) {
+        let doi = match[0].toLowerCase();
+        // Clean trailing punctuation
+        doi = doi.replace(/[.,;:)\]]+$/, '');
+        return doi;
+    }
+
+    return null;
+}
+
+/**
+ * Match criteria scoring (INIST algorithm)
+ * Compares CrossRef result with original reference
+ * Returns score (0-4) and title similarity
+ */
+function matchCriteria(crossrefData, refBiblio) {
+    let score = 0;
+    const refNorm = uniformize(refBiblio);
+
+    // 1. Title matching (> 0.8 = +1)
+    const titleScore = partialRatio(crossrefData.title || '', refBiblio);
+    if (titleScore > 0.8) score++;
+
+    // 2. First author matching
+    if (crossrefData.firstAuthor && refNorm.includes(uniformize(crossrefData.firstAuthor))) {
+        score++;
+    }
+
+    // 3. Date matching
+    if (crossrefData.year && refNorm.includes(String(crossrefData.year))) {
+        score++;
+    }
+
+    // 4. Source/journal matching (> 0.8 = +1)
+    if (crossrefData.journal) {
+        const journalScore = partialRatio(crossrefData.journal, refBiblio);
+        if (journalScore > 0.8) score++;
+    }
+
+    return { score, titleScore };
+}
+
+/**
+ * Extract key info from CrossRef response
+ */
+function extractCrossRefInfo(message) {
+    return {
+        doi: message.DOI || '',
+        title: message.title?.[0] || '',
+        firstAuthor: message.author?.[0]?.family || '',
+        firstAuthorGiven: message.author?.[0]?.given || '',
+        year: message.issued?.['date-parts']?.[0]?.[0] ||
+            message['published-print']?.['date-parts']?.[0]?.[0] || '',
+        journal: message['container-title']?.[0] || message['short-container-title']?.[0] || '',
+        type: message.type || ''
+    };
+}
+
+/**
+ * Search CrossRef without DOI (bibliographic query)
+ */
+async function searchCrossRefBibliographic(refString) {
+    try {
+        const query = encodeURIComponent(refString.substring(0, 500)); // Limit query length
+        const response = await fetch(
+            `https://api.crossref.org/works?query.bibliographic=${query}&rows=5`
+        );
+
+        if (!response.ok) {
+            return { status: 'error_service', doi: '', confidence: 0 };
+        }
+
+        const data = await response.json();
+        const items = data.message?.items || [];
+
+        let hallucinated = false;
+        let bestMatch = null;
+
+        for (const item of items) {
+            const itemInfo = extractCrossRefInfo(item);
+            const { score, titleScore } = matchCriteria(itemInfo, refString);
+
+            // 3+ criteria matched = found
+            if (score >= 3) {
+                return {
+                    status: 'found',
+                    doi: itemInfo.doi,
+                    confidence: 95,
+                    crossrefData: itemInfo,
+                    matchScore: score
+                };
+            }
+
+            // Title very similar but low overall score = potential hallucination
+            if (titleScore > 0.9 && score < 2) {
+                hallucinated = true;
+                bestMatch = itemInfo;
+            }
+
+            // 2 criteria + high title score
+            if (score === 2 && titleScore > 0.98) {
+                return {
+                    status: 'found',
+                    doi: itemInfo.doi,
+                    confidence: 85,
+                    crossrefData: itemInfo,
+                    matchScore: score
+                };
+            }
+
+            // 2 criteria + moderate title
+            if (score === 2 && titleScore > 0.6) {
+                return {
+                    status: 'found',
+                    doi: itemInfo.doi,
+                    confidence: 75,
+                    crossrefData: itemInfo,
+                    matchScore: score
+                };
+            }
+        }
+
+        if (hallucinated && bestMatch) {
+            return {
+                status: 'to_be_verified',
+                doi: '',
+                confidence: 40,
+                crossrefData: bestMatch,
+                reason: 'Titre similaire mais métadonnées discordantes (hallucination probable)'
+            };
+        }
+
+        return { status: 'not_found', doi: '', confidence: 0 };
+
+    } catch (error) {
+        return { status: 'error_service', doi: '', confidence: 0 };
+    }
+}
+
+/**
+ * Main INIST-style verification function
+ * Implements the full biblio-ref algorithm in JavaScript
+ */
+
+
 /**
  * Check if an article has been retracted
  * Uses CrossRef API to detect retraction notices (includes Retraction Watch data since 2023)

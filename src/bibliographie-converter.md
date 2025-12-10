@@ -58,10 +58,10 @@ const cslInput = view(Inputs.textarea({
 
 ### 🔍 Vérification CSL (optionnel)
 
-Vérifiez les références avec [BibCheck](https://services.istex.fr/validation-de-reference-bibliographique/) avant de les fusionner.
+Vérifiez les références avant de les fusionner.
 
 ```js
-import {verifyBibliography, verifyEntry, verifyWithInist, calculateSimilarity} from "./components/bibliography-verifier.js";
+import {verifyBibliography, verifyEntry, calculateSimilarity} from "./components/bibliography-verifier.js";
 import {
   checkRetraction,
   detectHallucinationRisk,
@@ -135,81 +135,34 @@ const cslVerificationResults = cslVerificationTriggered && cslInput
       // 2. Détection de doublons
       const duplicates = detectDuplicates(cslData);
       
-      // 3. Vérification dans les bases de données (INIST via Proxy -> Fallback BnF/HAL)
+      // 3. Vérification dans les bases de données (CrossRef + BnF + HAL + OpenLibrary)
       const entries = extractCSLEntries(cslInput);
       const verificationResults = [];
-      const BATCH_SIZE = 5; // INIST accepts batches
-      let inistAvailable = true; // Will be set to false if proxy fails
 
-      for (let i = 0; i < total; i += BATCH_SIZE) {
-        const batchEnd = Math.min(i + BATCH_SIZE, total);
-        const batch = entries.slice(i, batchEnd);
+      for (let i = 0; i < total; i++) {
+        const entry = entries[i];
         
         // Yield progress update
         yield { 
           loading: true, 
-          progress: { current: batchEnd, total }, 
-          message: `Vérification en cours (${batchEnd}/${total})... ${!inistAvailable ? '(sans INIST)' : ''}` 
+          progress: { current: i + 1, total }, 
+          message: `Vérification (${i + 1}/${total}): ${entry?.title?.substring(0, 40) || 'Entrée'}...` 
         };
-
-        // 1. Try INIST via proxy (if available)
-        let inistResults = null;
-        if (inistAvailable) {
-            inistResults = await verifyWithInist(batch);
-            if (!inistResults) {
-                // Proxy not running, switch to local-only mode
-                inistAvailable = false;
-                yield { 
-                  loading: true, 
-                  progress: { current: batchEnd, total }, 
-                  message: `Proxy INIST non disponible. Vérification locale...` 
-                };
-            }
+        
+        // Handle invalid entries
+        if (!entry || !entry.title) {
+            verificationResults.push({ original: entry || {}, verified: null, status: 'error', error: 'Titre manquant' });
+            continue;
         }
         
-        // 2. Process batch entries
-        for (let idx = 0; idx < batch.length; idx++) {
-            const entry = batch[idx];
-            
-            // Handle invalid entries
-            if (!entry || !entry.title) {
-                verificationResults.push({ original: entry || {}, verified: null, status: 'error', error: 'Titre manquant' });
-                continue;
-            }
-
-            const inist = inistResults ? inistResults[idx]?.value : null;
-            
-            // If INIST found it or it's retracted, use INIST result
-            if (inist && (inist.status === 'found' || inist.status === 'retracted')) {
-                verificationResults.push({
-                    original: entry,
-                    verified: {
-                        source: 'INIST/Crossref',
-                        title: entry.title, 
-                        confidence: 100,
-                        found: true
-                    },
-                    status: inist.status === 'retracted' ? 'retracted' : 'verified',
-                    inist: inist
-                });
-                continue;
-            }
-            
-            // Fallback: Local verification (BnF, HAL, CrossRef, OpenLibrary)
-            if (verificationResults.length > 0) {
-                await new Promise(r => setTimeout(r, 500));
-            }
-            
-            yield { 
-                loading: true, 
-                progress: { current: i + idx + 1, total }, 
-                message: `Vérification: ${i + idx + 1}/${total} - ${entry.title?.substring(0, 35)}...` 
-            };
-            
-            const localResult = await verifyEntry(entry);
-            localResult.inist = inist; // Attach INIST status even if not_found
-            verificationResults.push(localResult);
+        // Rate limiting: 300ms delay between requests
+        if (i > 0) {
+            await new Promise(r => setTimeout(r, 300));
         }
+        
+        // Vérification via BnF, HAL, CrossRef, OpenLibrary
+        const result = await verifyEntry(entry);
+        verificationResults.push(result);
       }
       
       // 4. Analyse de risque d'hallucination
@@ -224,19 +177,6 @@ const cslVerificationResults = cslVerificationTriggered && cslInput
       for (let i = 0; i < cslData.length; i++) {
         const entry = cslData[i];
         
-        // Check INIST result first (if proxy is running)
-        const inistStatus = verificationResults[i]?.inist?.status;
-        if (inistStatus === 'retracted') {
-            retractionChecks.push({
-                index: i,
-                retracted: true,
-                method: 'INIST PPS',
-                confidence: 100,
-                details: 'Rétractation détectée par INIST/PPS'
-            });
-            continue;
-        }
-        
         // Use checkRetraction from bibcheck-enhanced.js (queries CrossRef)
         const doi = entry.DOI || entry.doi;
         const result = await checkRetraction(doi, entry.title, entry.author);
@@ -246,21 +186,24 @@ const cslVerificationResults = cslVerificationTriggered && cslInput
         });
       }
       
-      // 6. Enrichir les résultats de vérification avec Bibcheck + INIST
+      // 6. Enrichir les résultats de vérification
       const enrichedResults = verificationResults.map((result, i) => {
         if (!result) return { status: 'error', original: cslData[i] }; // Safety fallback
 
-        // Adjust hallucination risk based on INIST
-        let hAnalysis = hallucinationAnalysis[i];
-        const inistStatus = result.inist?.status;
+        // Adjust hallucination risk based on verification status
+        let hAnalysis = hallucinationAnalysis[i] || { level: 'unknown', riskScore: 0, reasons: [] };
+        const verificationStatus = result.status;
         
-        if (inistStatus === 'to_be_verified' || inistStatus === 'not_found') {
-             // If INIST didn't find it either, increase risk
+        // Ensure reasons array exists
+        if (!hAnalysis.reasons) hAnalysis.reasons = [];
+        
+        if (verificationStatus === 'not_found' || verificationStatus === 'uncertain') {
+             // If not verified, increase risk
              if (hAnalysis.level === 'low') hAnalysis.level = 'medium';
-             hAnalysis.riskScore += 20;
-             hAnalysis.reasons.push(`Non trouvé par INIST (${inistStatus})`);
-        } else if (inistStatus === 'found') {
-             // If INIST found it, it's not a hallucination
+             hAnalysis.riskScore = (hAnalysis.riskScore || 0) + 20;
+             hAnalysis.reasons.push(`Non vérifié`);
+        } else if (verificationStatus === 'verified') {
+             // If verified, it's likely not a hallucination
              hAnalysis.level = 'low';
              hAnalysis.riskScore = 0;
              hAnalysis.reasons = [];
@@ -268,13 +211,12 @@ const cslVerificationResults = cslVerificationTriggered && cslInput
 
         return {
             ...result,
-            bibcheck: {
+            verification: {
               hallucinationRisk: hAnalysis.level,
               hallucinationScore: hAnalysis.riskScore,
               retracted: retractionChecks[i].retracted,
               formatIssues: formatValidation.issues.filter(issue => issue.index === i),
-              isDuplicate: duplicates.some(d => d.indices.includes(i)),
-              inistStatus: inistStatus // Expose for UI
+              isDuplicate: duplicates.some(d => d.indices.includes(i))
             }
         };
       });
@@ -441,8 +383,6 @@ if (cslVerificationResults.loading) {
   }
 
   // --- Tableau de bord statistiques avec Score intégré ---
-  const inistVerified = results.filter(r => r.bibcheck?.inistStatus === 'found').length;
-
   display(html`<div class="stats-dashboard">
     <h3 style="display: flex; align-items: center; gap: 1rem;">
       📊 Statistiques de vérification
@@ -464,8 +404,8 @@ if (cslVerificationResults.loading) {
         <div class="stat-label">Non trouvées ❌</div>
       </div>
       <div class="stat-card" style="border-color: #9333ea; background: rgba(147, 51, 234, 0.1);">
-        <div class="stat-number">${inistVerified}</div>
-        <div class="stat-label">INIST Found 🇫🇷</div>
+        <div class="stat-number">${stats.retracted}</div>
+        <div class="stat-label">Rétractées 🚨</div>
       </div>
     </div>
   </div>`);
@@ -473,22 +413,18 @@ if (cslVerificationResults.loading) {
   // --- Tableau détaillé ---
   const tableData = results.map((r, i) => ({
       "Index": i + 1,
-      "Statut": r.status === 'verified' ? '✅' : r.status === 'uncertain' ? '⚠️' : '❌',
+      "Statut": r.status === 'verified' ? '✅' : r.status === 'uncertain' ? '⚠️' : r.status === 'retracted' ? '🚨' : '❌',
       "Titre": r.original.title,
       "Auteur": r.original.author,
       "Source": r.verified?.source || "-",
       "Confiance": r.verified ? `${r.verified.confidence}%` : "-",
-      "INIST": r.bibcheck?.inistStatus === 'found' ? '✅ Found' : 
-               r.bibcheck?.inistStatus === 'retracted' ? '🚨 Retracted' : 
-               r.bibcheck?.inistStatus === 'to_be_verified' ? '❓ To Verify' : 
-               r.bibcheck?.inistStatus === 'not_found' ? '❌ Not Found' : '-',
-      "Risque IA": meta.hallucinationAnalysis[i].level === 'high' ? '🚨 Élevé' : 
-                   meta.hallucinationAnalysis[i].level === 'medium' ? '⚠️ Moyen' : '✅ Faible',
-      "Rétracté": meta.retractionChecks[i].retracted ? '⚠️ Oui' : '✅ Non'
+      "Risque IA": meta.hallucinationAnalysis[i]?.level === 'high' ? '🚨 Élevé' : 
+                   meta.hallucinationAnalysis[i]?.level === 'medium' ? '⚠️ Moyen' : '✅ Faible',
+      "Rétracté": meta.retractionChecks[i]?.retracted ? '⚠️ Oui' : '✅ Non'
   }));
   
   display(Inputs.table(tableData, {
-    columns: ["Index", "Statut", "Titre", "Auteur", "Source", "Confiance", "INIST", "Risque IA", "Rétracté"],
+    columns: ["Index", "Statut", "Titre", "Auteur", "Source", "Confiance", "Risque IA", "Rétracté"],
     width: "100%",
     rows: 15
   }));
@@ -530,15 +466,15 @@ function mergeCSL(cslText, currentGraph, sourceId, verificationResults = [], use
     
     const enrichedEntry = {
       ...entry,
-      _bibcheck: {
+      _verification: {
         verified: verification.status === 'verified',
         confidence: verification.verified?.confidence || 0,
         source: verification.verified?.source || 'none',
-        hallucinationRisk: verification.bibcheck?.hallucinationRisk || 'unknown',
-        hallucinationScore: verification.bibcheck?.hallucinationScore || 0,
-        retracted: verification.bibcheck?.retracted || false,
-        isDuplicate: verification.bibcheck?.isDuplicate || false,
-        formatIssues: verification.bibcheck?.formatIssues || []
+        hallucinationRisk: verification.verification?.hallucinationRisk || 'unknown',
+        hallucinationScore: verification.verification?.hallucinationScore || 0,
+        retracted: verification.verification?.retracted || false,
+        isDuplicate: verification.verification?.isDuplicate || false,
+        formatIssues: verification.verification?.formatIssues || []
       }
     };
     

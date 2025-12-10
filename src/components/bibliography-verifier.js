@@ -160,7 +160,6 @@ export async function searchOpenLibrary(title, author) {
  */
 export async function searchCrossRef(title, author) {
     try {
-        // Build query
         const cleanedTitle = cleanTitle(title);
         let query = cleanedTitle;
         if (author) {
@@ -168,10 +167,9 @@ export async function searchCrossRef(title, author) {
             query += ` ${lastName}`;
         }
 
-        const url = `https://api.crossref.org/works?query=${encodeURIComponent(query)}&rows=3`;
+        const url = `https://api.crossref.org/works?query.bibliographic=${encodeURIComponent(query)}&rows=3`;
 
         const response = await fetch(url);
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -182,23 +180,20 @@ export async function searchCrossRef(title, author) {
             return null;
         }
 
-        // Get best match
         const bestMatch = data.message.items[0];
         const matchTitle = bestMatch.title?.[0] || '';
         const similarity = calculateSimilarity(title, matchTitle);
 
-        // Extract author
-        const authorName = bestMatch.author?.[0]
-            ? `${bestMatch.author[0].given || ''} ${bestMatch.author[0].family || ''}`.trim()
-            : author;
+        // Extract authors
+        const authorStr = bestMatch.author?.map(a => `${a.given || ''} ${a.family || ''}`).join(', ') || author;
 
         return {
             title: matchTitle,
-            author: authorName,
-            year: bestMatch.published?.['date-parts']?.[0]?.[0],
+            author: authorStr,
+            year: bestMatch.published?.['date-parts']?.[0]?.[0] || bestMatch.created?.['date-parts']?.[0]?.[0],
             doi: bestMatch.DOI,
-            publisher: bestMatch.publisher,
-            url: bestMatch.URL || (bestMatch.DOI ? `https://doi.org/${bestMatch.DOI}` : ''),
+            journal: bestMatch['container-title']?.[0],
+            url: bestMatch.URL || `https://doi.org/${bestMatch.DOI}`,
             confidence: similarity,
             source: 'CrossRef',
             found: true
@@ -208,6 +203,61 @@ export async function searchCrossRef(title, author) {
         return null;
     }
 }
+
+/**
+ * Search OpenAlex for academic works
+ * OpenAlex is a free, open catalog of the global research system
+ */
+export async function searchOpenAlex(title, author) {
+    try {
+        const cleanedTitle = cleanTitle(title);
+        let query = cleanedTitle;
+        if (author) {
+            const lastName = extractLastName(author);
+            query += ` ${lastName}`;
+        }
+
+        // OpenAlex API - polite pool (add email for better rate limits)
+        const url = `https://api.openalex.org/works?search=${encodeURIComponent(query)}&per_page=3`;
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.results || data.results.length === 0) {
+            return null;
+        }
+
+        const bestMatch = data.results[0];
+        const matchTitle = bestMatch.title || '';
+        const similarity = calculateSimilarity(title, matchTitle);
+
+        // Extract authors
+        const authorStr = bestMatch.authorships?.map(a => a.author?.display_name).filter(Boolean).join(', ') || author;
+
+        return {
+            title: matchTitle,
+            author: authorStr,
+            year: bestMatch.publication_year,
+            doi: bestMatch.doi?.replace('https://doi.org/', ''),
+            journal: bestMatch.primary_location?.source?.display_name,
+            url: bestMatch.doi || bestMatch.id,
+            openAccess: bestMatch.open_access?.is_oa,
+            openAccessUrl: bestMatch.open_access?.oa_url,
+            citedByCount: bestMatch.cited_by_count,
+            confidence: similarity,
+            source: 'OpenAlex',
+            found: true
+        };
+    } catch (error) {
+        // Silently handle errors - fallback to other sources
+        return null;
+    }
+}
+
 
 /**
  * Search HAL (Hyper Articles en Ligne) for French academic publications
@@ -541,6 +591,15 @@ export async function verifyEntry(entry) {
         }
     }
 
+    // 6. Try OpenAlex (Broad coverage fallback)
+    if (!bestResult || bestResult.confidence < 70) {
+        const openAlexResult = await searchOpenAlex(entry.title, entry.author);
+
+        if (openAlexResult && (!bestResult || openAlexResult.confidence > bestResult.confidence)) {
+            bestResult = openAlexResult;
+        }
+    }
+
     return {
         original: entry,
         verified: bestResult,
@@ -569,49 +628,5 @@ export async function verifyBibliography(entries) {
     return results;
 }
 
-/**
- * Verify entries using INIST Biblio-Ref API via local proxy
- * The proxy runs at http://localhost:3001 and bypasses CORS
- * Start it with: npm run dev:proxy
- */
-export async function verifyWithInist(entries) {
-    // Prepare payload: [{ id: index, value: "Citation..." }]
-    const payload = entries.map((e, i) => {
-        // Construct a citation string
-        let citation = e.title || '';
-        if (e.author) {
-            const authStr = Array.isArray(e.author)
-                ? e.author.map(a => a.family || a.literal).join(', ')
-                : e.author;
-            citation = `${authStr}. ${citation}`;
-        }
-        if (e.year) citation += ` (${e.year})`;
 
-        return {
-            id: i,
-            value: citation
-        };
-    });
-
-    // Use local proxy to bypass CORS
-    const PROXY_ENDPOINT = 'http://localhost:3001/v1/validate';
-
-    try {
-        const response = await fetch(PROXY_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (response.ok) {
-            return await response.json();
-        }
-        console.warn(`INIST proxy returned ${response.status}`);
-        return null;
-    } catch (e) {
-        // Proxy not running or network error
-        console.warn('INIST proxy not available (run: npm run dev:proxy)');
-        return null;
-    }
-}
 
