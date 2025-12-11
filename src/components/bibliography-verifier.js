@@ -84,14 +84,177 @@ export function extractLastName(authorString) {
 /**
  * Clean title by removing subtitles and punctuation that might confuse search
  */
-export function cleanTitle(title) {
+export function cleanTitle(title, authorName = null) {
     if (!title) return '';
 
+    let cleaned = title;
+
+    // 1. Remove Author Name (Prefix or Suffix/Middle)
+    if (authorName) {
+        const normTitle = cleaned.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        // Prepare author variants
+        const variants = [];
+
+        // Normalize input to array
+        const candidates = Array.isArray(authorName) ? authorName : [authorName];
+
+        candidates.forEach(cand => {
+            if (!cand) return;
+
+            if (typeof cand === 'object') {
+                const family = cand.family ? cand.family.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+                const given = cand.given ? cand.given.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+
+                if (family) {
+                    variants.push(family);
+                    if (given) {
+                        variants.push(`${given} ${family}`);
+                        variants.push(`${family} ${given}`);
+                        variants.push(`${given.charAt(0)} ${family}`);
+                        variants.push(`${given.charAt(0)}. ${family}`);
+                    }
+                }
+            } else if (typeof cand === 'string') {
+                const normAuth = cand.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                // Add full string
+                variants.push(normAuth);
+
+                // If string looks like "Last, First", try to flip it too?
+                if (normAuth.includes(',')) {
+                    const parts = normAuth.split(',');
+                    if (parts.length === 2) {
+                        variants.push(`${parts[1].trim()} ${parts[0].trim()}`);
+                    }
+                }
+            }
+        });
+
+        // Check for author variant presence
+        for (const variant of variants) {
+            if (!variant || variant.length < 3) continue; // Skip too short variants to avoid false positives
+
+            const index = normTitle.indexOf(variant);
+            if (index !== -1) {
+                // CASE 1: Prefix (Starts with Author)
+                if (index < 5) {
+                    // Look for cut point after the matched name
+                    // Use variant length to estimate position in non-normalized string
+                    const endOfMatch = index + variant.length;
+
+                    // Find separator after match
+                    // We check multiple separators: comma, dash, period
+                    // And ensure we don't cut in the middle of a word if variant matched partially (unlikely with spaces)
+
+                    const suffix = cleaned.substring(endOfMatch);
+                    // Check if suffix starts with a separator
+                    const separatorMatch = suffix.match(/^[\s,.\/:-]+/);
+
+                    if (separatorMatch) {
+                        // Cut everything up to the end of separator
+                        cleaned = suffix.substring(separatorMatch[0].length).trim();
+                        break;
+                    }
+                }
+
+                // CASE 2: Suffix / Middle (Title by Author...)
+                // "Title, Author" or "Title, Author, Publisher"
+                else {
+                    // Check context BEFORE the author
+                    // We want to cut at the separator closest to the left of the author
+
+                    // Look at char before the match
+                    // In normalized matches, indices map poorly if special chars exist, but usually 1-1 for standard text.
+                    // Let's rely on substring extraction.
+
+                    // Extract text BEFORE the match estimate
+                    let prefixStr = cleaned.substring(0, index);
+
+                    // Check if it ends with a separator pattern
+                    // e.g. "Title, " or "Title - " or "Title. "
+                    // We use a regex looking for separator + spaces at end of string
+                    let matchSep = prefixStr.match(/[,.\/-]\s*$/);
+
+                    // NEW: Feature to handle "Evgeny Morozov" when we only know "Morozov"
+                    // If no separator found immediately, look back for a First Name?
+                    if (!matchSep && index > 3) {
+                        // Check previous word
+                        const trimmedPrefix = prefixStr.trimEnd();
+                        const lastSpaceIndex = trimmedPrefix.lastIndexOf(' ');
+
+                        if (lastSpaceIndex !== -1) {
+                            const word = trimmedPrefix.substring(lastSpaceIndex + 1);
+                            // Check if Word is Capitalized and alphanumeric (simple check on original string if possible,
+                            // but we are working with `prefixStr` which comes from `cleaned` which preserves case!)
+
+                            // `cleaned` preserves case. `normTitle` was lowercased.
+                            // So `prefixStr` has original case.
+
+                            if (/^[A-Z][a-z\u00C0-\u00FF]+$/.test(word)) {
+                                // Check stopwords to avoid "The Morozov" or "Le Morozov"
+                                const stopwords = ['The', 'Le', 'La', 'Les', 'Des', 'Un', 'Une', 'Of', 'De', 'Du', 'By', 'Par'];
+                                if (!stopwords.includes(word)) {
+                                    // Assume it's a first name.
+                                    // Check separator before this word
+                                    const newPrefix = trimmedPrefix.substring(0, lastSpaceIndex + 1); // keep trailing space
+                                    if (newPrefix.match(/[,.\/-]\s*$/)) {
+                                        // Separator found before [FirstName]!
+                                        // Update prefixStr to match the cut point before the First Name
+                                        matchSep = true;
+                                        prefixStr = newPrefix;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (matchSep) {
+                        // Separator found!
+                        // "Condition de l'homme moderne, Hannah Arendt"
+                        // prefixStr = "Condition de l'homme moderne, "
+
+                        // Verify this is a whole word match for the author?
+                        // Check if char AFTER variant is end of string or separator
+                        const charAfter = normTitle[index + variant.length];
+                        const isEndOrSep = !charAfter || /[\s,.\/-]/.test(charAfter);
+
+                        if (isEndOrSep) {
+                            // Safe to cut
+                            // Keep only the part BEFORE the separator
+                            cleaned = prefixStr.replace(/[,.\/-]\s*$/, "").trim();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 2. Remove standard suffixes
+
     // Remove subtitle (text after : or . or - if surrounded by spaces)
-    let cleaned = title.split(':')[0];
+    cleaned = cleaned.split(':')[0];
 
     // Split by " - " (dash with spaces)
     cleaned = cleaned.split(' - ')[0];
+
+    // Remove suffix starting with " /" (responsibility statement)
+    cleaned = cleaned.split(' / ')[0];
+
+    // Remove suffix starting with ". - " (library separator)
+    cleaned = cleaned.split('. - ')[0];
+
+    // Remove collection info often like ", « Le Débat »"
+    if (cleaned.includes(', «')) {
+        cleaned = cleaned.split(', «')[0];
+    }
+
+    // 3. Remove metadata suffixes (Pages, Price, Publisher, Date)
+    // Example: ", 2021, 160 pages, 13,50 €"
+    // Regex matches ", 1999" or ", 160 p." at the end
+    cleaned = cleaned.replace(/,\s*\d{4}.*$/, ''); // Remove ", 2021..."
+    cleaned = cleaned.replace(/,\s*\d+\s*p(?:ages?)?.*$/i, ''); // Remove ", 160 pages..."
+    cleaned = cleaned.replace(/,\s*\d+(?:,\d+)?\s*€.*$/i, ''); // Remove ", 13,50 €"
 
     // Remove text in parentheses
     cleaned = cleaned.replace(/\([^)]*\)/g, '');
