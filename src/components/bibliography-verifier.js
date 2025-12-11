@@ -89,6 +89,25 @@ export function cleanTitle(title, authorName = null) {
 
     let cleaned = title;
 
+    // NORMALIZE WHITESPACE: Fix double spaces which mess up splitting
+    cleaned = cleaned.replace(/\s+/g, ' ').trim();
+
+    // 0. REPETITION FIX CHECK
+    // Basic check: "A . A"
+    const lower = cleaned.toLowerCase();
+    // Split by period, optional space
+    const parts = lower.split('.').map(p => p.trim()).filter(p => p);
+    // If exactly 2 parts and they are identical (ignoring case)
+    if (parts.length === 2 && parts[0] === parts[1]) {
+        // It's a repetition!
+        // Return just the first part (preserving original case)
+        // We need to find the split point in the original string.
+        const originalParts = cleaned.split('.');
+        if (originalParts.length >= 2) {
+            return originalParts[0].trim();
+        }
+    }
+
     // 1. Remove Author Name (Prefix or Suffix/Middle)
     if (authorName) {
         const normTitle = cleaned.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
