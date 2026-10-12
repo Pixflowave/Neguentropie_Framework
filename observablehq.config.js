@@ -13,7 +13,8 @@ export default {
     { name: "Graph Noodiversité", path: "/Graph_Noodiversite" },
     { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" },
     { name: "Convertisseur Bibliographie", path: "/bibliographie-converter" },
-    { name: "Enveloppe icosaédrique 3D", path: "/enveloppe-icosaedrique-3d" }
+    { name: "Enveloppe icosaédrique 3D", path: "/enveloppe-icosaedrique-3d" },
+    { name: "Rencontres & Publications", path: "/rencontres" }
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:

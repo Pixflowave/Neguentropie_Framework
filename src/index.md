@@ -445,7 +445,8 @@ const Humus = [
 ]
 ```
 
-### Sur le Web
+### Publications & Rencontres
+- **Publication 2024 (Revue *Cartes & Géomatique*, CFC)** : *Néguentropie. Inscrire le monde sous licence art libre pour tenter de le réenchanter* par Erwan Bozec suite au Printemps des cartes 2024. [Notice HAL (hal-05035112)](https://hal.science/CFC-CARTES-ET-GEOMATIQUE/hal-05035112v1) &middot; [Découvrir la page Rencontres & Publications](rencontres)
 - Publication de Philippe Rivière sur [Observable](https://observablehq.com/@visionscarto/neguentropie) dans le cadre du ***#30DayMapChallenge***
 - Inscription des différents projets issus de Néguentropie sur le ***Centre de Ressources pour les Arts et les Cultures - Numériques en région Centre-Val de Loire***, [CRACN Néguentropie](https://cracn.fr/books/neguentropie)
 - Publication sur le site [Organoesis](https://organoesis.org/projets-contributifs/neguentropie) suite à la rencontre avec ***Anne Alombert.***
