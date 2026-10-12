@@ -2,17 +2,18 @@
 import MarkdownItFootnote from "markdown-it-footnote";
 export default {
   // The app’s title; used in the sidebar and webpage titles.
-  title: "Néguentropie",
+  title: "Néguentropie",
 
   // The pages and sections in the sidebar. If you don’t specify this option,
   // all pages will be listed in alphabetical order. Listing pages explicitly
   // lets you organize them into sections and have unlisted pages.
 
   pages: [
-    { name: "Néguanthropocène", path: "/néguanthropocène" },
-    { name: "Graph Noodiversité", path: "/Graph_Noodiversité" },
-    { name: "Symposium néguanthropique", path: "/Symposium_néguanthropique" },
-    { name: "Convertisseur Bibliographie", path: "/bibliographie-converter" }
+    { name: "Néguanthropocène", path: "/néguanthropocène" },
+    { name: "Graph Noodiversité", path: "/Graph_Noodiversité" },
+    { name: "Symposium néguanthropique", path: "/Symposium_néguanthropique" },
+    { name: "Convertisseur Bibliographie", path: "/bibliographie-converter" },
+    { name: "Enveloppe icosaédrique 3D", path: "/enveloppe-icosaedrique-3d" }
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
