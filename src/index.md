@@ -37,12 +37,12 @@ toc: false
   src="https://observablehq.com/embed/@pixflowave/airocean-attracteur-de-lorentz@710?cells=dual"></iframe>
 ```
 
-### Schéma partiel du pharmakon ***Néguentropie***
-#### Cartographie de bifurcations Noétiques
+### Graphique Noodiversité
+#### Graphe réticulé
 
 ```html
 <iframe width="100%" height="600" frameborder="0" style="border-radius: 8px; filter: invert(0.85) hue-rotate(180deg);"
-  src="https://observablehq.com/embed/@pixflowave/neguentropie?cells=chartz"></iframe>
+  src="https://observablehq.com/embed/@pixflowave/graph_neguentropie?cells=chartR"></iframe>
 ```
 
 ### [Reboute](https://tube.futuretic.fr/c/reboutelatechnologie/videos)

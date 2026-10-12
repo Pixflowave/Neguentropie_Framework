@@ -13,8 +13,7 @@ export default {
       name: "Bifurcations & Projets émergents",
       pages: [
         { name: "Néguanthropocène", path: "/neguanthropocene" },
-        { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" },
-        { name: "Graph Noodiversité", path: "/Graph_Noodiversite" }
+        { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" }
       ]
     },
     {
