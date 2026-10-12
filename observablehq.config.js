@@ -13,17 +13,12 @@ export default {
       name: "Bifurcations & Projets émergents",
       pages: [
         { name: "Néguanthropocène", path: "/neguanthropocene" },
-        { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" }
+        { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" },
+        { name: "Enveloppe icosaédrique", path: "/enveloppe-icosaedrique-3d" },
+        { name: "Convertisseur Bibliographie CSL-JSON", path: "/bibliographie-converter" }
       ]
     },
-    {
-      name: "Visualisations & Documentation",
-      pages: [
-        { name: "Enveloppe icosaédrique 3D", path: "/enveloppe-icosaedrique-3d" },
-        { name: "Rencontres & Publications", path: "/rencontres" },
-        { name: "Convertisseur Bibliographie", path: "/bibliographie-converter" }
-      ]
-    }
+    { name: "Rencontres & Publications", path: "/rencontres" }
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
