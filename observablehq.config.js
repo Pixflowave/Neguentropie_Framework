@@ -9,12 +9,22 @@ export default {
   // lets you organize them into sections and have unlisted pages.
 
   pages: [
-    { name: "Néguanthropocène", path: "/neguanthropocene" },
-    { name: "Graph Noodiversité", path: "/Graph_Noodiversite" },
-    { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" },
-    { name: "Convertisseur Bibliographie", path: "/bibliographie-converter" },
-    { name: "Enveloppe icosaédrique 3D", path: "/enveloppe-icosaedrique-3d" },
-    { name: "Rencontres & Publications", path: "/rencontres" }
+    {
+      name: "Bifurcations & Projets émergents",
+      pages: [
+        { name: "Néguanthropocène", path: "/neguanthropocene" },
+        { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" },
+        { name: "Graph Noodiversité", path: "/Graph_Noodiversite" }
+      ]
+    },
+    {
+      name: "Visualisations & Documentation",
+      pages: [
+        { name: "Enveloppe icosaédrique 3D", path: "/enveloppe-icosaedrique-3d" },
+        { name: "Rencontres & Publications", path: "/rencontres" },
+        { name: "Convertisseur Bibliographie", path: "/bibliographie-converter" }
+      ]
+    }
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
