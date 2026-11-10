@@ -105,7 +105,7 @@ const sizeScale = d3.scaleSqrt()
 const plot = Plot.plot({
   projection: {
     type: "mercator",
-    domain: [[5.5, 7.5], [45.5, 47.5]]
+    domain: [[5.5, 10.5], [45.5, 48.0]]
   },
   marks: [
     // Fond de carte (Suisse)
