@@ -42,7 +42,7 @@ Carte des sites prestigieux dans un rayon de **60 km autour de Cossonay-Ville (S
 ```js
 import {Plot as _ObservablePlot} from "@observablehq/plot";
 import * as d3 from "d3";
-import {feature} from "topojson-client";
+import {feature} from "@observablehq/framework/lib/topojson";
 
 // Coordonnées de Cossonay-Ville (centre)
 const cossonay = {lon: 6.6500, lat: 46.6167, name: "Cossonay-Ville", type: "Centre"};
