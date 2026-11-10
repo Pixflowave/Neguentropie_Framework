@@ -40,9 +40,9 @@ Carte des sites prestigieux dans un rayon de **60 km autour de Cossonay-Ville (S
 *Critères : Intérêt touristique prestigieux pour la clientèle | Surface >= 1 hectare*
 
 ```js
-import {Plot as _ObservablePlot} from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.19/+esm";
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.2/+esm";
-import {feature} from "https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm";
+import {Plot as _ObservablePlot} from "@observablehq/plot";
+import * as d3 from "d3";
+import {feature} from "topojson-client";
 
 // Coordonnées de Cossonay-Ville (centre)
 const cossonay = {lon: 6.6500, lat: 46.6167, name: "Cossonay-Ville", type: "Centre"};
