@@ -40,10 +40,7 @@ Carte des sites prestigieux dans un rayon de **60 km autour de Cossonay-Ville (S
 *Critères : Intérêt touristique prestigieux pour la clientèle | Surface >= 1 hectare*
 
 ```js
-import {Plot as _ObservablePlot} from "npm:@observablehq/plot";
-import * as d3 from "npm:d3";
-import {feature} from "npm:topojson-client";
-
+// Plot, d3, et feature sont disponibles automatiquement via les imports implicites d'Observable Framework
 // Coordonnées de Cossonay-Ville (centre)
 const cossonay = {lon: 6.6500, lat: 46.6167, name: "Cossonay-Ville", type: "Centre"};
 
@@ -105,24 +102,24 @@ const sizeScale = d3.scaleSqrt()
   .range([8, 20]);
 
 // Afficher la carte
-const plot = _ObservablePlot.plot({
+const plot = Plot.plot({
   projection: {
     type: "mercator",
     domain: [[6.0, 7.0], [46.1, 46.9]]
   },
   marks: [
     // Fond de carte (Suisse)
-    _ObservablePlot.geo(switzerland, {fill: "#f0f0f0", stroke: "#999"}),
+    Plot.geo(switzerland, {fill: "#f0f0f0", stroke: "#999"}),
     
     // Cercle de 60 km
-    _ObservablePlot.line(circlePoints, {x: "lon", y: "lat", stroke: "#ff0000", strokeWidth: 2, strokeDasharray: "5,5"}),
+    Plot.line(circlePoints, {x: "lon", y: "lat", stroke: "#ff0000", strokeWidth: 2, strokeDasharray: "5,5"}),
     
     // Point central (Cossonay)
-    _ObservablePlot.dot([cossonay], {x: "lon", y: "lat", fill: "#ff0000", r: 12, tip: true}),
-    _ObservablePlot.text([cossonay], {x: "lon", y: "lat", text: d => d.name, dy: -15, fill: "#ff0000", fontWeight: "bold"}),
+    Plot.dot([cossonay], {x: "lon", y: "lat", fill: "#ff0000", r: 12, tip: true}),
+    Plot.text([cossonay], {x: "lon", y: "lat", text: d => d.name, dy: -15, fill: "#ff0000", fontWeight: "bold"}),
     
     // Points de décollage valides
-    _ObservablePlot.dot(validPoints, {
+    Plot.dot(validPoints, {
       x: "lon", 
       y: "lat", 
       fill: d => colorScale(d.type),
@@ -131,7 +128,7 @@ const plot = _ObservablePlot.plot({
     }),
     
     // Étiquettes
-    _ObservablePlot.text(validPoints, {
+    Plot.text(validPoints, {
       x: "lon", 
       y: "lat", 
       text: d => d.name,
