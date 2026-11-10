@@ -104,9 +104,10 @@ const sizeScale = d3.scaleSqrt()
 // Afficher la carte
 const plot = Plot.plot({
   projection: {
-    type: "mercator",
-    domain: [[5.5, 10.5], [45.5, 48.0]]
+    type: "mercator"
   },
+  // Plot ajuste automatiquement l'échelle aux données (Suisse + cercle + points)
+
   marks: [
     // Fond de carte (Suisse)
     Plot.geo(switzerland, {fill: "#f0f0f0", stroke: "#999"}),
