@@ -41,7 +41,7 @@ Carte des sites prestigieux autour de **Cossonay-Ville (Suisse)**. Réglez le ra
 
 ```js
 // Données fixes (calculées une seule fois)
-const cossonay = {lon: 6.6500, lat: 46.6167, name: "Cossonay-Ville", type: "Centre"};
+const cossonay = {lon: 6.5075, lat: 46.6202, name: "Cossonay-Ville", type: "Centre"};
 
 // Superficies et prestige : valeurs indicatives, à valider
 const landingPoints = [
