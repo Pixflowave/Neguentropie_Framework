@@ -49,7 +49,7 @@ const landingPoints = [
   {lon: 6.9275, lat: 46.4116, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
   {lon: 6.8358, lat: 46.4750, name: "Vevey - Riviera", type: "Lac + Culture", area: 8, prestige: 5, tourism: "Chaplin's World, Nestlé"},
   {lon: 6.9153, lat: 46.4806, name: "Montreux - Château", type: "Lac + Montagne", area: 10, prestige: 5, tourism: "Jazz Festival, vue Lavaux"},
-  {lon: 6.6569, lat: 46.2362, name: "Jussy - Chateaux du Crest", type: "Vignoble", area: 20, prestige: 4, tourism: "Vignobles, Vue Chateaux"},
+  {lon: 6.2562, lat: 46.2362, name: "Jussy - Chateaux du Crest", type: "Vignoble", area: 20, prestige: 4, tourism: "Vignobles, Vue Chateaux"},
   {lon: 6.6398, lat: 46.7781, name: "Yverdon-les-Bains", type: "Thermal + Nature", area: 15, prestige: 4, tourism: "Thermes, parc naturel"},
   {lon: 6.1376, lat: 46.3575, name: "Nyon - Domaine de Divonne", type: "Lac + Golf", area: 20, prestige: 4, tourism: "Golf, lac, vue Jura"},
   {lon: 6.1432, lat: 46.2044, name: "Genève - Aéroport", type: "International", area: 50, prestige: 5, tourism: "Ville internationale, Jet d'Eau"},
