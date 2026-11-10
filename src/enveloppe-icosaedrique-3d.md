@@ -6,6 +6,7 @@ toc: false
 # Enveloppe icosaédrique 3 750 m³
 
 ```js
+import {html} from "npm:htl";
 const viewerUrl = await FileAttachment("enveloppe-3d-viewer.html").url();
 
 display(html`
