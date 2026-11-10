@@ -49,9 +49,9 @@ const landingPoints = [
   {lon: 6.9275, lat: 46.4116, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
   {lon: 6.8358, lat: 46.4750, name: "Vevey - Riviera", type: "Lac + Culture", area: 8, prestige: 5, tourism: "Chaplin's World, Nestlé"},
   {lon: 6.9153, lat: 46.4806, name: "Montreux - Château", type: "Lac + Montagne", area: 10, prestige: 5, tourism: "Jazz Festival, vue Lavaux"},
-  {lon: 6.4950, lat: 46.5100, name: "Morges - Domaine", type: "Vignoble", area: 12, prestige: 4, tourism: "Vignobles Lavaux UNESCO"},
+  {lon: 6.6569, lat: 43.2362, name: "Jussy - Chateaux du Crest", type: "Vignoble", area: 20, prestige: 4, tourism: "Vignobles, Vue Chateaux"},
   {lon: 6.6398, lat: 46.7781, name: "Yverdon-les-Bains", type: "Thermal + Nature", area: 15, prestige: 4, tourism: "Thermes, parc naturel"},
-  {lon: 6.2333, lat: 46.3833, name: "Nyon - Domaine de Divonne", type: "Lac + Golf", area: 20, prestige: 4, tourism: "Golf, lac, vue Jura"},
+  {lon: 6.1376, lat: 46.3575, name: "Nyon - Domaine de Divonne", type: "Lac + Golf", area: 20, prestige: 4, tourism: "Golf, lac, vue Jura"},
   {lon: 6.1432, lat: 46.2044, name: "Genève - Aéroport", type: "International", area: 50, prestige: 5, tourism: "Ville internationale, Jet d'Eau"},
   {lon: 6.5800, lat: 46.6500, name: "Penthalaz - Domaine", type: "Campagne", area: 25, prestige: 3, tourism: "Vues panoramiques, calme"},
   {lon: 6.7000, lat: 46.5500, name: "Ecublens - Parc", type: "Innovation", area: 8, prestige: 4, tourism: "EPFL, lac proche"},
@@ -59,7 +59,7 @@ const landingPoints = [
   // Sites ajoutés (coordonnées approximatives, superficies à valider)
   {lon: 6.5111, lat: 46.6567, name: "La Sarraz - Château", type: "Château", area: 4, prestige: 3, tourism: "Château, musée du cheval"},
   {lon: 6.7311, lat: 46.4880, name: "Cully - Lavaux", type: "Vignoble", area: 10, prestige: 5, tourism: "Vignoble en terrasses, UNESCO"},
-  {lon: 6.3375, lat: 46.4592, name: "Rolle - Château", type: "Château", area: 3, prestige: 4, tourism: "Château au bord du lac"},
+  {lon: 6.3415, lat: 46.4588, name: "Rolle - Château", type: "Château", area: 3, prestige: 4, tourism: "Château au bord du lac"},
   {lon: 6.6469, lat: 46.8089, name: "Grandson - Château", type: "Château", area: 5, prestige: 4, tourism: "Château, lac de Neuchâtel"},
   {lon: 6.5000, lat: 46.8222, name: "Sainte-Croix", type: "Jura", area: 15, prestige: 3, tourism: "Balcons du Jura, vue Alpes"},
   {lon: 6.8478, lat: 46.8500, name: "Estavayer-le-Lac", type: "Lac + Ville", area: 6, prestige: 4, tourism: "Vieille ville, château de Chenaux"},
@@ -72,7 +72,7 @@ const landingPoints = [
   {lon: 7.2861, lat: 46.4749, name: "Gstaad", type: "Montagne + Ballons", area: 18, prestige: 5, tourism: "Station alpine de prestige"},
   {lon: 7.4474, lat: 46.9480, name: "Berne", type: "Ville historique", area: 15, prestige: 5, tourism: "Vieille ville UNESCO, Alpes"},
   {lon: 7.4739, lat: 46.9492, name: "Zentrum Paul Klee (Berne)", type: "Musée + parc", area: 9, prestige: 5, tourism: "Musée de Renzo Piano, parc de sculptures"},
-  {lon: 6.2503, lat: 46.3864, name: "Château de Prangins (Musée national)", type: "Musée + parc", area: 5, prestige: 4, tourism: "Château du XVIIIe siècle, jardins, vue sur le Léman"}
+  {lon: 6.2516, lat: 46.3942, name: "Château de Prangins (Musée national)", type: "Musée + parc", area: 5, prestige: 4, tourism: "Château du XVIIIe siècle, jardins, vue sur le Léman"}
 ];
 
 // Suivi des parcelles voisines : statuts uniquement, SANS nom ni téléphone
