@@ -33,18 +33,17 @@ display(html`
 ```
 ---
 
-## 🎈 Points de décollage potentiels de montgolfière - Ballons du Léman
+## 🎈 Points de décollage potentiels de montgolfière
 
-Carte des sites prestigieux dans un rayon de **60 km autour de Cossonay-Ville (Suisse)**.
+Carte des sites prestigieux autour de **Cossonay-Ville (Suisse)**. Réglez le rayon avec le curseur.
 
 *Critères : Intérêt touristique prestigieux pour la clientèle | Surface >= 1 hectare*
 
 ```js
-// Plot, d3, topojson et html sont disponibles automatiquement via les imports implicites d'Observable Framework
-// Coordonnées de Cossonay-Ville (centre)
+// Données fixes (calculées une seule fois)
 const cossonay = {lon: 6.6500, lat: 46.6167, name: "Cossonay-Ville", type: "Centre"};
 
-// Points de décollage potentiels (intérêt touristique + prestigieux + >= 1 hectare)
+// Superficies et prestige : valeurs indicatives, à valider
 const landingPoints = [
   {lon: 6.6323, lat: 46.5197, name: "Lausanne - Ouchy", type: "Lac + Ville", area: 5, prestige: 5, tourism: "Lac Léman, vue Alpes"},
   {lon: 6.9275, lat: 46.4116, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
@@ -55,143 +54,229 @@ const landingPoints = [
   {lon: 6.2333, lat: 46.3833, name: "Nyon - Domaine de Divonne", type: "Lac + Golf", area: 20, prestige: 4, tourism: "Golf, lac, vue Jura"},
   {lon: 6.1432, lat: 46.2044, name: "Genève - Aéroport", type: "International", area: 50, prestige: 5, tourism: "Ville internationale, Jet d'Eau"},
   {lon: 6.5800, lat: 46.6500, name: "Penthalaz - Domaine", type: "Campagne", area: 25, prestige: 3, tourism: "Vues panoramiques, calme"},
-  {lon: 6.7000, lat: 46.5500, name: "Ecublens - Parc", type: "Innovation", area: 8, prestige: 4, tourism: "EPFL, lac proche"}
+  {lon: 6.7000, lat: 46.5500, name: "Ecublens - Parc", type: "Innovation", area: 8, prestige: 4, tourism: "EPFL, lac proche"},
+
+  // Sites ajoutés (coordonnées approximatives, superficies à valider)
+  {lon: 6.5111, lat: 46.6567, name: "La Sarraz - Château", type: "Château", area: 4, prestige: 3, tourism: "Château, musée du cheval"},
+  {lon: 6.7311, lat: 46.4880, name: "Cully - Lavaux", type: "Vignoble", area: 10, prestige: 5, tourism: "Vignoble en terrasses, UNESCO"},
+  {lon: 6.3375, lat: 46.4592, name: "Rolle - Château", type: "Château", area: 3, prestige: 4, tourism: "Château au bord du lac"},
+  {lon: 6.6469, lat: 46.8089, name: "Grandson - Château", type: "Château", area: 5, prestige: 4, tourism: "Château, lac de Neuchâtel"},
+  {lon: 6.5000, lat: 46.8222, name: "Sainte-Croix", type: "Jura", area: 15, prestige: 3, tourism: "Balcons du Jura, vue Alpes"},
+  {lon: 6.8478, lat: 46.8500, name: "Estavayer-le-Lac", type: "Lac + Ville", area: 6, prestige: 4, tourism: "Vieille ville, château de Chenaux"},
+  {lon: 7.0833, lat: 46.5833, name: "Gruyères", type: "Château", area: 8, prestige: 5, tourism: "Château, village médiéval"},
+  {lon: 7.1389, lat: 46.4764, name: "Château-d'Œx", type: "Montagne + Ballons", area: 20, prestige: 5, tourism: "Capitale des ballons, Alpes vaudoises"},
+  {lon: 7.0425, lat: 46.8804, name: "Avenches", type: "Patrimoine romain", area: 12, prestige: 4, tourism: "Site romain, plaine de la Broye"},
+  {lon: 6.9313, lat: 46.9920, name: "Neuchâtel", type: "Lac + Ville", area: 8, prestige: 4, tourism: "Lac, château, vieille ville"},
+  {lon: 7.1613, lat: 46.8065, name: "Fribourg", type: "Ville historique", area: 10, prestige: 4, tourism: "Vieille ville, cathédrale"},
+  {lon: 7.1136, lat: 46.9269, name: "Morat", type: "Lac + Ville", area: 7, prestige: 4, tourism: "Ville fortifiée, lac de Morat"},
+  {lon: 7.2861, lat: 46.4749, name: "Gstaad", type: "Montagne + Ballons", area: 18, prestige: 5, tourism: "Station alpine de prestige"},
+  {lon: 7.4474, lat: 46.9480, name: "Berne", type: "Ville historique", area: 15, prestige: 5, tourism: "Vieille ville UNESCO, Alpes"},
+  {lon: 7.4739, lat: 46.9492, name: "Zentrum Paul Klee (Berne)", type: "Musée + parc", area: 9, prestige: 5, tourism: "Musée de Renzo Piano, parc de sculptures"},
+  {lon: 6.2503, lat: 46.3864, name: "Château de Prangins (Musée national)", type: "Musée + parc", area: 5, prestige: 4, tourism: "Château du XVIIIe siècle, jardins, vue sur le Léman"}
 ];
 
-// Charger la carte de la Suisse
-const world = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
-const switzerland = topojson.feature(world, world.objects.countries).features.find(d => d.id === 210 || d.properties.name === "Switzerland");
+// Suivi des parcelles voisines : statuts uniquement, SANS nom ni téléphone
+// (la page est publique sur GitHub Pages)
+const suivi = {
+  "Penthalaz - Domaine": {parcelle: "à repérer", accord: "à contacter"}
+  // "Nom du site": {parcelle: "...", accord: "à contacter | contacté | accord | refus"}
+};
 
-// Calculer la distance en km (formule de Haversine)
 function haversineDistance(coord1, coord2) {
-  const R = 6371; // Rayon de la Terre en km
+  const R = 6371;
   const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
   const dLon = (coord2.lon - coord1.lon) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+  const a = Math.sin(dLat/2) ** 2 +
             Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
+            Math.sin(dLon/2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Filtrer les points dans le rayon de 60 km
-const radiusKm = 60;
+// Couleurs générées automatiquement selon les types présents
+const types = [...new Set(landingPoints.map(p => p.type))];
+const colorScale = d3.scaleOrdinal(types, d3.quantize(t => d3.interpolateRainbow(t * 0.9), types.length));
+```
+
+```js
+const radiusKm = view(Inputs.range([10, 100], {value: 60, step: 5, label: "Rayon (km)"}));
+```
+
+```js
+// Ce bloc se recalcule à chaque changement du curseur
 const validPoints = landingPoints.filter(p => haversineDistance(cossonay, p) <= radiusKm);
 
-// Créer le cercle de 60 km
-const circlePoints = [];
-for (let angle = 0; angle < 360; angle += 5) {
-  const rad = angle * Math.PI / 180;
-  const R = 6371;
-  const d = radiusKm / R;
-  const lat2 = Math.asin(Math.sin(cossonay.lat * Math.PI / 180) * Math.cos(d) +
-                          Math.cos(cossonay.lat * Math.PI / 180) * Math.sin(d) * Math.cos(rad)) * 180 / Math.PI;
-  const lon2 = cossonay.lon + (Math.atan2(Math.sin(rad) * Math.sin(d) * Math.cos(cossonay.lat * Math.PI / 180),
-                                         Math.cos(d) - Math.sin(cossonay.lat * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180))) * 180 / Math.PI;
-  circlePoints.push({lon: lon2, lat: lat2});
+display(html`<p><strong>${validPoints.length} site${validPoints.length > 1 ? "s" : ""}</strong> dans un rayon de ${radiusKm} km autour de ${cossonay.name}.</p>`);
+
+const mapDiv = display(document.createElement("div"));
+mapDiv.style = "height: 600px; width: 100%; border-radius: 8px;";
+
+const map = L.map(mapDiv, {
+  zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false,
+  wheelPxPerZoomLevel: 240,  // 60 par défaut : plus la valeur est grande, moins le zoom est sensible
+  wheelDebounceTime: 60,     // regroupe les mouvements rapprochés de la molette
+  zoomSnap: 0.5              // le zoom avance par demi-niveau au lieu d'un niveau entier
+}).setView([cossonay.lat, cossonay.lon], 9);
+let alive = true;
+invalidation.then(() => { alive = false; map.remove(); });
+
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 20, maxNativeZoom: 19, zIndex: 1,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+// Vue satellite (swisstopo SWISSIMAGE, Suisse uniquement)
+const satellite = L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg", {
+  maxZoom: 20, maxNativeZoom: 20, zIndex: 2,
+  attribution: "&copy; swisstopo"
+}).addTo(map);
+
+// Couches de biodiversité (geodienste.ch)
+const wmsUrl = "https://wfs.geodienste.ch/lwb_biodiversitaetsfoerderflaechen_v2_0_0/fra";
+const wmsOpts = {format: "image/png", transparent: true, opacity: 0.65, zIndex: 3,
+  attribution: "Source : geodienste.ch, cantons / OFAG"};
+const spbQ2 = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "spb_qualite_2_surfaces"});
+const spbReseau = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "spb_reseau_surfaces"});
+const dispo = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "disponibilite_cantons", opacity: 0.5, zIndex: 4});
+
+L.control.layers(null, {
+  "Vue satellite (swisstopo)": satellite,
+  "SPB qualité II (jachères, prairies…)": spbQ2,
+  "SPB mises en réseau (zoom requis)": spbReseau,
+  "Disponibilité des données par canton": dispo
+}, {collapsed: false}).addTo(map);
+
+// Cercle du rayon
+L.circle([cossonay.lat, cossonay.lon], {
+  radius: radiusKm * 1000, color: "#ff0000", weight: 2, dashArray: "6 6", fillOpacity: 0.03,
+  interactive: false
+}).addTo(map);
+
+// Centre
+L.circleMarker([cossonay.lat, cossonay.lon], {
+  radius: 9, color: "#fff", weight: 2, fillColor: "#ff0000", fillOpacity: 1,
+  bubblingMouseEvents: false
+}).addTo(map).bindTooltip(cossonay.name, {permanent: true, direction: "right"});
+
+// Sites
+for (const p of validPoints) {
+  const s = suivi[p.name];
+  L.circleMarker([p.lat, p.lon], {
+    radius: 5 + Math.sqrt(p.area),
+    color: "#fff", weight: 1.5, fillColor: colorScale(p.type), fillOpacity: 0.9,
+    bubblingMouseEvents: false
+  })
+  .addTo(map)
+  .bindTooltip(p.name, {direction: "top"})
+  .bindPopup(`<strong>${p.name}</strong><br>${p.type} · ${p.area} ha <small>(${p.source ?? "estimation à vérifier"})</small><br>${p.tourism}<br>${haversineDistance(cossonay, p).toFixed(1)} km de Cossonay${s ? `<br><em>Parcelle : ${s.parcelle} · Accord : ${s.accord}</em>` : ""}`);
 }
 
-// Échelle de couleurs par type
-const colorScale = d3.scaleOrdinal()
-  .domain(["Centre", "Lac + Ville", "Patrimoine UNESCO", "Lac + Culture", "Lac + Montagne", "Vignoble", "Thermal + Nature", "Lac + Golf", "International", "Campagne", "Innovation"])
-  .range(["#ff0000", "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]);
+// Légende des types de sites
+const legend = L.control({position: "bottomright"});
+legend.onAdd = () => {
+  const div = L.DomUtil.create("div");
+  div.style.cssText = "background:#fff;color:#333;padding:8px 10px;border-radius:6px;font-size:12px;line-height:1.7;box-shadow:0 1px 4px rgba(0,0,0,.3)";
+  const used = [...new Set(validPoints.map(p => p.type))];
+  div.innerHTML = "<strong>Type de site</strong><br>" + used.map(t =>
+    `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colorScale(t)};margin-right:6px"></span>${t}`
+  ).join("<br>");
+  return div;
+};
+legend.addTo(map);
 
-// Échelle de taille par superficie
-const sizeScale = d3.scaleSqrt()
-  .domain([1, 50])
-  .range([8, 20]);
+// Clic sur la carte : type de surface de biodiversité (GetFeatureInfo)
+const codesSPB = {
+  "556": "Jachère florale", "557": "Jachère tournante", "559": "Ourlet sur terre assolée",
+  "572": "Bande fleurie pour pollinisateurs",
+  "611": "Prairie extensive", "612": "Prairie peu intensive",
+  "617": "Pâturage extensif", "618": "Pâturage boisé",
+  "622": "Prairie extensive (estivage)", "623": "Prairie peu intensive (estivage)",
+  "634": "Prairie riveraine d'un cours d'eau"
+};
+const codesJachere = new Set(["556", "557"]);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 
-// Afficher la carte
-const plot = Plot.plot({
-  projection: {
-    type: "mercator",
-    fit: true  // Plot ajuste automatiquement la projection aux données
-  },
-  marks: [
-    // Fond de carte (Suisse)
-    Plot.geo(switzerland, {fill: "#f0f0f0", stroke: "#999"}),
-    
-    // Cercle de 60 km
-    Plot.line(circlePoints, {x: "lon", y: "lat", stroke: "#ff0000", strokeWidth: 2, strokeDasharray: "5,5"}),
-    
-    // Point central (Cossonay)
-    Plot.dot([cossonay], {x: "lon", y: "lat", fill: "#ff0000", r: 12, tip: true}),
-    Plot.text([cossonay], {x: "lon", y: "lat", text: d => d.name, dy: -15, fill: "#ff0000", fontWeight: "bold"}),
-    
-    // Points de décollage valides
-    Plot.dot(validPoints, {
-      x: "lon", 
-      y: "lat", 
-      fill: d => colorScale(d.type),
-      r: d => sizeScale(d.area),
-      tip: true
-    }),
-    
-    // Étiquettes
-    Plot.text(validPoints, {
-      x: "lon", 
-      y: "lat", 
-      text: d => d.name,
-      dy: -12,
-      fill: "#333",
-      fontSize: 10
-    })
-  ],
-  height: 600,
-  width: 900,
-  style: {
-    background: "#fff",
-    fontSize: "12px"
-  },
-  title: `Points de décollage de montgolfière - Rayon ${radiusKm} km autour de Cossonay-Ville`,
-  subtitle: "Critères: Intérêt touristique prestigieux | >= 1 hectare | Clientèle Ballons du Léman"
+function parseFeatureInfo(txt) {
+  const out = []; let layer = "", cur = null;
+  for (const line of txt.split("\n")) {
+    const l = line.match(/^Layer '(.+)'/);
+    if (l) { layer = l[1]; cur = null; continue; }
+    if (/^\s*Feature \d+:/.test(line)) { cur = {layer, attrs: {}}; out.push(cur); continue; }
+    const kv = line.match(/^\s+(\S+)\s*=\s*'(.*)'\s*$/);
+    if (kv && cur) cur.attrs[kv[1]] = kv[2];
+  }
+  return out;
+}
+
+function popupSPB(features) {
+  if (!features.length) return "Aucune surface de biodiversité à cet endroit.";
+  return features.map(f => {
+    const a = f.attrs, code = a.Code_utilisation;
+    const label = codesSPB[code] ?? (code ? `Code ${code}` : "Surface de biodiversité");
+    const badge = codesJachere.has(code)
+      ? ` <span style="background:#2e7d32;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px">JACHÈRE</span>` : "";
+    const m2 = a.Surface_m2 ? +a.Surface_m2 : null;
+    const lines = [
+      m2 != null && `${m2.toLocaleString("fr-CH")} m² (${(m2 / 10000).toFixed(2)} ha)`,
+      a.Année_de_référence && `Année : ${esc(a.Année_de_référence)}`,
+      a.Canton && `Canton : ${esc(a.Canton)}`,
+      a.Identificateur && `Réf. : ${esc(a.Identificateur)}`
+    ].filter(Boolean);
+    if (!code && m2 == null) {
+      lines.push(...Object.entries(a).filter(([, v]) => v).map(([k, v]) => `${esc(k)} : ${esc(v)}`));
+    }
+    return `<div style="color:#222;font-size:13px;line-height:1.5"><strong>${esc(label)}</strong>${badge}<br>${lines.join("<br>")}</div>`;
+  }).join('<hr style="margin:6px 0">');
+}
+
+map.on("click", async (e) => {
+  const active = [[spbQ2, "spb_qualite_2_surfaces"], [spbReseau, "spb_reseau_surfaces"]]
+    .filter(([layer]) => map.hasLayer(layer)).map(([, name]) => name).join(",");
+  if (!active) return;
+  const size = map.getSize(), b = map.getBounds(), crs = map.options.crs;
+  const sw = crs.project(b.getSouthWest()), ne = crs.project(b.getNorthEast());
+  const pt = map.latLngToContainerPoint(e.latlng);
+  const params = new URLSearchParams({
+    SERVICE: "WMS", VERSION: "1.3.0", REQUEST: "GetFeatureInfo",
+    LAYERS: active, QUERY_LAYERS: active, STYLES: "", CRS: "EPSG:3857",
+    BBOX: [sw.x, sw.y, ne.x, ne.y].join(","),
+    WIDTH: size.x, HEIGHT: size.y, I: Math.round(pt.x), J: Math.round(pt.y),
+    INFO_FORMAT: "text/plain", FEATURE_COUNT: 5
+  });
+  const popup = L.popup({maxWidth: 260}).setLatLng(e.latlng).setContent("Recherche…").openOn(map);
+    try {
+    const r = await fetch(`${wmsUrl}?${params}`);
+    const txt = (await r.text()).trim();
+    if (!alive) return;
+    popup.setContent(popupSPB(parseFeatureInfo(txt)));
+  } catch (err) {
+    if (alive) popup.setContent("Information indisponible (le serveur refuse la requête depuis cette page).");
+  }
 });
 
-// Tableau des points valides
+map.fitBounds(L.latLng(cossonay.lat, cossonay.lon).toBounds(radiusKm * 2000), {animate: false});
+
+// Tableau des sites, avec suivi
 const tableData = validPoints.map(p => ({
   Site: p.name,
   Type: p.type,
   "Superficie (ha)": p.area,
+  "Source superficie": p.source ?? "estimation à vérifier",
   "Prestige": "★".repeat(p.prestige),
-  "Intérêt touristique": p.tourism,
-  "Distance (km)": haversineDistance(cossonay, p).toFixed(1)
-})).sort((a, b) => parseFloat(a["Distance (km)"]) - parseFloat(b["Distance (km)"]));
+  "Distance (km)": +haversineDistance(cossonay, p).toFixed(1),
+  "Parcelle proche": suivi[p.name]?.parcelle ?? "—",
+  "Accord": suivi[p.name]?.accord ?? "—",
+  "Intérêt touristique": p.tourism
+})).sort((a, b) => a["Distance (km)"] - b["Distance (km)"]);
 
-display(html`<div style="margin-top: 20px; overflow-x: auto;">
-  <h3 style="margin-bottom: 10px;">📋 Liste des sites valides (${validPoints.length} points)</h3>
-  <table style="border-collapse: collapse; width: 100%; font-size: 14px;">
-    <thead>
-      <tr style="background: #f5f5f5;">
-        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Site</th>
-        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Type</th>
-        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Superficie</th>
-        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Prestige</th>
-        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Distance</th>
-        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Intérêt touristique</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${tableData.map(row => `
-        <tr>
-          <td style="padding: 8px; border: 1px solid #ddd;"><strong>${row.Site}</strong></td>
-          <td style="padding: 8px; border: 1px solid #ddd;">${row.Type}</td>
-          <td style="padding: 8px; border: 1px solid #ddd;">${row["Superficie (ha)"]} ha</td>
-          <td style="padding: 8px; border: 1px solid #ddd;">${row.Prestige}</td>
-          <td style="padding: 8px; border: 1px solid #ddd;">${row["Distance (km)"]} km</td>
-          <td style="padding: 8px; border: 1px solid #ddd;">${row["Intérêt touristique"]}</td>
-        </tr>
-      `).join('')}
-    </tbody>
-  </table>
-  <p style="margin-top: 10px; color: #666; font-size: 12px;">
-    ✈️ <strong>Note:</strong> Les points marqués sur la carte respectent les critères : 
-    <em>intérêt touristique prestigieux pour la clientèle des Ballons du Léman</em> et 
-    <em>surface minimale de 1 hectare</em>.
-    <strong>À valider avec les propriétaires et autorités locales.</strong>
-  </p>
-</div>`);
+display(Inputs.table(tableData, {rows: 12})); 
 
-display(plot);
+display(html`<p style="color: var(--theme-foreground-muted); font-size: 12px;">
+  ✈️ <strong>Note :</strong> les points marqués sur la carte respectent les critères :
+  <em>intérêt touristique prestigieux pour la clientèle des Ballons du Léman</em> et
+  <em>surface minimale de 1 hectare</em>.
+  <strong>À valider avec les propriétaires et autorités locales.</strong><br>
+  Surfaces de biodiversité : source geodienste.ch, cantons / OFAG. Elles reflètent les déclarations agricoles, pas forcément l'état actuel des champs.
+</p>`);
 ```
 
 ---
