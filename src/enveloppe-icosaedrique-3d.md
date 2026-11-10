@@ -60,7 +60,7 @@ const landingPoints = [
 
 // Charger la carte de la Suisse
 const world = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
-const switzerland = feature(world, world.objects.countries).features.find(d => d.id === 210 || d.properties.name === "Switzerland");
+const switzerland = topojson.feature(world, world.objects.countries).features.find(d => d.id === 210 || d.properties.name === "Switzerland");
 
 // Calculer la distance en km (formule de Haversine)
 function haversineDistance(coord1, coord2) {
