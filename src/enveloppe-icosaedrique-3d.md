@@ -40,7 +40,9 @@ Carte des sites prestigieux dans un rayon de **60 km autour de Cossonay-Ville (S
 *Critères : Intérêt touristique prestigieux pour la clientèle | Surface >= 1 hectare*
 
 ```js
-// Plot, d3, et feature sont disponibles automatiquement via les imports implicites d'Observable Framework
+// Plot, d3, topojson et html sont disponibles automatiquement via les imports implicites d'Observable Framework
+import {html} from "npm:htl";
+
 // Coordonnées de Cossonay-Ville (centre)
 const cossonay = {lon: 6.6500, lat: 46.6167, name: "Cossonay-Ville", type: "Centre"};
 
@@ -104,10 +106,9 @@ const sizeScale = d3.scaleSqrt()
 // Afficher la carte
 const plot = Plot.plot({
   projection: {
-    type: "mercator"
+    type: "mercator",
+    fit: true  // Plot ajuste automatiquement la projection aux données
   },
-  // Plot ajuste automatiquement l'échelle aux données (Suisse + cercle + points)
-
   marks: [
     // Fond de carte (Suisse)
     Plot.geo(switzerland, {fill: "#f0f0f0", stroke: "#999"}),
