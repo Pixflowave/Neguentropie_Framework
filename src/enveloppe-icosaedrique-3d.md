@@ -30,7 +30,6 @@ display(html`
 </div>
 `);
 ```
-
 ---
 
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie
