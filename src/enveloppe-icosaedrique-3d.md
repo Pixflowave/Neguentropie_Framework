@@ -74,7 +74,7 @@ const landingPoints = [
   {lon: 7.2861, lat: 46.4749, name: "Gstaad", type: "Montagne + Ballons", area: 18, prestige: 5, tourism: "Station alpine de prestige"},
   {lon: 7.4474, lat: 46.9480, name: "Berne", type: "Ville historique", area: 15, prestige: 5, tourism: "Vieille ville UNESCO, Alpes"},
   {lon: 7.4739, lat: 46.9492, name: "Zentrum Paul Klee (Berne)", type: "Musée + parc", area: 9, prestige: 5, tourism: "Musée de Renzo Piano, parc de sculptures"},
-  {lon: 6.2516, lat: 46.3942, name: "Prangins - Château de Prangins", type: "Musée + parc", area: 5, prestige: 4, tourism: "Château du XVIIIe siècle, jardins, vue sur le Léman, Musée National Suisse"}
+  {lon: 6.2516, lat: 46.3942, name: "Prangins - Château de Prangins", type: "Musée + parc", area: 5, prestige: 4, tourism: "Château du XVIIIe siècle, jardins, vue sur le Léman, Musée National Suisse"},
   {lon: 6.1919, lat: 46.3170, name: "Coppet - Château de Coppet", type: "Château", area: 3, prestige: 5, tourism: "Château au bord du lac"},
   {lon: 6.4967, lat: 46.5067, name: "Morges - Château", type: "Château", area: 3, prestige: 5, tourism: "Château au bord du lac, Musée militaire vaudois"},
   {lon: 6.3952, lat: 46.4706, name: "Allaman - Château de Rochefort", type: "Château", area: 3, prestige: 5, tourism: "Château au bord du lac, Musée du Vieux-Moudon"},
