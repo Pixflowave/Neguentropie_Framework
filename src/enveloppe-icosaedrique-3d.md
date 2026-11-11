@@ -103,8 +103,13 @@ display(html`<p><strong>${validPoints.length} site${validPoints.length > 1 ? "s"
 
 ```js
 // Carte créée UNE SEULE FOIS (elle ne dépend pas des curseurs)
+// Choix des couches AU-DESSUS de la carte, légende EN DESSOUS (rien ne recouvre la carte sur smartphone)
+const layersDiv = display(document.createElement("div"));
+layersDiv.style = "margin-bottom: 8px;";
 const mapDiv = display(document.createElement("div"));
-mapDiv.style = "height: 600px; width: 100%; border-radius: 8px;";
+mapDiv.style = "height: 600px; max-height: 70vh; width: 100%; border-radius: 8px;";
+const legendDiv = display(document.createElement("div"));
+legendDiv.style = "margin-top: 8px; font-size: 13px; line-height: 1.6;";
 
 const map = L.map(mapDiv, {
   zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false,
@@ -136,7 +141,7 @@ const spbQ2 = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "spb_qualite_2_surfac
 const spbReseau = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "spb_reseau_surfaces"});
 const dispo = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "disponibilite_cantons", opacity: 0.5, zIndex: 5});
 
-L.control.layers(
+const controleCouches = L.control.layers(
   {
     "Plan (OpenStreetMap)": L.layerGroup(),
     "Vue satellite (swisstopo)": satellite,
@@ -151,15 +156,16 @@ L.control.layers(
   {collapsed: false}
 ).addTo(map);
 
+// Sortir le sélecteur de la carte : on déplace son élément dans layersDiv
+const layersCtl = controleCouches.getContainer();
+layersDiv.append(layersCtl);
+layersCtl.style.cssText = "margin:0;float:none;width:100%;box-sizing:border-box;box-shadow:none;border:1px solid var(--theme-foreground-faintest);border-radius:8px;background:var(--theme-background-alt, #fff);color:inherit;font-size:13px;";
+const liste = layersCtl.querySelector(".leaflet-control-layers-list");
+liste.style.cssText = "display:flex;flex-wrap:wrap;gap:4px 24px;";
+liste.querySelector(".leaflet-control-layers-separator").style.display = "none";
+
 const groupeSites = L.layerGroup().addTo(map);
 const terrains = L.layerGroup().addTo(map);
-
-// Légende (le contenu est mis à jour plus bas)
-const legendDiv = L.DomUtil.create("div");
-legendDiv.style.cssText = "background:#fff;color:#333;padding:8px 10px;border-radius:6px;font-size:12px;line-height:1.7;box-shadow:0 1px 4px rgba(0,0,0,.3)";
-const legend = L.control({position: "bottomright"});
-legend.onAdd = () => legendDiv;
-legend.addTo(map);
 
 // Terrains ≥ 1 ha autour d'un site, avec leur dénivelé
 async function chercherTerrains(p, bouton, seuil) {
@@ -300,9 +306,9 @@ map.on("click", async (e) => {
 groupeSites.clearLayers();
 
 const used = [...new Set(validPoints.map(p => p.type))];
-legendDiv.innerHTML = "<strong>Type de site</strong><br>" + used.map(t =>
-  `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colorScale(t)};margin-right:6px"></span>${t}`
-).join("<br>");
+legendDiv.innerHTML = "<strong>Type de site :</strong> " + used.map(t =>
+  `<span style="display:inline-flex;align-items:center;margin-right:14px;white-space:nowrap"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colorScale(t)};margin-right:6px"></span>${t}</span>`
+).join("");
 
 L.circle([cossonay.lat, cossonay.lon], {
   radius: radiusKm * 1000, color: "#ff0000", weight: 2, dashArray: "6 6", fillOpacity: 0.03, interactive: false
