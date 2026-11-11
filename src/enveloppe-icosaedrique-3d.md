@@ -46,7 +46,7 @@ const cossonay = {lon: 6.5075, lat: 46.6202, name: "Cossonay-Ville", type: "Cent
 // Superficies et prestige : valeurs indicatives, à valider
 const landingPoints = [
   {lon: 6.6323, lat: 46.5197, name: "Lausanne - Ouchy", type: "Lac + Ville", area: 5, prestige: 5, tourism: "Lac Léman, vue Alpes"},
-  {lon: 6.9275, lat: 46.4142, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
+  {lon: 6.927599, lat: 46.414242, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
   {lon: 6.8358, lat: 46.4750, name: "Vevey - Riviera", type: "Lac + Culture", area: 8, prestige: 5, tourism: "Chaplin's World, Nestlé"},
   {lon: 6.9110, lat: 46.4330, name: "Montreux - Château", type: "Lac + Montagne", area: 10, prestige: 5, tourism: "Jazz Festival, vue Lavaux"},
   {lon: 6.2562, lat: 46.2362, name: "Jussy - Chateaux du Crest", type: "Vignoble", area: 20, prestige: 4, tourism: "Vignobles, Vue Chateaux"},
