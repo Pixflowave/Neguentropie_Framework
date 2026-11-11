@@ -46,20 +46,19 @@ const cossonay = {lon: 6.5075, lat: 46.6202, name: "Cossonay-Ville", type: "Cent
 // Superficies et prestige : valeurs indicatives, à valider
 const landingPoints = [
   {lon: 6.6323, lat: 46.5197, name: "Lausanne - Ouchy", type: "Lac + Ville", area: 5, prestige: 5, tourism: "Lac Léman, vue Alpes"},
-  {lon: 6.9275, lat: 46.4116, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
+  {lon: 6.9275, lat: 46.4142, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
   {lon: 6.8358, lat: 46.4750, name: "Vevey - Riviera", type: "Lac + Culture", area: 8, prestige: 5, tourism: "Chaplin's World, Nestlé"},
-  {lon: 6.911, lat: 46.4330, name: "Montreux - Château", type: "Lac + Montagne", area: 10, prestige: 5, tourism: "Jazz Festival, vue Lavaux"},
+  {lon: 6.9110, lat: 46.4330, name: "Montreux - Château", type: "Lac + Montagne", area: 10, prestige: 5, tourism: "Jazz Festival, vue Lavaux"},
   {lon: 6.2562, lat: 46.2362, name: "Jussy - Chateaux du Crest", type: "Vignoble", area: 20, prestige: 4, tourism: "Vignobles, Vue Chateaux"},
   {lon: 6.6398, lat: 46.7781, name: "Yverdon-les-Bains", type: "Thermal + Nature", area: 15, prestige: 4, tourism: "Thermes, parc naturel"},
   {lon: 6.1376, lat: 46.3575, name: "Nyon - Domaine de Divonne", type: "Lac + Golf", area: 20, prestige: 4, tourism: "Golf, lac, vue Jura"},
   {lon: 6.5800, lat: 46.6500, name: "Penthalaz - Domaine", type: "Campagne", area: 25, prestige: 3, tourism: "Vues panoramiques, calme"},
-  {lon: 6.5660, lat: 46.5190, name: "Ecublens - Parc", type: "Innovation", area: 8, prestige: 4, tourism: "EPFL, lac proche"},
+  {lon: 6.5664, lat: 46.5183, name: "Ecublens - Parc", type: "Innovation", area: 8, prestige: 4, tourism: "EPFL, lac proche"},
 
   // Sites ajoutés (coordonnées approximatives, superficies à valider)
-  {lon: 6.5111, lat: 46.6567, name: "La Sarraz - Château", type: "Château", area: 4, prestige: 3, tourism: "Château, musée du cheval"},
-  {lon: 6.7311, lat: 46.4880, name: "Cully - Lavaux", type: "Vignoble", area: 10, prestige: 5, tourism: "Vignoble en terrasses, UNESCO"},
+  {lon: 6.5141, lat: 46.6602, name: "La Sarraz - Château", type: "Château", area: 4, prestige: 3, tourism: "Château, musée du cheval"},
   {lon: 6.3415, lat: 46.4588, name: "Rolle - Château", type: "Château", area: 3, prestige: 4, tourism: "Château au bord du lac"},
-  {lon: 6.6469, lat: 46.8089, name: "Grandson - Château", type: "Château", area: 5, prestige: 4, tourism: "Château, lac de Neuchâtel"},
+  {lon: 6.6469, lat: 46.8095, name: "Grandson - Château", type: "Château", area: 5, prestige: 4, tourism: "Château, lac de Neuchâtel"},
   {lon: 6.5000, lat: 46.8222, name: "Sainte-Croix", type: "Jura", area: 15, prestige: 3, tourism: "Balcons du Jura, vue Alpes"},
   {lon: 6.8478, lat: 46.8500, name: "Estavayer-le-Lac", type: "Lac + Ville", area: 6, prestige: 4, tourism: "Vieille ville, château de Chenaux"},
   {lon: 7.0833, lat: 46.5833, name: "Gruyères", type: "Château", area: 8, prestige: 5, tourism: "Château, village médiéval"},
