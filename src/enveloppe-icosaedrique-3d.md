@@ -48,13 +48,12 @@ const landingPoints = [
   {lon: 6.6323, lat: 46.5197, name: "Lausanne - Ouchy", type: "Lac + Ville", area: 5, prestige: 5, tourism: "Lac Léman, vue Alpes"},
   {lon: 6.9275, lat: 46.4116, name: "Château de Chillon", type: "Patrimoine UNESCO", area: 3, prestige: 5, tourism: "Château médiéval"},
   {lon: 6.8358, lat: 46.4750, name: "Vevey - Riviera", type: "Lac + Culture", area: 8, prestige: 5, tourism: "Chaplin's World, Nestlé"},
-  {lon: 6.9153, lat: 46.4806, name: "Montreux - Château", type: "Lac + Montagne", area: 10, prestige: 5, tourism: "Jazz Festival, vue Lavaux"},
+  {lon: 6.911, lat: 46.4330, name: "Montreux - Château", type: "Lac + Montagne", area: 10, prestige: 5, tourism: "Jazz Festival, vue Lavaux"},
   {lon: 6.2562, lat: 46.2362, name: "Jussy - Chateaux du Crest", type: "Vignoble", area: 20, prestige: 4, tourism: "Vignobles, Vue Chateaux"},
   {lon: 6.6398, lat: 46.7781, name: "Yverdon-les-Bains", type: "Thermal + Nature", area: 15, prestige: 4, tourism: "Thermes, parc naturel"},
   {lon: 6.1376, lat: 46.3575, name: "Nyon - Domaine de Divonne", type: "Lac + Golf", area: 20, prestige: 4, tourism: "Golf, lac, vue Jura"},
-  {lon: 6.1432, lat: 46.2044, name: "Genève - Aéroport", type: "International", area: 50, prestige: 5, tourism: "Ville internationale, Jet d'Eau"},
   {lon: 6.5800, lat: 46.6500, name: "Penthalaz - Domaine", type: "Campagne", area: 25, prestige: 3, tourism: "Vues panoramiques, calme"},
-  {lon: 6.7000, lat: 46.5500, name: "Ecublens - Parc", type: "Innovation", area: 8, prestige: 4, tourism: "EPFL, lac proche"},
+  {lon: 6.5660, lat: 46.5190, name: "Ecublens - Parc", type: "Innovation", area: 8, prestige: 4, tourism: "EPFL, lac proche"},
 
   // Sites ajoutés (coordonnées approximatives, superficies à valider)
   {lon: 6.5111, lat: 46.6567, name: "La Sarraz - Château", type: "Château", area: 4, prestige: 3, tourism: "Château, musée du cheval"},
@@ -90,11 +89,76 @@ function haversineDistance(coord1, coord2) {
             Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
             Math.sin(dLon/2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+```
+```js
+// Aérodromes autour de Cossonay (OpenStreetMap), mis en cache dans le navigateur
+const aerodromes = await (async () => {
+  const cle = "aerodromes:v1";
+  try { const c = localStorage.getItem(cle); if (c) return JSON.parse(c); } catch {}
+  const q = `[out:json][timeout:25];nwr["aeroway"="aerodrome"](around:100000,${cossonay.lat},${cossonay.lon});out center tags;`;
+  try {
+    const r = await fetch("https://overpass-api.de/api/interpreter", {method: "POST", body: "data=" + encodeURIComponent(q)});
+    const d = await r.json();
+    const liste = d.elements
+      .map(e => ({
+        lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon,
+        name: `${e.tags?.name ?? "Aérodrome sans nom"}${e.tags?.icao ? ` (${e.tags.icao})` : ""}`,
+        type: "Aérodrome", area: null, prestige: 0,
+        tourism: "Décollage possible avec autorisation de la tour",
+        source: "OpenStreetMap"
+      }))
+      .filter((a, i, tab) => a.lat != null && a.lon != null && tab.findIndex(t => t.name === a.name) === i);
+    try { localStorage.setItem(cle, JSON.stringify(liste)); } catch {}
+    return liste;
+  } catch (err) { return []; }
+})();
+
+const sites = [...landingPoints, ...aerodromes];
+const types = [...new Set(sites.map(p => p.type))];
+const colorScale = d3.scaleOrdinal(types, d3.quantize(t => d3.interpolateRainbow(t * 0.9), types.length));
+
+// Conversion WGS84 → LV95 (formule d'approximation de swisstopo, précision de quelques mètres)
+function toLV95(lat, lon) {
+  const p = (lat * 3600 - 169028.66) / 10000, l = (lon * 3600 - 26782.5) / 10000;
+  const E = 2600072.37 + 211455.93 * l - 10938.51 * l * p - 0.36 * l * p ** 2 - 44.54 * l ** 3;
+  const N = 1200147.07 + 308807.95 * p + 3745.25 * l ** 2 + 76.63 * p ** 2 - 194.56 * l ** 2 * p + 119.79 * p ** 3;
+  return {E, N};
 }
 
-// Couleurs générées automatiquement selon les types présents
-const types = [...new Set(landingPoints.map(p => p.type))];
-const colorScale = d3.scaleOrdinal(types, d3.quantize(t => d3.interpolateRainbow(t * 0.9), types.length));
+async function hauteur(lat, lon) {
+  const k = `h:${lat.toFixed(5)},${lon.toFixed(5)}`;
+  try { const c = localStorage.getItem(k); if (c) return +c; } catch {}
+  const {E, N} = toLV95(lat, lon);
+  const r = await fetch(`https://api3.geo.admin.ch/rest/services/height?easting=${E.toFixed(1)}&northing=${N.toFixed(1)}&sr=2056`);
+  const h = parseFloat((await r.json()).height);
+  if (!Number.isFinite(h)) throw new Error("hauteur indisponible");
+  try { localStorage.setItem(k, String(h)); } catch {}
+  return h;
+}
+
+async function mesurerRelief(site, rayon = 300) {
+  const dLat = rayon / 111320, dLon = rayon / (111320 * Math.cos(site.lat * Math.PI / 180));
+  const pts = [[0, 0]];
+  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; pts.push([Math.sin(a), Math.cos(a)]); }
+  const hs = await Promise.all(pts.map(([dx, dy]) => hauteur(site.lat + dy * dLat, site.lon + dx * dLon)));
+  return {denivele: Math.max(...hs) - Math.min(...hs), centre: hs[0]};
+}
+
+async function pool(items, fn, n = 6) {
+  const out = new Array(items.length); let i = 0;
+  await Promise.all(Array.from({length: n}, async () => {
+    while (i < items.length) { const j = i++; try { out[j] = await fn(items[j]); } catch { out[j] = null; } }
+  }));
+  return out;
+}
+
+const reliefs = await pool(sites, s => mesurerRelief(s));
+const relief = new Map(sites.map((s, i) => [s.name, reliefs[i]]));
+```
+
+```js
+const denivMax = view(Inputs.range([10, 100], {value: 30, step: 5, label: "Dénivelé max (m, rayon 300 m)"}));
 ```
 
 ```js
@@ -103,7 +167,9 @@ const radiusKm = view(Inputs.range([10, 100], {value: 60, step: 5, label: "Rayon
 
 ```js
 // Ce bloc se recalcule à chaque changement du curseur
-const validPoints = landingPoints.filter(p => haversineDistance(cossonay, p) <= radiusKm);
+const dans = sites.filter(p => haversineDistance(cossonay, p) <= radiusKm);
+const validPoints = dans.filter(p => { const d = relief.get(p.name)?.denivele; return d == null || d <= denivMax; });
+const ecartes = dans.filter(p => !validPoints.includes(p));
 
 display(html`<p><strong>${validPoints.length} site${validPoints.length > 1 ? "s" : ""}</strong> dans un rayon de ${radiusKm} km autour de ${cossonay.name}.</p>`);
 
@@ -124,26 +190,40 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-// Vue satellite (swisstopo SWISSIMAGE, Suisse uniquement)
+// Fonds de carte au choix (OpenStreetMap reste en dessous, utile hors Suisse)
 const satellite = L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg", {
-  maxZoom: 20, maxNativeZoom: 20, zIndex: 2,
-  attribution: "&copy; swisstopo"
-}).addTo(map);
+  maxZoom: 20, maxNativeZoom: 20, zIndex: 2, attribution: "&copy; swisstopo"
+});
+const carteNationale = L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg", {
+  maxZoom: 20, maxNativeZoom: 18, zIndex: 2, attribution: "&copy; swisstopo"
+});
+const ombrage = L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissalti3d-reliefschattierung/default/current/3857/{z}/{x}/{y}.png", {
+  maxZoom: 20, maxNativeZoom: 17, opacity: 0.5, zIndex: 3, attribution: "&copy; swisstopo"
+});
+satellite.addTo(map);
 
 // Couches de biodiversité (geodienste.ch)
 const wmsUrl = "https://wfs.geodienste.ch/lwb_biodiversitaetsfoerderflaechen_v2_0_0/fra";
-const wmsOpts = {format: "image/png", transparent: true, opacity: 0.65, zIndex: 3,
+const wmsOpts = {format: "image/png", transparent: true, opacity: 0.65, zIndex: 4,
   attribution: "Source : geodienste.ch, cantons / OFAG"};
 const spbQ2 = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "spb_qualite_2_surfaces"});
 const spbReseau = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "spb_reseau_surfaces"});
-const dispo = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "disponibilite_cantons", opacity: 0.5, zIndex: 4});
+const dispo = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "disponibilite_cantons", opacity: 0.5, zIndex: 5});
 
-L.control.layers(null, {
-  "Vue satellite (swisstopo)": satellite,
-  "SPB qualité II (jachères, prairies…)": spbQ2,
-  "SPB mises en réseau (zoom requis)": spbReseau,
-  "Disponibilité des données par canton": dispo
-}, {collapsed: false}).addTo(map);
+L.control.layers(
+  {
+    "Plan (OpenStreetMap)": L.layerGroup(),
+    "Vue satellite (swisstopo)": satellite,
+    "Carte nationale, courbes de niveau (swisstopo)": carteNationale
+  },
+  {
+    "Relief ombré (swisstopo)": ombrage,
+    "SPB qualité II (jachères, prairies…)": spbQ2,
+    "SPB mises en réseau (zoom requis)": spbReseau,
+    "Disponibilité des données par canton": dispo
+  },
+  {collapsed: false}
+).addTo(map);
 
 // Cercle du rayon
 L.circle([cossonay.lat, cossonay.lon], {
@@ -157,17 +237,71 @@ L.circleMarker([cossonay.lat, cossonay.lon], {
   bubblingMouseEvents: false
 }).addTo(map).bindTooltip(cossonay.name, {permanent: true, direction: "right"});
 
+const terrains = L.layerGroup().addTo(map);
+
+async function chercherTerrains(p, bouton) {
+  bouton.disabled = true; bouton.textContent = "Recherche…";
+  const q = `[out:json][timeout:25];(
+    way(around:1500,${p.lat},${p.lon})["landuse"~"^(meadow|farmland|grass|greenfield)$"];
+    way(around:1500,${p.lat},${p.lon})["leisure"~"^(park|pitch|common)$"];
+    way(around:1500,${p.lat},${p.lon})["natural"="grassland"];
+  );out geom;`;
+  try {
+    const r = await fetch("https://overpass-api.de/api/interpreter", {method: "POST", body: "data=" + encodeURIComponent(q)});
+    const data = await r.json();
+    if (!alive) return;
+    terrains.clearLayers();
+    let n = 0;
+    for (const w of data.elements) {
+      const g = w.geometry;
+      if (!g || g.length < 4) continue;
+      if (g[0].lat !== g.at(-1).lat || g[0].lon !== g.at(-1).lon) continue; // seulement les contours fermés
+      const poly = {type: "Polygon", coordinates: [g.map(({lon, lat}) => [lon, lat])]};
+      const a = d3.geoArea(poly);
+      const ha = Math.min(a, 4 * Math.PI - a) * 6371000 ** 2 / 10000;
+      if (ha < 1) continue;
+      const [clon, clat] = d3.geoCentroid(poly);
+      const dist = Math.round(haversineDistance(p, {lat: clat, lon: clon}) * 1000);
+      L.polygon(g.map(({lat, lon}) => [lat, lon]), {color: "#00e676", weight: 2, fillOpacity: 0.25})
+        .bindTooltip(`${ha.toFixed(1)} ha · à ${dist} m de ${p.name}<br>${w.tags.landuse ?? w.tags.leisure ?? w.tags.natural}`)
+        .addTo(terrains);
+      n++;
+    }
+    bouton.textContent = n ? `${n} terrain(s) ≥ 1 ha trouvé(s)` : "Aucun terrain ≥ 1 ha trouvé";
+  } catch (err) {
+    bouton.textContent = "Recherche impossible : réessayer";
+  } finally {
+    bouton.disabled = false;
+  }
+}
+
 // Sites
 for (const p of validPoints) {
   const s = suivi[p.name];
+  const rel = relief.get(p.name);
   L.circleMarker([p.lat, p.lon], {
-    radius: 5 + Math.sqrt(p.area),
+    radius: 5 + Math.sqrt(p.area ?? 4),
     color: "#fff", weight: 1.5, fillColor: colorScale(p.type), fillOpacity: 0.9,
     bubblingMouseEvents: false
   })
   .addTo(map)
   .bindTooltip(p.name, {direction: "top"})
-  .bindPopup(`<strong>${p.name}</strong><br>${p.type} · ${p.area} ha <small>(${p.source ?? "estimation à vérifier"})</small><br>${p.tourism}<br>${haversineDistance(cossonay, p).toFixed(1)} km de Cossonay${s ? `<br><em>Parcelle : ${s.parcelle} · Accord : ${s.accord}</em>` : ""}`);
+  .bindPopup(() => {
+    const div = document.createElement("div");
+    div.style.cssText = "color:#222;font-size:13px;line-height:1.5";
+    div.innerHTML = `<strong>${p.name}</strong><br>
+      ${p.type} · ${p.area ?? "—"} ha <small>(${p.source ?? "estimation à vérifier"})</small><br>
+      ${p.tourism}<br>
+      ${haversineDistance(cossonay, p).toFixed(1)} km de Cossonay<br>
+      Dénivelé (300 m) : ${rel ? Math.round(rel.denivele) + " m" : "?"}
+      ${s ? `<br><em>Parcelle : ${s.parcelle} · Accord : ${s.accord}</em>` : ""}<br>`;
+    const btn = document.createElement("button");
+    btn.textContent = "Chercher des terrains ≥ 1 ha (1,5 km)";
+    btn.style.cssText = "margin-top:6px;padding:4px 8px;cursor:pointer";
+    btn.onclick = () => chercherTerrains(p, btn);
+    div.append(btn);
+    return div;
+  });
 }
 
 // Légende des types de sites
@@ -186,11 +320,18 @@ legend.addTo(map);
 // Clic sur la carte : type de surface de biodiversité (GetFeatureInfo)
 const codesSPB = {
   "556": "Jachère florale", "557": "Jachère tournante", "559": "Ourlet sur terre assolée",
-  "572": "Bande fleurie pour pollinisateurs",
+  "572": "Bande semée pour organismes utiles",
+  "594": "SPB spécifique à la région (terres ouvertes)",
   "611": "Prairie extensive", "612": "Prairie peu intensive",
   "617": "Pâturage extensif", "618": "Pâturage boisé",
-  "622": "Prairie extensive (estivage)", "623": "Prairie peu intensive (estivage)",
-  "634": "Prairie riveraine d'un cours d'eau"
+  "622": "Prairie de fauche d'estivage (type extensive)", "623": "Prairie de fauche d'estivage (type peu intensive)",
+  "635": "Prairie riveraine d'un cours d'eau",
+  "693": "SPB spécifique à la région (pâturages)", "694": "SPB spécifique à la région (prairies)",
+  "701": "Vigne", "717": "Vigne à biodiversité naturelle", "735": "Vigne (SPB spécifique à la région)",
+  "851": "Surface à litière", "852": "Haie, bosquet champêtre, berge boisée",
+  "904": "Fossé humide, mare, étang", "905": "Surface rudérale, tas d'épierrage, rocher", "906": "Mur de pierres sèches",
+  "921": "Arbres fruitiers haute-tige", "922": "Noyers", "923": "Châtaigniers", "950": "Bande culturale extensive",
+  "930": "Pâturage d'estivage", "933": "Pâturage communautaire", "935": "Prairie de fauche d'estivage", "936": "Surface à litière (estivage)"
 };
 const codesJachere = new Set(["556", "557"]);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -211,7 +352,7 @@ function popupSPB(features) {
   if (!features.length) return "Aucune surface de biodiversité à cet endroit.";
   return features.map(f => {
     const a = f.attrs, code = a.Code_utilisation;
-    const label = codesSPB[code] ?? (code ? `Code ${code}` : "Surface de biodiversité");
+    const label = codesSPB[code] ?? (code ? `Code ${code} (absent du catalogue fédéral 2026)` : "Surface de biodiversité");
     const badge = codesJachere.has(code)
       ? ` <span style="background:#2e7d32;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px">JACHÈRE</span>` : "";
     const m2 = a.Surface_m2 ? +a.Surface_m2 : null;
@@ -259,7 +400,8 @@ map.fitBounds(L.latLng(cossonay.lat, cossonay.lon).toBounds(radiusKm * 2000), {a
 const tableData = validPoints.map(p => ({
   Site: p.name,
   Type: p.type,
-  "Superficie (ha)": p.area,
+  "Superficie (ha)": p.area ?? "—",
+  "Dénivelé (m)": relief.get(p.name) ? Math.round(relief.get(p.name).denivele) : "?",
   "Source superficie": p.source ?? "estimation à vérifier",
   "Prestige": "★".repeat(p.prestige),
   "Distance (km)": +haversineDistance(cossonay, p).toFixed(1),
@@ -269,6 +411,9 @@ const tableData = validPoints.map(p => ({
 })).sort((a, b) => a["Distance (km)"] - b["Distance (km)"]);
 
 display(Inputs.table(tableData, {rows: 12})); 
+
+if (ecartes.length) display(html`<details><summary>${ecartes.length} site(s) écarté(s) pour dénivelé supérieur à ${denivMax} m</summary>
+  <ul>${ecartes.map(p => html`<li>${p.name} : ${Math.round(relief.get(p.name).denivele)} m</li>`)}</ul></details>`);
 
 display(html`<p style="color: var(--theme-foreground-muted); font-size: 12px;">
   ✈️ <strong>Note :</strong> les points marqués sur la carte respectent les critères :
