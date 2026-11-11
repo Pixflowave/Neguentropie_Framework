@@ -12,7 +12,6 @@ const manuels = [
   ["Penthalaz - Domaine", 6.5800, 46.6500, "Campagne", "Vues panoramiques, calme"],
   ["Ecublens - Parc", 6.5660, 46.5190, "Innovation", "EPFL, lac proche"],
   ["La Sarraz - Château", 6.5111, 46.6567, "Château", "Château, musée du cheval"],
-  ["Cully - Lavaux", 6.7311, 46.4880, "Vignoble", "Vignoble en terrasses, UNESCO"],
   ["Rolle - Château", 6.3415, 46.4588, "Château", "Château au bord du lac"],
   ["Grandson - Château", 6.6469, 46.8089, "Château", "Château, lac de Neuchâtel"],
   ["Sainte-Croix", 6.5000, 46.8222, "Jura", "Balcons du Jura, vue Alpes"],
