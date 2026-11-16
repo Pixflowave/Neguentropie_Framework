@@ -1,3 +1,5 @@
+import {readFileSync} from "node:fs";
+
 const cossonay = {lon: 6.5075, lat: 46.6202};
 
 // [nom, lon, lat, type, intérêt touristique]
@@ -28,15 +30,18 @@ const manuels = [
   ["Château de Prangins (Musée national)", 6.2516, 46.3942, "Musée + parc", "Château du XVIIIe siècle, jardins, vue sur le Léman"]
 ].map(([name, lon, lat, type, tourism]) => ({name, lon, lat, type, tourism}));
 
-// Aérodromes à code OACI (OpenStreetMap), avec un second serveur en secours
+// Aérodromes à code OACI (OpenStreetMap). Trois serveurs Overpass essayés tour à tour,
+// 90 s maximum chacun ; s'ils sont tous indisponibles, on reprend la copie de secours
+// (aerodromes-secours.json) au lieu de faire échouer le build.
 async function aerodromes() {
   const q = `[out:json][timeout:60];nwr["aeroway"="aerodrome"]["icao"](around:100000,${cossonay.lat},${cossonay.lon});out center tags;`;
-  for (const url of ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]) {
+  for (const url of ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]) {
     try {
       const r = await fetch(url, {
         method: "POST",
         headers: {"User-Agent": "neguentropie-carte/1.0", "Content-Type": "application/x-www-form-urlencoded"},
-        body: "data=" + encodeURIComponent(q)
+        body: "data=" + encodeURIComponent(q),
+        signal: AbortSignal.timeout(90_000)
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const d = await r.json();
@@ -51,7 +56,8 @@ async function aerodromes() {
       console.error(`Overpass ${url} : ${err.message}`);
     }
   }
-  throw new Error("Aérodromes : aucun serveur Overpass n'a répondu");
+  console.error("Aérodromes : aucun serveur Overpass n'a répondu, copie de secours utilisée");
+  return JSON.parse(readFileSync(new URL("./aerodromes-secours.json", import.meta.url), "utf8"));
 }
 
 // WGS84 → LV95 (formule d'approximation de swisstopo)
