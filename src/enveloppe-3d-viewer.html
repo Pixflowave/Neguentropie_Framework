@@ -30,7 +30,7 @@ body{background:var(--bg);color:var(--fg);font-family:Raleway,system-ui,sans-ser
 <label><input type="checkbox" data-g="low" checked>Jupe + câbles</label>
 <label><input type="checkbox" data-g="bsk" checked>Nacelle</label>
 <label><input type="checkbox" data-g="ctl" checked>Ligne de commande</label>
-<label><input type="checkbox" id="lbt">Étiquettes</label>
+<label><input type="checkbox" id="lbt" checked>Étiquettes</label>
 <label><input type="checkbox" id="mp" checked>Carte</label>
 <label><input type="radio" name="m" value="0" checked>1 · Arabie / Pacifique E</label>
 <label><input type="radio" name="m" value="1">2 · Pacifique N / Indien S</label>
@@ -42,7 +42,7 @@ body{background:var(--bg);color:var(--fg);font-family:Raleway,system-ui,sans-ser
 <label>axe 2 <input type="range" id="sz" min="-35" max="35" value="0"></label>
 </div>
 <div id="c"></div>
-<div id="hint">Glisser pour tourner dans tous les sens, molette ou pincement pour zoomer, clic droit ou deux doigts pour déplacer, double-clic pour recentrer. Arête 12 m, environ 21 m de haut, 3 passagers + 1 pilote. Les 3 options d'orientation de la carte déplacent aussi le scoop et les ventaux sur les faces les plus pauvres en terres, et règlent la soupape sur la marge d'océan autour du sommet (ajustable au curseur).</div>
+<div id="hint">Glisser pour tourner dans tous les sens, molette ou pincement pour zoomer, clic droit ou deux doigts pour déplacer, double-clic pour recentrer. Arête 12 m, environ 21 m de haut, 3 passagers + 1 pilote. Les 3 options d'orientation de la carte déplacent aussi le scoop et les ventaux sur les faces les plus pauvres en terres, et règlent la soupape sur la marge d'océan autour du sommet (ajustable au curseur). Carte Airocean : Philippe Rivière, contours Natural Earth · photo : NASA Earth Observatory, Blue Marble: Next Generation.</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
@@ -199,7 +199,7 @@ theme();matchMedia('(prefers-color-scheme: dark)').addEventListener('change',the
 function size(){const w=host.clientWidth,h=host.clientHeight;ren.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
 addEventListener('resize',size);size();
 const on={};document.querySelectorAll('[data-g]').forEach(c=>{on[c.dataset.g]=true;c.onchange=()=>{on[c.dataset.g]=c.checked;G[c.dataset.g].visible=c.checked}});
-let showL=false;document.getElementById('lbt').onchange=e=>showL=e.target.checked;
+let showL=true;document.getElementById('lbt').onchange=e=>showL=e.target.checked;
 // Caméra libre : tourner dans tous les sens (dessous compris), pincer/molette pour zoomer, clic droit ou deux doigts pour déplacer
 cam.position.set(0,8.5,57.4);sc.add(cam);cam.add(sun);sun.position.set(10,20,15);
 const ctl=new THREE.OrbitControls(cam,ren.domElement);

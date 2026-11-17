@@ -112,7 +112,7 @@ La démarche se déploie en cycles d'ateliers participatifs :
 Le projet mobilise conjointement des techniques constructives low-tech, des standards numériques ouverts et des dispositifs de traçabilité des savoirs.
 
 ### Architecture participative & Matérialités
-* **Version durable extérieure :** Conception d'un abri étanche intégrant la projection cartographique de Buckminster Fuller imprimée sur textile technique (Greenscreen Sea-Tex).
+* **Version durable extérieure :** Conception d'un abri étanche intégrant la carte Airocean de Buckminster Fuller imprimée sur textile technique (Greenscreen Sea-Tex).
 * **Cartographie en patchwork de tissus :** Globe terrestre constitué d'étoffes issues de différents continents, cousu avec des participants en relation avec chaque pays d'origine.
 * **Mobilier Paper Planet :** Gamme de mobilier (tabourets, tables basses polygonales) matérialisant les projections du monde développées par Philippe Rivière.
 

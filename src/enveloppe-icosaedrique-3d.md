@@ -10,7 +10,7 @@ toc: false
 
 ### La carte Airocean sur l’enveloppe
 
-L’enveloppe porte la carte Airocean (ou Dymaxion) de Buckminster Fuller, imaginée en 1943 et achevée en 1954. Fuller projette la Terre sur un icosaèdre de vingt triangles, puis le déplie à plat. Les continents y forment une seule île dans un seul océan, sans haut ni bas et presque sans déformation.
+L’enveloppe porte la carte Airocean de Buckminster Fuller, imaginée en 1943 et achevée en 1954. Fuller projette la Terre sur un icosaèdre de vingt triangles, puis le déplie à plat. Les continents y forment une seule île dans un seul océan, sans haut ni bas et presque sans déformation.
 
 Notre enveloppe est elle-même un icosaèdre, donc la carte y retrouve sa forme d’origine : chaque triangle correspond à une face. Dans la vue 3D, les trois orientations proposées placent le scoop et les ventaux sur les faces les moins chargées en terres. La soupape, au sommet, tombe dans l’océan.
 
@@ -115,11 +115,16 @@ const map = L.map(mapDiv, {
 let alive = true;
 invalidation.then(() => { alive = false; map.remove(); });
 
+// Aérodromes et contours de terrains : données OpenStreetMap (ODbL), donc mention
+// affichée en permanence, quel que soit le fond de carte.
+const attributionOsm = '&copy; <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>';
+map.attributionControl.addAttribution(attributionOsm);
+
 // Fonds swisstopo par défaut. OpenStreetMap reste proposé, mais ses tuiles ne sont
 // téléchargées que si l'utilisateur choisit ce fond (Leaflet ne charge pas une couche masquée).
 const planOsm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 20, maxNativeZoom: 19, zIndex: 2,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  attribution: attributionOsm
 });
 const plan = L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swisstlm3d-karte-farbe/default/current/3857/{z}/{x}/{y}.png", {
   maxZoom: 20, maxNativeZoom: 19, zIndex: 2, attribution: "&copy; swisstopo"
@@ -166,6 +171,9 @@ const liste = layersCtl.querySelector(".leaflet-control-layers-list");
 liste.style.cssText = "display:flex;flex-wrap:wrap;gap:4px 24px;";
 liste.querySelector(".leaflet-control-layers-separator").style.display = "none";
 
+// Échappe le texte inséré dans du HTML (noms venant d'OSM ou du fichier des sites)
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+
 const groupeSites = L.layerGroup().addTo(map);
 const terrains = L.layerGroup().addTo(map);
 
@@ -187,13 +195,14 @@ async function afficherTerrains(p, seuil, centrer = true) {
     const plat = t.denivele != null && t.denivele <= seuil;
     if (plat) plats++;
     L.polygon(t.contour, {color: plat ? "#00e676" : "#ff9800", weight: 2, fillOpacity: 0.25})
-      .bindTooltip(`${t.ha.toLocaleString("fr-CH")} ha · à ${t.dist} m de ${p.name}<br>${t.genre}<br>Dénivelé : ${t.denivele != null ? Math.round(t.denivele) + " m" : "?"}`)
+      .bindTooltip(`${t.ha.toLocaleString("fr-CH")} ha · à ${t.dist} m de ${esc(p.name)}<br>${esc(t.genre)}<br>Dénivelé : ${t.denivele != null ? Math.round(t.denivele) + " m" : "?"}`)
       .addTo(terrains);
   }
+  map.invalidateSize(); // la taille du conteneur peut avoir changé depuis la création
   if (centrer) map.fitBounds(L.latLng(p.lat, p.lon).toBounds(rayon * 2.2), {animate: false});
   infoTerrains.innerHTML = liste.length
-    ? `<strong>${p.name}</strong> : ${plats} terrain(s) plat(s) (dénivelé ≤ ${seuil} m) sur ${liste.length} terrain(s) d'au moins 1 ha, dans un rayon de ${rayon / 1000} km.`
-    : `<strong>${p.name}</strong> : aucun terrain d'au moins 1 ha dans un rayon de ${rayon / 1000} km.`;
+    ? `<strong>${esc(p.name)}</strong> : ${plats} terrain(s) plat(s) (dénivelé ≤ ${seuil} m) sur ${liste.length} terrain(s) d'au moins 1 ha, dans un rayon de ${rayon / 1000} km.`
+    : `<strong>${esc(p.name)}</strong> : aucun terrain d'au moins 1 ha dans un rayon de ${rayon / 1000} km.`;
   return {plats, total: liste.length};
 }
 
@@ -214,7 +223,6 @@ const codesSPB = {
   "930": "Pâturage d'estivage", "933": "Pâturage communautaire", "935": "Prairie de fauche d'estivage", "936": "Surface à litière (estivage)"
 };
 const codesJachere = new Set(["556", "557"]);
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 
 function parseFeatureInfo(txt) {
   const out = []; let layer = "", cur = null;
@@ -281,7 +289,7 @@ groupeSites.clearLayers();
 
 const used = [...new Set(validPoints.map(p => p.type))];
 legendDiv.innerHTML = "<strong>Type de site :</strong> " + used.map(t =>
-  `<span style="display:inline-flex;align-items:center;margin-right:14px;white-space:nowrap"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colorScale(t)};margin-right:6px"></span>${t}</span>`
+  `<span style="display:inline-flex;align-items:center;margin-right:14px;white-space:nowrap"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colorScale(t)};margin-right:6px"></span>${esc(t)}</span>`
 ).join("");
 
 L.circle([cossonay.lat, cossonay.lon], {
@@ -302,7 +310,7 @@ for (const p of validPoints) {
   .bindPopup(() => {
     const div = document.createElement("div");
     div.style.cssText = "color:#222;font-size:13px;line-height:1.5";
-    div.innerHTML = `<strong>${p.name}</strong><br>${p.type}<br>${p.tourism}<br>
+    div.innerHTML = `<strong>${esc(p.name)}</strong><br>${esc(p.type)}<br>${esc(p.tourism)}<br>
       ${haversineDistance(cossonay, p).toFixed(1)} km de Cossonay<br>
       Dénivelé (300 m) : ${p.denivele != null ? Math.round(p.denivele) + " m" : "?"}<br>`;
     if (p.type !== "Aérodrome") {
@@ -319,6 +327,8 @@ for (const p of validPoints) {
   });
 }
 
+// Sans ce recalcul, la carte s'est déjà ouverte au zoom 0 (taille du conteneur encore nulle)
+map.invalidateSize();
 if (etat.site) afficherTerrains(etat.site, denivMax, false);
 else map.fitBounds(L.latLng(cossonay.lat, cossonay.lon).toBounds(radiusKm * 2000), {animate: false});
 ```
@@ -351,8 +361,15 @@ display(html`<p style="color: var(--theme-foreground-muted); font-size: 12px;">
 
 ---
 
-#### Erwan BOZEC - Philippe Riviere - Luc Léger - Aline Perdereau, Néguentropie
-Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
+#### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie
+Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](https://artlibre.org).
+
+**Sources et crédits de cette page**
+- Carte Airocean : Philippe Rivière, d'après Buckminster Fuller ([notebooks Observable](https://observablehq.com/@fil/airocean-projection)).
+- Contours des continents : [Natural Earth](https://www.naturalearthdata.com/) (domaine public), via [visionscarto-world-atlas](https://github.com/Fil/visionscarto-world-atlas).
+- Photo de la Terre : NASA Earth Observatory, [Blue Marble: Next Generation](https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography-bathymetry/) (janvier 2004, relief et bathymétrie).
+- Logo du Fediverse : Eukombos et Dr. Quadragon (domaine public).
+- Carte des sites : fonds © swisstopo · aérodromes et terrains © [contributeurs OpenStreetMap](https://www.openstreetmap.org/copyright) (ODbL) · surfaces de biodiversité : geodienste.ch, cantons / OFAG.
 
 <img src="artefacts-logo1.png" alt="Artefacts" width="150">
 
