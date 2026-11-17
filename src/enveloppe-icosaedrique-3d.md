@@ -10,7 +10,7 @@ toc: false
 
 ### La carte Airocean sur l’enveloppe
 
-L’enveloppe porte la carte Airocean de Buckminster Fuller, imaginée en 1943 et achevée en 1954. Fuller projette la Terre sur un icosaèdre de vingt triangles, puis le déplie à plat. Les continents y forment une seule île dans un seul océan, sans haut ni bas et presque sans déformation.
+L’enveloppe porte la carte Airocean, publiée par Buckminster Fuller en 1954 sous le nom « Airocean World Map » après une première version en 1943. Fuller projette la Terre sur un icosaèdre de vingt triangles, puis le déplie à plat. Il oriente l’icosaèdre de façon très précise pour qu’aucun continent ne soit coupé : les terres y forment une seule île dans un seul océan, sans haut ni bas. Sa transformation des triangles, formalisée par Robert W. Gray et implémentée par Philippe Rivière, rend la projection presque équivalente : les surfaces sont quasiment conservées.
 
 Notre enveloppe est elle-même un icosaèdre, donc la carte y retrouve sa forme d’origine : chaque triangle correspond à une face. Dans la vue 3D, les trois orientations proposées placent le scoop et les ventaux sur les faces les moins chargées en terres. La soupape, au sommet, tombe dans l’océan.
 
