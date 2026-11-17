@@ -115,11 +115,15 @@ const map = L.map(mapDiv, {
 let alive = true;
 invalidation.then(() => { alive = false; map.remove(); });
 
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 20, maxNativeZoom: 19, zIndex: 1,
+// Fonds swisstopo par défaut. OpenStreetMap reste proposé, mais ses tuiles ne sont
+// téléchargées que si l'utilisateur choisit ce fond (Leaflet ne charge pas une couche masquée).
+const planOsm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 20, maxNativeZoom: 19, zIndex: 2,
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
-
+});
+const plan = L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swisstlm3d-karte-farbe/default/current/3857/{z}/{x}/{y}.png", {
+  maxZoom: 20, maxNativeZoom: 19, zIndex: 2, attribution: "&copy; swisstopo"
+});
 const satellite = L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg", {
   maxZoom: 20, maxNativeZoom: 20, zIndex: 2, attribution: "&copy; swisstopo"
 });
@@ -140,7 +144,8 @@ const dispo = L.tileLayer.wms(wmsUrl, {...wmsOpts, layers: "disponibilite_canton
 
 const controleCouches = L.control.layers(
   {
-    "Plan (OpenStreetMap)": L.layerGroup(),
+    "Plan (swisstopo)": plan,
+    "Plan (OpenStreetMap)": planOsm,
     "Vue satellite (swisstopo)": satellite,
     "Carte nationale, courbes de niveau (swisstopo)": carteNationale
   },

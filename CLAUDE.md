@@ -31,6 +31,7 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 ### Carte des sites de vol
 
+- Fonds de carte : swisstopo par défaut (satellite affiché à l'ouverture, plan swissTLM3D, carte nationale, relief). « Plan (OpenStreetMap) » reste au choix, mais n'est jamais chargé d'office, pour ménager les serveurs OSM (depuis le 2026-11-17). Les fonds swisstopo ne couvrent que la Suisse et ses abords.
 - Les sites sont choisis à la main dans [src/data/sites-manuels.json](src/data/sites-manuels.json).
 - Les aérodromes viennent d'Overpass ([src/data/sites.json.js](src/data/sites.json.js)), avec une copie de secours dans `aerodromes-secours.json`. Overpass sature souvent : il ne doit jamais être indispensable au build.
 - Les terrains de 1 ha ou plus situés dans un rayon de 2 km sont précalculés par `npm run terrains` (sortie dans [src/data/terrains.json](src/data/terrains.json)). Relancer environ une fois par an, ou `npm run terrains -- "Nom"` pour un seul site.
@@ -50,4 +51,5 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 - Comparer les couleurs du logo avec la version Mattermost si besoin.
 - Gérer les multipolygones dans la recherche de terrains.
+- Si le plan OSM devient très utilisé : générer nos propres tuiles vectorielles (extrait Geofabrik ou Protomaps → un fichier PMTiles pour la région, affiché avec `protomaps-leaflet`). Interdit d'aspirer les tuiles de tile.openstreetmap.org dans le build.
 - Tenir ce fichier à jour à chaque évolution notable.
