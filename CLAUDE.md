@@ -41,7 +41,7 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 | Date | Commit | Changement |
 |---|---|---|
-| 2026-11-17 | (ce commit) | Textes Airocean et Fediverse en deux colonnes, police Raleway |
+| 2026-11-17 | bcf06b7 | Textes Airocean et Fediverse en deux colonnes, police Raleway |
 | 2026-11-17 | dbcc66f | Ajout de CLAUDE.md |
 | 2026-11-17 | 162425c | Vue 3D : logo Fediverse, caméra libre, étiquettes en colonnes |
 | 2026-11-17 | 3f34de7 | Terrains précalculés autour des sites choisis |
