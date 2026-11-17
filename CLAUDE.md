@@ -6,10 +6,13 @@ https://pixflowave.github.io/Neguentropie_Framework/
 - Le déploiement se fait par GitHub Actions ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) à chaque push sur `main` (environ 4 min). Plus de build quotidien depuis le 2026-11-17.
 - `npm run dev` : aperçu local · `npm run build` : génère `dist/`.
 - Répondre en français. Ne faire de commit ou de push qu'avec l'accord d'Erwan.
+- **Police** : Raleway sur tout le site, chargée depuis Google Fonts dans le `head` de [observablehq.config.js](observablehq.config.js). Elle remplace `--serif` et `--sans-serif`, avec des chiffres alignés (`font-variant-numeric: lining-nums`). La vue 3D charge aussi Raleway de son côté.
+- **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »
 
-[src/enveloppe-icosaedrique-3d.md](src/enveloppe-icosaedrique-3d.md) contient deux parties :
+[src/enveloppe-icosaedrique-3d.md](src/enveloppe-icosaedrique-3d.md) contient trois parties :
+- deux colonnes de texte (grille `grid grid-cols-2`) sous le titre : « La carte Airocean sur l'enveloppe » et « Le logo du Fediverse sous la nacelle ». Le texte a été validé par Erwan. Ne pas y ajouter de rapprochement avec Tiers-Lieux Édu : leur logo est un hexagone, pas le logo du Fediverse, et Erwan a écarté l'idée ;
 - la vue 3D, intégrée en iframe ;
 - la carte Leaflet des sites de vol autour de Cossonay.
 
@@ -38,6 +41,8 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 | Date | Commit | Changement |
 |---|---|---|
+| 2026-11-17 | (ce commit) | Textes Airocean et Fediverse en deux colonnes, police Raleway |
+| 2026-11-17 | dbcc66f | Ajout de CLAUDE.md |
 | 2026-11-17 | 162425c | Vue 3D : logo Fediverse, caméra libre, étiquettes en colonnes |
 | 2026-11-17 | 3f34de7 | Terrains précalculés autour des sites choisis |
 

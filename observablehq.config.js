@@ -22,7 +22,12 @@ export default {
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
-  head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32">',
+  // Police Raleway sur tout le site (texte courant, titres, menus, cartes)
+  head: `<link rel="icon" href="observable.png" type="image/png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400..800;1,400..800&display=swap">
+<style>:root{--serif:Raleway,system-ui,sans-serif;--sans-serif:Raleway,system-ui,sans-serif}body{font-variant-numeric:lining-nums}</style>`,
 
   // The path to the source root.
 

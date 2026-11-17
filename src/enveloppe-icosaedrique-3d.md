@@ -5,6 +5,27 @@ toc: false
 
 # Enveloppe icosaédrique 3 750 m³
 
+<div class="grid grid-cols-2" style="gap: 2rem; margin-bottom: 1.5rem;">
+<div>
+
+### La carte Airocean sur l’enveloppe
+
+L’enveloppe porte la carte Airocean (ou Dymaxion) de Buckminster Fuller, imaginée en 1943 et achevée en 1954. Fuller projette la Terre sur un icosaèdre de vingt triangles, puis le déplie à plat. Les continents y forment une seule île dans un seul océan, sans haut ni bas et presque sans déformation.
+
+Notre enveloppe est elle-même un icosaèdre, donc la carte y retrouve sa forme d’origine : chaque triangle correspond à une face. Dans la vue 3D, les trois orientations proposées placent le scoop et les ventaux sur les faces les moins chargées en terres. La soupape, au sommet, tombe dans l’océan.
+
+</div>
+<div>
+
+### Le logo du Fediverse sous la nacelle
+
+Sous la nacelle, les câbles du plancher dessinent une étoile et les patins en cuir un pentagone. Une fois colorés, ils forment le logo du Fediverse : cinq nœuds tous reliés entre eux. Eukombos et Dr. Quadragon l’ont créé en 2018 et l’ont placé dans le domaine public.
+
+Le Fediverse est un réseau social sans centre : des serveurs indépendants (Mastodon, PeerTube…) y communiquent grâce à un protocole commun. Il répond bien à une carte où aucun continent n’occupe le centre.
+
+</div>
+</div>
+
 ```js
 import {html} from "npm:htl";
 const viewerUrl = await FileAttachment("enveloppe-3d-viewer.html").url();
@@ -31,6 +52,7 @@ display(html`
 </div>
 `);
 ```
+
 ---
 
 ## 🎈 Points de décollage potentiels de montgolfière
