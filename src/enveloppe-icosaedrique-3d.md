@@ -56,33 +56,6 @@ function haversineDistance(coord1, coord2) {
 
 const types = [...new Set(sites.map(p => p.type))];
 const colorScale = d3.scaleOrdinal(types, d3.quantize(t => d3.interpolateRainbow(t * 0.9), types.length));
-
-// Altitude en direct (utilisée pour les terrains voisins)
-function toLV95(lat, lon) {
-  const p = (lat * 3600 - 169028.66) / 10000, l = (lon * 3600 - 26782.5) / 10000;
-  const E = 2600072.37 + 211455.93 * l - 10938.51 * l * p - 0.36 * l * p ** 2 - 44.54 * l ** 3;
-  const N = 1200147.07 + 308807.95 * p + 3745.25 * l ** 2 + 76.63 * p ** 2 - 194.56 * l ** 2 * p + 119.79 * p ** 3;
-  return {E, N};
-}
-
-async function hauteur(lat, lon) {
-  const k = `h:${lat.toFixed(5)},${lon.toFixed(5)}`;
-  try { const c = localStorage.getItem(k); if (c) return +c; } catch {}
-  const {E, N} = toLV95(lat, lon);
-  const r = await fetch(`https://api3.geo.admin.ch/rest/services/height?easting=${E.toFixed(1)}&northing=${N.toFixed(1)}&sr=2056`);
-  const h = parseFloat((await r.json()).height);
-  if (!Number.isFinite(h)) throw new Error("hauteur indisponible");
-  try { localStorage.setItem(k, String(h)); } catch {}
-  return h;
-}
-
-async function pool(items, fn, n = 6) {
-  const out = new Array(items.length); let i = 0;
-  await Promise.all(Array.from({length: n}, async () => {
-    while (i < items.length) { const j = i++; try { out[j] = await fn(items[j]); } catch { out[j] = null; } }
-  }));
-  return out;
-}
 ```
 
 ```js
@@ -110,6 +83,8 @@ const mapDiv = display(document.createElement("div"));
 mapDiv.style = "height: 600px; max-height: 70vh; width: 100%; border-radius: 8px;";
 const legendDiv = display(document.createElement("div"));
 legendDiv.style = "margin-top: 8px; font-size: 13px; line-height: 1.6;";
+const infoTerrains = display(document.createElement("div"));
+infoTerrains.style = "margin-top: 4px; font-size: 13px; line-height: 1.6;";
 
 const map = L.map(mapDiv, {
   zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false,
@@ -167,60 +142,32 @@ liste.querySelector(".leaflet-control-layers-separator").style.display = "none";
 const groupeSites = L.layerGroup().addTo(map);
 const terrains = L.layerGroup().addTo(map);
 
-// Terrains ≥ 1 ha autour d'un site, avec leur dénivelé
-async function chercherTerrains(p, bouton, seuil) {
-  bouton.disabled = true; bouton.textContent = "Recherche…";
-  const q = `[out:json][timeout:25];(
-    way(around:1500,${p.lat},${p.lon})["landuse"~"^(meadow|farmland|grass|greenfield)$"];
-    way(around:1500,${p.lat},${p.lon})["leisure"~"^(park|pitch|common)$"];
-    way(around:1500,${p.lat},${p.lon})["natural"="grassland"];
-  );out geom;`;
-  try {
-    const r = await fetch("https://overpass-api.de/api/interpreter", {method: "POST", body: "data=" + encodeURIComponent(q)});
-    const data = await r.json();
-    if (!alive) return;
-    const candidats = [];
-    for (const w of data.elements) {
-      const g = w.geometry;
-      if (!g || g.length < 4) continue;
-      if (g[0].lat !== g.at(-1).lat || g[0].lon !== g.at(-1).lon) continue;
-      const poly = {type: "Polygon", coordinates: [g.map(({lon, lat}) => [lon, lat])]};
-      const a = d3.geoArea(poly);
-      const ha = Math.min(a, 4 * Math.PI - a) * 6371000 ** 2 / 10000;
-      if (ha < 1) continue;
-      const [clon, clat] = d3.geoCentroid(poly);
-      candidats.push({
-        g, ha, clat, clon,
-        genre: w.tags?.landuse ?? w.tags?.leisure ?? w.tags?.natural,
-        dist: Math.round(haversineDistance(p, {lat: clat, lon: clon}) * 1000)
-      });
-    }
-    bouton.textContent = `Mesure du dénivelé de ${candidats.length} terrain(s)…`;
-    // Dénivelé d'un terrain : centre + jusqu'à 8 points répartis sur son contour
-    const mesures = await pool(candidats, async c => {
-      const pas = Math.max(1, Math.floor(c.g.length / 8));
-      const pts = [{lat: c.clat, lon: c.clon}, ...c.g.filter((_, i) => i % pas === 0).slice(0, 8)];
-      const hs = await Promise.all(pts.map(pt => hauteur(pt.lat, pt.lon)));
-      return Math.max(...hs) - Math.min(...hs);
-    }, 4);
-    if (!alive) return;
-    terrains.clearLayers();
-    let plats = 0;
-    candidats.forEach((c, i) => {
-      const d = mesures[i], plat = d != null && d <= seuil;
-      if (plat) plats++;
-      L.polygon(c.g.map(({lat, lon}) => [lat, lon]), {color: plat ? "#00e676" : "#ff9800", weight: 2, fillOpacity: 0.25})
-        .bindTooltip(`${c.ha.toFixed(1)} ha · à ${c.dist} m de ${p.name}<br>${c.genre}<br>Dénivelé : ${d != null ? Math.round(d) + " m" : "?"}`)
-        .addTo(terrains);
-    });
-    bouton.textContent = candidats.length
-      ? `${plats} terrain(s) plat(s) sur ${candidats.length} (≥ 1 ha)`
-      : "Aucun terrain ≥ 1 ha trouvé";
-  } catch (err) {
-    bouton.textContent = "Recherche impossible : réessayer";
-  } finally {
-    bouton.disabled = false;
+// Terrains ≥ 1 ha autour des sites choisis, calculés une fois pour toutes
+// (npm run terrains → src/data/terrains.json) : rien n'est téléchargé à la volée.
+const etat = {site: null};
+let donneesTerrains = null;
+async function afficherTerrains(p, seuil, centrer = true) {
+  etat.site = p;
+  donneesTerrains ??= await FileAttachment("data/terrains.json").json();
+  if (!alive) return {plats: 0, total: 0};
+  const {rayon, sites: parSite} = donneesTerrains;
+  const liste = parSite[p.name] ?? [];
+  terrains.clearLayers();
+  L.circle([p.lat, p.lon], {radius: rayon, color: "#fff", weight: 1.5, dashArray: "4 6", fill: false, interactive: false})
+    .addTo(terrains);
+  let plats = 0;
+  for (const t of liste) {
+    const plat = t.denivele != null && t.denivele <= seuil;
+    if (plat) plats++;
+    L.polygon(t.contour, {color: plat ? "#00e676" : "#ff9800", weight: 2, fillOpacity: 0.25})
+      .bindTooltip(`${t.ha.toLocaleString("fr-CH")} ha · à ${t.dist} m de ${p.name}<br>${t.genre}<br>Dénivelé : ${t.denivele != null ? Math.round(t.denivele) + " m" : "?"}`)
+      .addTo(terrains);
   }
+  if (centrer) map.fitBounds(L.latLng(p.lat, p.lon).toBounds(rayon * 2.2), {animate: false});
+  infoTerrains.innerHTML = liste.length
+    ? `<strong>${p.name}</strong> : ${plats} terrain(s) plat(s) (dénivelé ≤ ${seuil} m) sur ${liste.length} terrain(s) d'au moins 1 ha, dans un rayon de ${rayon / 1000} km.`
+    : `<strong>${p.name}</strong> : aucun terrain d'au moins 1 ha dans un rayon de ${rayon / 1000} km.`;
+  return {plats, total: liste.length};
 }
 
 // Clic sur la carte : type de surface de biodiversité (GetFeatureInfo)
@@ -331,35 +278,45 @@ for (const p of validPoints) {
     div.innerHTML = `<strong>${p.name}</strong><br>${p.type}<br>${p.tourism}<br>
       ${haversineDistance(cossonay, p).toFixed(1)} km de Cossonay<br>
       Dénivelé (300 m) : ${p.denivele != null ? Math.round(p.denivele) + " m" : "?"}<br>`;
-    const btn = document.createElement("button");
-    btn.textContent = "Chercher des terrains ≥ 1 ha (1,5 km)";
-    btn.style.cssText = "margin-top:6px;padding:4px 8px;cursor:pointer";
-    btn.onclick = () => chercherTerrains(p, btn, denivMax);
-    div.append(btn);
+    if (p.type !== "Aérodrome") {
+      const btn = document.createElement("button");
+      btn.textContent = "Afficher les terrains ≥ 1 ha (2 km)";
+      btn.style.cssText = "margin-top:6px;padding:4px 8px;cursor:pointer";
+      btn.onclick = async () => {
+        const {plats, total} = await afficherTerrains(p, denivMax);
+        btn.textContent = total ? `${plats} terrain(s) plat(s) sur ${total} (≥ 1 ha)` : "Aucun terrain ≥ 1 ha";
+      };
+      div.append(btn);
+    }
     return div;
   });
 }
 
-map.fitBounds(L.latLng(cossonay.lat, cossonay.lon).toBounds(radiusKm * 2000), {animate: false});
+if (etat.site) afficherTerrains(etat.site, denivMax, false);
+else map.fitBounds(L.latLng(cossonay.lat, cossonay.lon).toBounds(radiusKm * 2000), {animate: false});
 ```
 
 ```js
-// Liste des sites : cartes lisibles sur smartphone
-const tri = [...validPoints].sort((a, b) => haversineDistance(cossonay, a) - haversineDistance(cossonay, b));
+// Liste des sites choisis (les aérodromes restent sur la carte, sans bouton)
+const tri = validPoints.filter(p => p.type !== "Aérodrome").sort((a, b) => haversineDistance(cossonay, a) - haversineDistance(cossonay, b));
 
 display(html`<div style="display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-top: 16px;">
-  ${tri.map(p => html`<div style="border: 1px solid var(--theme-foreground-faintest); border-radius: 8px; padding: 8px 12px;">
+  ${tri.map(p => html`<button type="button" onclick=${() => {
+      afficherTerrains(p, denivMax);
+      mapDiv.scrollIntoView({behavior: "smooth", block: "center"});
+    }} style="text-align: left; font: inherit; color: inherit; background: none; cursor: pointer; border: 1px solid var(--theme-foreground-faintest); border-radius: 8px; padding: 8px 12px;">
     <strong>${p.name}</strong><br>
     <span style="color: var(--theme-foreground-muted); font-size: 13px;">${p.type} · ${haversineDistance(cossonay, p).toFixed(1)} km · dénivelé ${p.denivele != null ? Math.round(p.denivele) + " m" : "?"}</span><br>
-    <small>${p.tourism}</small>
-  </div>`)}
+    <small>${p.tourism}</small><br>
+    <small style="color: var(--theme-foreground-focus);">Voir les terrains sur la carte</small>
+  </button>`)}
 </div>`);
 
 if (ecartes.length) display(html`<details style="margin-top: 16px;"><summary>${ecartes.length} site(s) écarté(s) pour dénivelé supérieur à ${denivMax} m</summary>
   <ul>${ecartes.map(p => html`<li>${p.name} : ${Math.round(p.denivele)} m</li>`)}</ul></details>`);
 
 display(html`<p style="color: var(--theme-foreground-muted); font-size: 12px;">
-  ✈️ <strong>Note :</strong> les sites affichés respectent le seuil de dénivelé choisi. Le bouton de chaque fiche cherche des terrains d'au moins 1 hectare à proximité.
+  ✈️ <strong>Note :</strong> les sites affichés respectent le seuil de dénivelé choisi. Cliquez sur un site, dans la liste ou sur la carte, pour voir les terrains d'au moins 1 hectare dans un rayon de 2 km (en vert : dénivelé sous le seuil). Les aérodromes, visibles uniquement sur la carte, servent eux-mêmes de point de décollage, avec l'accord du gestionnaire.
   <strong>À valider avec les propriétaires et autorités locales.</strong><br>
   Surfaces de biodiversité : source geodienste.ch, cantons / OFAG. Elles reflètent les déclarations agricoles, pas forcément l'état actuel des champs.
 </p>`);

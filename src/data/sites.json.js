@@ -2,33 +2,8 @@ import {readFileSync} from "node:fs";
 
 const cossonay = {lon: 6.5075, lat: 46.6202};
 
-// [nom, lon, lat, type, intérêt touristique]
-const manuels = [
-  ["Lausanne - Ouchy", 6.6323, 46.5197, "Lac + Ville", "Lac Léman, vue Alpes"],
-  ["Château de Chillon", 6.9275, 46.4116, "Patrimoine UNESCO", "Château médiéval"],
-  ["Vevey - Riviera", 6.8358, 46.4750, "Lac + Culture", "Chaplin's World, Nestlé"],
-  ["Montreux - Château", 6.911, 46.4330, "Lac + Montagne", "Jazz Festival, vue Lavaux"],
-  ["Jussy - Chateaux du Crest", 6.2562, 46.2362, "Vignoble", "Vignobles, vue Châteaux"],
-  ["Yverdon-les-Bains", 6.6398, 46.7781, "Thermal + Nature", "Thermes, parc naturel"],
-  ["Nyon - Domaine de Divonne", 6.1376, 46.3575, "Lac + Golf", "Golf, lac, vue Jura"],
-  ["Penthalaz - Domaine", 6.5800, 46.6500, "Campagne", "Vues panoramiques, calme"],
-  ["Ecublens - Parc", 6.5660, 46.5190, "Innovation", "EPFL, lac proche"],
-  ["La Sarraz - Château", 6.5111, 46.6567, "Château", "Château, musée du cheval"],
-  ["Rolle - Château", 6.3415, 46.4588, "Château", "Château au bord du lac"],
-  ["Grandson - Château", 6.6469, 46.8089, "Château", "Château, lac de Neuchâtel"],
-  ["Sainte-Croix", 6.5000, 46.8222, "Jura", "Balcons du Jura, vue Alpes"],
-  ["Estavayer-le-Lac", 6.8478, 46.8500, "Lac + Ville", "Vieille ville, château de Chenaux"],
-  ["Gruyères", 7.0833, 46.5833, "Château", "Château, village médiéval"],
-  ["Château-d'Œx", 7.1389, 46.4764, "Montagne + Ballons", "Capitale des ballons, Alpes vaudoises"],
-  ["Avenches", 7.0425, 46.8804, "Patrimoine romain", "Site romain, plaine de la Broye"],
-  ["Neuchâtel", 6.9313, 46.9920, "Lac + Ville", "Lac, château, vieille ville"],
-  ["Fribourg", 7.1613, 46.8065, "Ville historique", "Vieille ville, cathédrale"],
-  ["Morat", 7.1136, 46.9269, "Lac + Ville", "Ville fortifiée, lac de Morat"],
-  ["Gstaad", 7.2861, 46.4749, "Montagne + Ballons", "Station alpine de prestige"],
-  ["Berne", 7.4474, 46.9480, "Ville historique", "Vieille ville UNESCO, Alpes"],
-  ["Zentrum Paul Klee (Berne)", 7.4739, 46.9492, "Musée + parc", "Musée de Renzo Piano, parc de sculptures"],
-  ["Château de Prangins (Musée national)", 6.2516, 46.3942, "Musée + parc", "Château du XVIIIe siècle, jardins, vue sur le Léman"]
-].map(([name, lon, lat, type, tourism]) => ({name, lon, lat, type, tourism}));
+// Sites choisis à la main (nom, coordonnées, type, intérêt touristique)
+const manuels = JSON.parse(readFileSync(new URL("./sites-manuels.json", import.meta.url), "utf8"));
 
 // Aérodromes à code OACI (OpenStreetMap). Trois serveurs Overpass essayés tour à tour,
 // 90 s maximum chacun ; s'ils sont tous indisponibles, on reprend la copie de secours
@@ -49,7 +24,7 @@ async function aerodromes() {
         .map(e => ({
           lat: e.lat ?? e.center?.lat, lon: e.lon ?? e.center?.lon,
           name: `${e.tags?.name ?? "Aérodrome"} (${e.tags.icao})`,
-          type: "Aérodrome", tourism: "Décollage possible avec autorisation de la tour"
+          type: "Aérodrome", tourism: "Décollage depuis l'aérodrome, avec l'accord du gestionnaire"
         }))
         .filter((a, i, tab) => a.lat != null && a.lon != null && tab.findIndex(t => t.name === a.name) === i);
     } catch (err) {

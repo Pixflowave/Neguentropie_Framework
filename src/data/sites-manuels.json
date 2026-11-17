@@ -1,0 +1,170 @@
+[
+ {
+  "name": "Lausanne - Ouchy",
+  "lon": 6.6323,
+  "lat": 46.5197,
+  "type": "Lac + Ville",
+  "tourism": "Lac Léman, vue Alpes"
+ },
+ {
+  "name": "Château de Chillon",
+  "lon": 6.9275,
+  "lat": 46.4116,
+  "type": "Patrimoine UNESCO",
+  "tourism": "Château médiéval"
+ },
+ {
+  "name": "Vevey - Riviera",
+  "lon": 6.8358,
+  "lat": 46.475,
+  "type": "Lac + Culture",
+  "tourism": "Chaplin's World, Nestlé"
+ },
+ {
+  "name": "Montreux - Château",
+  "lon": 6.911,
+  "lat": 46.433,
+  "type": "Lac + Montagne",
+  "tourism": "Jazz Festival, vue Lavaux"
+ },
+ {
+  "name": "Jussy - Chateaux du Crest",
+  "lon": 6.2562,
+  "lat": 46.2362,
+  "type": "Vignoble",
+  "tourism": "Vignobles, vue Châteaux"
+ },
+ {
+  "name": "Yverdon-les-Bains",
+  "lon": 6.6398,
+  "lat": 46.7781,
+  "type": "Thermal + Nature",
+  "tourism": "Thermes, parc naturel"
+ },
+ {
+  "name": "Nyon - Domaine de Divonne",
+  "lon": 6.1376,
+  "lat": 46.3575,
+  "type": "Lac + Golf",
+  "tourism": "Golf, lac, vue Jura"
+ },
+ {
+  "name": "Penthalaz - Domaine",
+  "lon": 6.58,
+  "lat": 46.65,
+  "type": "Campagne",
+  "tourism": "Vues panoramiques, calme"
+ },
+ {
+  "name": "Ecublens - Parc",
+  "lon": 6.566,
+  "lat": 46.519,
+  "type": "Innovation",
+  "tourism": "EPFL, lac proche"
+ },
+ {
+  "name": "La Sarraz - Château",
+  "lon": 6.5111,
+  "lat": 46.6567,
+  "type": "Château",
+  "tourism": "Château, musée du cheval"
+ },
+ {
+  "name": "Rolle - Château",
+  "lon": 6.3415,
+  "lat": 46.4588,
+  "type": "Château",
+  "tourism": "Château au bord du lac"
+ },
+ {
+  "name": "Grandson - Château",
+  "lon": 6.6469,
+  "lat": 46.8089,
+  "type": "Château",
+  "tourism": "Château, lac de Neuchâtel"
+ },
+ {
+  "name": "Sainte-Croix",
+  "lon": 6.5,
+  "lat": 46.8222,
+  "type": "Jura",
+  "tourism": "Balcons du Jura, vue Alpes"
+ },
+ {
+  "name": "Estavayer-le-Lac",
+  "lon": 6.8478,
+  "lat": 46.85,
+  "type": "Lac + Ville",
+  "tourism": "Vieille ville, château de Chenaux"
+ },
+ {
+  "name": "Gruyères",
+  "lon": 7.0833,
+  "lat": 46.5833,
+  "type": "Château",
+  "tourism": "Château, village médiéval"
+ },
+ {
+  "name": "Château-d'Œx",
+  "lon": 7.1389,
+  "lat": 46.4764,
+  "type": "Montagne + Ballons",
+  "tourism": "Capitale des ballons, Alpes vaudoises"
+ },
+ {
+  "name": "Avenches",
+  "lon": 7.0425,
+  "lat": 46.8804,
+  "type": "Patrimoine romain",
+  "tourism": "Site romain, plaine de la Broye"
+ },
+ {
+  "name": "Neuchâtel",
+  "lon": 6.9313,
+  "lat": 46.992,
+  "type": "Lac + Ville",
+  "tourism": "Lac, château, vieille ville"
+ },
+ {
+  "name": "Fribourg",
+  "lon": 7.1613,
+  "lat": 46.8065,
+  "type": "Ville historique",
+  "tourism": "Vieille ville, cathédrale"
+ },
+ {
+  "name": "Morat",
+  "lon": 7.1136,
+  "lat": 46.9269,
+  "type": "Lac + Ville",
+  "tourism": "Ville fortifiée, lac de Morat"
+ },
+ {
+  "name": "Gstaad",
+  "lon": 7.2861,
+  "lat": 46.4749,
+  "type": "Montagne + Ballons",
+  "tourism": "Station alpine de prestige"
+ },
+ {
+  "name": "Berne",
+  "lon": 7.4474,
+  "lat": 46.948,
+  "type": "Ville historique",
+  "tourism": "Vieille ville UNESCO, Alpes"
+ },
+ {
+  "name": "Zentrum Paul Klee (Berne)",
+  "lon": 7.4739,
+  "lat": 46.9492,
+  "type": "Musée + parc",
+  "tourism": "Musée de Renzo Piano, parc de sculptures"
+ },
+ {
+  "name": "Château de Prangins (Musée national)",
+  "lon": 6.2516,
+  "lat": 46.3942,
+  "type": "Musée + parc",
+  "tourism": "Château du XVIIIe siècle, jardins, vue sur le Léman"
+ }
+]

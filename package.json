@@ -6,7 +6,8 @@
     "build": "observable build",
     "dev": "observable preview",
     "deploy": "observable deploy",
-    "observable": "observable"
+    "observable": "observable",
+    "terrains": "node scripts/generer-terrains.mjs"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",
