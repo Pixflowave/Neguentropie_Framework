@@ -173,6 +173,7 @@ Pour valoriser les apprentissages informels et les savoir-faire mobilisés lors 
 #### Néguanthropocène &mdash; Erwan Bozec, Philippe Carré, Manuel Herreno, Jean-Paul Thibeau, Camille Guyon Taillens, Olivier Heinry
 Copyleft : [Licence Art Libre](http://www.artlibre.org) &middot; Projet issu de *Néguentropie* (2020)
 
-<img src="artefacts-logo1.png" alt="Artefacts" width="150">
-
-[https://artefacts.coop](https://artefacts.coop/)
+<div style="text-align: center;">
+  <img src="artefacts-logo1.png" alt="Artefacts" width="150"><br>
+  <a href="https://artefacts.coop/">https://artefacts.coop</a>
+</div>

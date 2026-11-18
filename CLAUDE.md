@@ -40,15 +40,26 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 - Fonds de carte : swisstopo par défaut (satellite affiché à l'ouverture, plan swissTLM3D, carte nationale, relief). « Plan (OpenStreetMap) » reste au choix, mais n'est jamais chargé d'office, pour ménager les serveurs OSM (depuis le 2026-11-17). Les fonds swisstopo ne couvrent que la Suisse et ses abords.
 - Les sites sont choisis à la main dans [src/data/sites-manuels.json](src/data/sites-manuels.json).
-- Les aérodromes viennent d'Overpass ([src/data/sites.json.js](src/data/sites.json.js)), avec une copie de secours dans `aerodromes-secours.json`. Overpass sature souvent : il ne doit jamais être indispensable au build.
-- Les terrains de 1 ha ou plus situés dans un rayon de 2 km sont précalculés par `npm run terrains` (sortie dans [src/data/terrains.json](src/data/terrains.json)). Relancer environ une fois par an, ou `npm run terrains -- "Nom"` pour un seul site.
+- **Données OSM : GeoDesk, plus d'Overpass** (depuis le 2026-11-18). Bibliothèque locale `donnees-osm/romandie.gol` (≈ 740 Mo, 291 tuiles, ignorée par git), interrogée avec l'outil `gol` (binaire autonome, https://www.geodesk.com/download, version 2.5.3 testée ; variable `GOL` si `gol` n'est pas dans le PATH). Tout passe par [scripts/osm.mjs](scripts/osm.mjs).
+  - `npm run osm` (re)charge la bibliothèque depuis le fichier planète GOB d'openplanetdata.com, sur la zone des sites choisis (+ 0,04°) et du cercle de 100 km des aérodromes (`5.198,45.72,7.817,47.52`) : seules les tuiles utiles arrivent, en quelques secondes. La zone chargée est notée dans `donnees-osm/zone.json`. Les scripts refusent de tourner si elle ne couvre plus la zone voulue (nouveau site hors zone).
+  - Sous Claude Code, `npm run osm` doit tourner dans un terminal ordinaire : `gol` ignore le proxy du bac à sable. Les requêtes (`gol query`) n'utilisent pas le réseau.
+  - Mise à jour annuelle : `npm run osm`, puis `npm run aerodromes`, `npm run reliefs` et `npm run terrains`.
+- **Altitudes swisstopo précalculées** (depuis le 2026-11-18) : `npm run reliefs` écrit [src/data/reliefs.json](src/data/reliefs.json) (altitude et dénivelé à 300 m de chaque site, clé `lat,lon`), en ne mesurant que les sites qui manquent (`-- --tout` pour tout remesurer). [src/data/sites.json.js](src/data/sites.json.js) le lit : le build ne fait plus aucune requête réseau. Un site absent du fichier est mesuré au build et signalé dans le journal (« Reliefs manquants… ») : lancer `npm run reliefs` après chaque modification de `sites-manuels.json`. Code commun dans [scripts/relief.mjs](scripts/relief.mjs).
+- Les aérodromes à code OACI dans 100 km autour de Cossonay sont précalculés par `npm run aerodromes` (sortie dans [src/data/aerodromes.json](src/data/aerodromes.json), qui remplace l'ancienne copie de secours `aerodromes-secours.json`). [src/data/sites.json.js](src/data/sites.json.js) les lit tels quels : le build n'interroge plus Overpass. Le 2026-11-18 : 38 aérodromes, identiques à ceux d'Overpass.
+- Les terrains de 1 ha ou plus situés dans un rayon de 2 km sont précalculés par `npm run terrains` (sortie dans [src/data/terrains.json](src/data/terrains.json)), ou `npm run terrains -- "Nom"` pour un seul site. Le résultat est reproductible (tri par distance, puis surface, puis contour).
+  - Les multipolygones sont pris en compte : `contour` vaut `[[lat, lon], …]` pour un polygone simple, `[extérieur, trou…]` pour un polygone à trous, `[[extérieur, trou…], …]` pour plusieurs parties. `L.polygon` accepte les trois formes telles quelles.
+  - Le champ `osm` de `terrains.json` donne la date des données OSM.
 - Aérodromes : pas de recherche de terrain. On y décolle avec l'accord du gestionnaire.
-- Limite connue : seuls les `way` sont pris en compte, pas les multipolygones, si bien que Gruyères et Château de Chillon n'ont aucun terrain.
+- Résultat du 2026-11-18 : 1 120 terrains (932 avec Overpass, qui ne prenait que les `way`) ; Gruyères en a 16 et Château de Chillon 7, contre 0 avant. Le fichier passe de 0,9 à 2,1 Mo, surtout à cause des grands pâturages en multipolygone (Sainte-Croix, Gstaad).
 
 ## Historique récent
 
 | Date | Commit | Changement |
 |---|---|---|
+| 2026-11-18 | (à venir) | Terrains et aérodromes via GeoDesk au lieu d'Overpass, multipolygones pris en compte, altitudes précalculées : build sans réseau |
+| 2026-11-18 | dfcb4ce | Texte Airocean : origine du nom (1954) et transformation de Gray |
+| 2026-11-17 | 41e48c1 | Crédits Airocean, Natural Earth et NASA, attribution OSM permanente, étiquettes affichées par défaut |
+| 2026-11-17 | 47b3f9a | Carte : fonds swisstopo par défaut, OpenStreetMap seulement sur demande |
 | 2026-11-17 | bcf06b7 | Textes Airocean et Fediverse en deux colonnes, police Raleway |
 | 2026-11-17 | dbcc66f | Ajout de CLAUDE.md |
 | 2026-11-17 | 162425c | Vue 3D : logo Fediverse, caméra libre, étiquettes en colonnes |
@@ -58,8 +69,11 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 Déjà en place :
 - Les tuiles OSM ne sont jamais chargées d'office (fond swisstopo par défaut).
-- Les terrains sont précalculés, avec une pause de 5 s entre deux sites. Plusieurs serveurs Overpass sont essayés tour à tour, et une copie de secours existe.
+- Altitudes swisstopo précalculées : plus de requêtes à geo.admin.ch au build.
+- Terrains et aérodromes précalculés à partir d'une bibliothèque GeoDesk locale : plus aucune requête Overpass, ni au build ni à la main, et un seul téléchargement partiel (tuiles de la zone) par an chez openplanetdata.com.
 - Attributions : swisstopo et geodienste.ch / OFAG sur leurs couches. La mention « © contributeurs OpenStreetMap » est affichée en permanence sur la carte (`attributionOsm`, ajoutée via `map.attributionControl`), car les aérodromes et les terrains viennent d'OSM.
+- Ligne « Carte des sites » des crédits : OSM (ODbL) extrait avec GeoDesk des données openplanetdata.com, altitudes © swisstopo (ajout du 2026-11-18 ; GeoDesk, sous licence Apache 2.0, n'exige pas de mention, c'est une politesse).
+- Logo Artefacts centré (avec son lien) en bas des 4 pages : index, rencontres, neguanthropocene, enveloppe-icosaedrique-3d.
 - Bloc « Sources et crédits de cette page » en bas de [src/enveloppe-icosaedrique-3d.md](src/enveloppe-icosaedrique-3d.md), et ligne de crédit à la fin de `#hint` dans la vue 3D. Licence Art Libre « sauf mention contraire », lien en https.
 - **Sources des textures de la vue 3D** (crédits ajoutés le 2026-11-17 en bas de page et sous la vue 3D) :
   - Carte vectorielle Airocean (`TEXB`, mode « Vecteur ») : créée par Philippe Rivière (son compte Observable s'appelle « Fil », d'où les adresses `@fil`), déjà crédité en bas de page (précision d'Erwan, 2026-11-17).
@@ -72,9 +86,6 @@ Déjà en place :
 - Carte Leaflet : `map.invalidateSize()` avant chaque `fitBounds` (elle s'était ouverte une fois au zoom 0). Les textes venant des données (`p.name`, `p.type`, `p.tourism`, `t.genre`) passent par `esc()` avant d'être insérés en HTML.
 
 À corriger :
-- **Overpass interrogé à chaque push** : `src/data/sites.json.js` est un data loader, et GitHub Actions repart sans cache Framework à chaque build. Il faut soit précalculer les aérodromes comme les terrains, soit mettre `.observablehq/cache` en cache dans le workflow.
-- **API d'altitude geo.admin.ch** : `sites.json.js` refait 9 requêtes par site à chaque build. Les altitudes pourraient être précalculées, comme dans `generer-terrains.mjs`.
-- **User-Agent** : `neguentropie-carte/1.0` ne permet pas de contacter l'auteur. Y ajouter l'URL du site ou une adresse de contact.
 - **Raleway via Google Fonts** : chaque visiteur envoie son adresse IP à Google. Raleway est sous licence OFL, on peut donc l'héberger dans le dépôt, à la fois dans le site et dans la vue 3D.
 - Pas de `meta description` ni de balises Open Graph : en ajouter une par page avec `head:` dans l'en-tête du fichier .md.
 - Remplacer le favicon Observable.
@@ -82,6 +93,5 @@ Déjà en place :
 ## À faire / idées
 
 - Comparer les couleurs du logo avec la version Mattermost si besoin.
-- Gérer les multipolygones dans la recherche de terrains.
 - Si le plan OSM devient très utilisé : générer nos propres tuiles vectorielles (extrait Geofabrik ou Protomaps → un fichier PMTiles pour la région, affiché avec `protomaps-leaflet`). Interdit d'aspirer les tuiles de tile.openstreetmap.org dans le build.
 - Tenir ce fichier à jour à chaque évolution notable.

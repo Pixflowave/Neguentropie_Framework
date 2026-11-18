@@ -487,9 +487,10 @@ De formation initiale en développement informatique, il utilise depuis plus de 
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 
 Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
 
-<img src="artefacts-logo1.png" alt="Artefacts" width="150">
-
-[https://artefacts.coop](https://artefacts.coop/)
+<div style="text-align: center;">
+  <img src="artefacts-logo1.png" alt="Artefacts" width="150"><br>
+  <a href="https://artefacts.coop/">https://artefacts.coop</a>
+</div>
 
 ---
 

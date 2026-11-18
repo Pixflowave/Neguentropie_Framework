@@ -369,8 +369,9 @@ Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier
 - Contours des continents : [Natural Earth](https://www.naturalearthdata.com/) (domaine public), via [visionscarto-world-atlas](https://github.com/Fil/visionscarto-world-atlas).
 - Photo de la Terre : NASA Earth Observatory, [Blue Marble: Next Generation](https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography-bathymetry/) (janvier 2004, relief et bathymétrie).
 - Logo du Fediverse : Eukombos et Dr. Quadragon (domaine public).
-- Carte des sites : fonds © swisstopo · aérodromes et terrains © [contributeurs OpenStreetMap](https://www.openstreetmap.org/copyright) (ODbL) · surfaces de biodiversité : geodienste.ch, cantons / OFAG.
+- Carte des sites : fonds © swisstopo · aérodromes et terrains © [contributeurs OpenStreetMap](https://www.openstreetmap.org/copyright) (ODbL), extraits avec [GeoDesk](https://www.geodesk.com/) des données [openplanetdata.com](https://openplanetdata.com/) · altitudes © swisstopo · surfaces de biodiversité : geodienste.ch, cantons / OFAG.
 
-<img src="artefacts-logo1.png" alt="Artefacts" width="150">
-
-[https://artefacts.coop](https://artefacts.coop/)
+<div style="text-align: center;">
+  <img src="artefacts-logo1.png" alt="Artefacts" width="150"><br>
+  <a href="https://artefacts.coop/">https://artefacts.coop</a>
+</div>

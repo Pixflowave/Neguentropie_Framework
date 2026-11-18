@@ -5,3 +5,6 @@ yarn-error.log
 
 # Cache des altitudes du script de génération des terrains
 scripts/.cache-altitudes.json
+
+# Bibliothèque GeoDesk des données OSM (≈ 240 Mo, rechargée par npm run terrains -- --recharger)
+donnees-osm/

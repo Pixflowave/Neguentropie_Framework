@@ -7,7 +7,10 @@
     "dev": "observable preview",
     "deploy": "observable deploy",
     "observable": "observable",
-    "terrains": "node scripts/generer-terrains.mjs"
+    "osm": "node scripts/osm.mjs",
+    "terrains": "node scripts/generer-terrains.mjs",
+    "aerodromes": "node scripts/generer-aerodromes.mjs",
+    "reliefs": "node scripts/generer-reliefs.mjs"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",
