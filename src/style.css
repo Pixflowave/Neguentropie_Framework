@@ -1,14 +1,86 @@
-/* Thème par défaut de Framework (clair ou sombre selon le système). */
+/* Une seule palette, sombre, quel que soit le thème de l'ordinateur :
+   celle de pixflowave.fr. Base : thème sombre de Framework, couleurs remplacées. */
 @import url("observablehq:default.css");
-@import url("observablehq:theme-air.css") (prefers-color-scheme: light);
-@import url("observablehq:theme-near-midnight.css") (prefers-color-scheme: dark);
+@import url("observablehq:theme-near-midnight.css");
 
 /* Raleway hébergée dans le dépôt (pas d'appel à Google), générée par npm run police. */
 @import url("./raleway.css");
 
 :root {
+  color-scheme: dark;
   --serif: Raleway, system-ui, sans-serif;
   --sans-serif: Raleway, system-ui, sans-serif;
+
+  /* Palette pixflowave.fr (src/styles/global.css du dépôt pixflowave-fr) */
+  --theme-background-a: #565656;        /* fond des pages (--bg) */
+  --theme-background-b: #4d4d4d;        /* barre latérale, cartes, code */
+  --theme-foreground: #fff8e7;          /* texte et titres (--fg) */
+  --theme-foreground-focus: #ffc536;    /* liens, accents, titre du site (--link, --title) */
+  --theme-foreground-muted: #ffe29b;    /* texte secondaire, légendes (--muted) */
+  --theme-foreground-faintest: #7a7a7a; /* traits et bordures (--line) */
+  accent-color: #ffc536;                /* cases à cocher, curseurs */
+}
+
+/* Liens : soulignement fin et un peu décollé du texte, comme sur pixflowave.fr */
+a[href] {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+a[href]:hover {
+  text-decoration-thickness: 1.5px;
+}
+a.observablehq-header-anchor,
+#observablehq-sidebar a[href],
+#observablehq-toc a[href],
+a[href][style*="background"],
+a[href][style*="border"] {
+  text-decoration: none;
+}
+
+/* Notebooks ObservableHQ dessinés dans la page (components/notebook.js) */
+.notebook {
+  margin: 1rem 0 2rem;
+  max-width: none;
+}
+.notebook-graphe {
+  width: 100%;
+  overflow: hidden;
+  border-block: 1px solid #bdbab5;      /* --rule de pixflowave.fr */
+  background: var(--theme-background);
+  color: var(--theme-foreground);
+}
+.notebook-graphe:fullscreen {
+  display: grid;
+  place-items: center;
+  overflow: auto;
+}
+.notebook-graphe svg,
+.notebook-graphe canvas,
+.notebook-graphe img {
+  max-width: 100%;
+  height: auto;
+}
+.notebook figcaption {
+  margin-top: .5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem 1rem;
+  color: var(--theme-foreground-muted);
+  font-size: .9rem;
+}
+.notebook button {
+  font: inherit;
+  color: var(--theme-foreground);
+  background: transparent;
+  border: 1px solid var(--theme-foreground-faintest);
+  border-radius: .25rem;
+  padding: .1rem .6rem;
+  cursor: pointer;
+}
+.notebook button:hover {
+  border-color: var(--theme-foreground-focus);
 }
 
 body {

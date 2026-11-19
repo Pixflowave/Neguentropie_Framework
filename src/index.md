@@ -2,6 +2,11 @@
 toc: false
 ---
 
+```js
+import {arbre} from "./components/arbre.js";
+import {notebook} from "./components/notebook.js";
+```
+
 <div class="hero">
   <h1> Néguentropie </h1>
 </div>
@@ -32,26 +37,26 @@ toc: false
 
 ### Projection Airocean | Attracteur étrange de Lorenz
 
-```html
-<iframe width="100%" height="400" frameborder="0" style="border-radius: 8px; filter: invert(0.85) hue-rotate(180deg);"
-  src="https://observablehq.com/embed/@pixflowave/airocean-attracteur-de-lorentz@710?cells=dual"></iframe>
+```js
+display(notebook("@pixflowave/airocean-attracteur-de-lorenz", "dual", {
+  titre: "Attracteur étrange de Lorenz tracé sur la projection Airocean",
+  hauteur: 400
+}))
 ```
 
 ### Graphique Noodiversité
 #### Graphe réticulé
 
-```html
-<iframe width="100%" height="600" frameborder="0" style="border-radius: 8px; filter: invert(0.85) hue-rotate(180deg);"
-  src="https://observablehq.com/embed/@pixflowave/graph_neguentropie?cells=chartR"></iframe>
+```js
+display(notebook("@pixflowave/graph_neguentropie", "chartR", {
+  titre: "Graphe réticulé des bifurcations noétiques",
+  hauteur: 600
+}))
 ```
 
 La vidéo *Reboute #07 — Le projet Néguentropie* est sur la page [Rencontres & Publications](rencontres).
 
 ---
-
-```js
-import {arbre} from "./components/arbre.js";
-```
 
 ### Néguentropie - 2020
 #### Résidence artistique - Artéfacts
@@ -236,7 +241,7 @@ Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier
 
 **Sources et crédits de cette page**
 - Image d'accueil : Erwan Bozec, réalisée avec [Blender](https://www.blender.org/).
-- Projection Airocean et attracteur de Lorenz, graphe réticulé : notebooks [ObservableHQ](https://observablehq.com/) de Pixflowave ([Airocean × Lorenz](https://observablehq.com/@pixflowave/airocean-attracteur-de-lorentz), [graphe Néguentropie](https://observablehq.com/@pixflowave/graph_neguentropie)), d'après la carte Airocean de Philippe Rivière.
+- Projection Airocean et attracteur de Lorenz, graphe réticulé : notebooks [ObservableHQ](https://observablehq.com/) de Pixflowave ([Airocean × Lorenz](https://observablehq.com/@pixflowave/airocean-attracteur-de-lorenz), [graphe Néguentropie](https://observablehq.com/@pixflowave/graph_neguentropie)), d'après la carte Airocean de Philippe Rivière.
 - Arbres des participants : [Observable Plot](https://observablehq.com/plot/).
 
 <div style="text-align: center;">

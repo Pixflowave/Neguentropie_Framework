@@ -9,7 +9,7 @@ toc: true
   <h2>Une démarche participative pour interroger l’activité humaine et s'émanciper par le collectif.</h2>
 </div>
 
-<div class="card" style="border-left: 4px solid var(--theme-foreground-focus, #3b82f6); margin-bottom: 2rem;">
+<div class="card" style="border-left: 4px solid var(--theme-foreground-focus); margin-bottom: 2rem;">
   <p style="margin: 0; font-size: 0.95rem; line-height: 1.6;">
     <strong>Néguanthropocène (2021) — Œuvre commune :</strong><br>
     Erwan Bozec &middot; Philippe Carré &middot; Manuel Herreno &middot; Jean-Paul Thibeau &middot; Camille Guyon Taillens &middot; Olivier Heinry<br>
@@ -85,7 +85,7 @@ Trop souvent asservie aux logiques de rentabilité financière et d'automatisati
 Conçu comme un laboratoire de **recherche culturelle et de sciences participatives**, *Néguanthropocène* s'articule autour de la co-construction de l'œuvre-lieu et de la dialectique des savoirs.
 
 <div style="text-align: center; margin: 1.5rem 0;">
-  <img src="images/neguanthropocene/schema-conceptuel.png" alt="Schéma conceptuel Néguanthropocène" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+  <img src="images/neguanthropocene/schema-conceptuel.png" alt="Schéma conceptuel Néguanthropocène" style="max-width: 100%; border-radius: 8px; ">
 </div>
 
 ### Les 3 rôles de l'écosystème contributif
@@ -135,28 +135,28 @@ Pour valoriser les apprentissages informels et les savoir-faire mobilisés lors 
 <div class="grid grid-cols-2" style="gap: 1.25rem; margin-bottom: 2rem;">
 
   <div class="card">
-    <h3 style="margin-top: 0; color: var(--theme-foreground-focus, #3b82f6);">Entropie & Néguentropie</h3>
+    <h3 style="margin-top: 0; color: var(--theme-foreground-focus);">Entropie & Néguentropie</h3>
     <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;">
       L’<strong>entropie</strong> est la mesure de la dégradation, de la dissipation et de l'uniformisation (physique, biologique et culturelle). La <strong>néguentropie</strong> désigne la dynamique inverse : production de différence, de diversification, d'organisation locale et d'invention noétique qui retarde l'épuisement systémique.
     </p>
   </div>
 
   <div class="card">
-    <h3 style="margin-top: 0; color: var(--theme-foreground-focus, #3b82f6);">Capacitation vs Compétence</h3>
+    <h3 style="margin-top: 0; color: var(--theme-foreground-focus);">Capacitation vs Compétence</h3>
     <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;">
       La <em>compétence</em> standardise l'individu selon des normes prescrites et automatisables. La <em>capacitation</em> (Sen, Stiegler) développe au contraire la singularité et la désautomatisation par la pratique et le partage collectif des savoirs.
     </p>
   </div>
 
   <div class="card">
-    <h3 style="margin-top: 0; color: var(--theme-foreground-focus, #3b82f6);">Les Protocoles Méta</h3>
+    <h3 style="margin-top: 0; color: var(--theme-foreground-focus);">Les Protocoles Méta</h3>
     <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;">
       Opérateurs d'écart et de pas de côté initiés par Jean-Paul Thibeau. Ils ne constituent pas des règles rigides, mais des propositions ouvertes à détourner pour expérimenter l'écologie de l'attention et de la perception.
     </p>
   </div>
 
   <div class="card">
-    <h3 style="margin-top: 0; color: var(--theme-foreground-focus, #3b82f6);">Le Rythme face au Chaos</h3>
+    <h3 style="margin-top: 0; color: var(--theme-foreground-focus);">Le Rythme face au Chaos</h3>
     <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;">
       Comme le soulignait Henri Maldiney à travers Paul Klee : <em>« Le monde naît du point gris par lui-même chaos... Au commencement était le rythme. »</em> C'est par le rythme partagé de la création que l'espace commun s'ordonne et se réenchante.
     </p>

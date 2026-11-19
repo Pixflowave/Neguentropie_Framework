@@ -16,6 +16,18 @@ https://pixflowave.github.io/Neguentropie_Framework/
   - Les caractères hors du jeu latin (« ł » polonais, par exemple) s'affichent dans la police du système.
 - **Favicon** (2026-11-19) : icosaèdre vu par un sommet, avec le dégradé violet → rouge → or des arbres de l'accueil. [src/favicon.svg](src/favicon.svg), plus [src/favicon.png](src/favicon.png) en 32 px pour les navigateurs qui ne lisent pas le SVG (rendu avec Chrome sans fenêtre).
 - **`head` commun, description et Open Graph** (2026-11-19) : dans [observablehq.config.js](observablehq.config.js), `head` est une fonction `({title, path})` qui écrit le script `lang`, le favicon, `meta description` et les balises `og:` / `twitter:`. Les descriptions sont dans l'objet `DESCRIPTIONS`, indexé par adresse (`/index`, `/rencontres`…), car Framework 1.13 ignore les champs inconnus de l'en-tête des pages : ajouter une ligne pour toute nouvelle page. Ne jamais mettre `head:` dans l'en-tête d'une page, il remplacerait tout le `head` commun. L'image de partage est `src/Neguentropie.png`, lue sur raw.githubusercontent.com (adresse fixe, sans empreinte) : elle n'est donc à jour qu'après le push.
+- **Couleurs : palette de pixflowave.fr** (2026-11-19, demande d'Erwan) : un seul thème sombre, quel que soit le réglage de l'ordinateur. Elle est définie dans [src/style.css](src/style.css) : thème `near-midnight` de Framework, dont les variables sont remplacées.
+  - Fond `#565656` (`--theme-background-a`), surfaces `#4d4d4d` (`-b` : barre latérale, cartes).
+  - Texte et titres `#fff8e7`, liens et accents or `#ffc536` (`--theme-foreground-focus`).
+  - Texte secondaire `#ffe29b` (`-muted`), traits `#7a7a7a` (`-faintest`).
+  - Liens soulignés fin et décollés ; les ancres de titre, la barre latérale, la table des matières et les liens-boutons ne sont pas soulignés.
+  - Sur un fond or, écrire le texte en `var(--theme-background)`, jamais en blanc.
+  - La vue 3D utilise la même palette (`--bg`, `--fg`, `accent-color`).
+  - Référence : `src/styles/global.css` du dépôt pixflowave-fr.
+- **Notebooks ObservableHQ de l'accueil** : ils sont dessinés dans la page par [src/components/notebook.js](src/components/notebook.js), comme sur pixflowave.fr, avec `@pixflowave/graph_neguentropie` (cellule `chartR`) et `@pixflowave/airocean-attracteur-de-lorenz` (cellule `dual`, nouvelle adresse sans « t », dernière version publiée).
+  - Pas d'iframe ni de filtre `invert` : les couleurs sont réglées dans les notebooks, pour ce fond.
+  - Le runtime `@observablehq/runtime@5.9.9` est chargé à la demande depuis jsDelivr. `npm:@observablehq/runtime` ne convient pas : Framework le remplace par son runtime interne, qui n'exporte pas `Library`, et toute la page plante.
+  - En capture Chrome sans fenêtre, le notebook Lorenz reste vide, sur pixflowave.fr aussi : c'est normal.
 - **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »

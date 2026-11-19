@@ -11,9 +11,9 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
 
 ## Publication scientifique & Printemps des Cartes 2024
 
-<div class="card" style="border-left: 4px solid var(--theme-foreground-focus, #3b82f6); padding: 1.5rem; margin-bottom: 2rem;">
+<div class="card" style="border-left: 4px solid var(--theme-foreground-focus); padding: 1.5rem; margin-bottom: 2rem;">
   <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap;">
-    <span style="background: var(--theme-foreground-focus, #3b82f6); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Publication 2024</span>
+    <span style="background: var(--theme-foreground-focus); color: var(--theme-background); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Publication 2024</span>
     <span style="color: var(--theme-foreground-muted); font-size: 0.9rem;">Comité français de cartographie &middot; Revue <em>Cartes et géomatique</em></span>
   </div>
 
@@ -32,17 +32,17 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
   </blockquote>
 
   <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1.25rem;">
-    <a href="https://hal.science/CFC-CARTES-ET-GEOMATIQUE/hal-05035112v1" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--theme-foreground-focus, #3b82f6); color: white; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+    <a href="https://hal.science/CFC-CARTES-ET-GEOMATIQUE/hal-05035112v1" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--theme-foreground-focus); color: var(--theme-background); border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
       <span>Notice HAL (hal-05035112)</span>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
     </a>
-    <a href="https://dx.doi.org/10.62437/6724690" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--theme-background-alt, #f3f4f6); color: var(--theme-foreground); border: 1px solid var(--theme-foreground-faintest); border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+    <a href="https://dx.doi.org/10.62437/6724690" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--theme-background-alt); color: var(--theme-foreground); border: 1px solid var(--theme-foreground-faintest); border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
       <span>DOI : 10.62437/6724690</span>
     </a>
-    <a href="https://hal.science/hal-05035112v1/file/Ne%CC%81guentropie.pdf" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--theme-background-alt, #f3f4f6); color: var(--theme-foreground); border: 1px solid var(--theme-foreground-faintest); border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+    <a href="https://hal.science/hal-05035112v1/file/Ne%CC%81guentropie.pdf" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--theme-background-alt); color: var(--theme-foreground); border: 1px solid var(--theme-foreground-faintest); border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
       <span>Télécharger le PDF</span>
     </a>
-    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-festival-printemps-des-cartes/publications/printemps-des-cartes?display=section" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: transparent; color: var(--theme-foreground-focus, #3b82f6); border: 1px solid var(--theme-foreground-focus, #3b82f6); border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-festival-printemps-des-cartes/publications/printemps-des-cartes?display=section" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: transparent; color: var(--theme-foreground-focus); border: 1px solid var(--theme-foreground-focus); border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
       <span>Carnet de bord de l'atelier</span>
     </a>
   </div>
@@ -55,79 +55,79 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
 <div class="grid grid-cols-2" style="gap: 1.25rem; margin-bottom: 2rem;">
 
   <div class="card" style="padding: 1.25rem;">
-    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6); text-transform: uppercase; margin-bottom: 0.25rem;">Mai 2024 &middot; Montmorillon</div>
+    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus); text-transform: uppercase; margin-bottom: 0.25rem;">Mai 2024 &middot; Montmorillon</div>
     <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.15rem;">Printemps des Cartes</h3>
     <p style="font-size: 0.9rem; color: var(--theme-foreground-muted); margin-bottom: 0.75rem;">
       Atelier de cartographie expérimentale et construction participative explorant la diversité des projections terrestres et leurs répercussions sur nos imaginaires.
     </p>
-    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-festival-printemps-des-cartes/publications/printemps-des-cartes?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-festival-printemps-des-cartes/publications/printemps-des-cartes?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
       Consulter la documentation &rarr;
     </a>
   </div>
 
   <div class="card" style="padding: 1.25rem;">
-    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6); text-transform: uppercase; margin-bottom: 0.25rem;">Avril 2024 &middot; Tours</div>
+    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus); text-transform: uppercase; margin-bottom: 0.25rem;">Avril 2024 &middot; Tours</div>
     <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.15rem;">Université de Tours</h3>
     <p style="font-size: 0.9rem; color: var(--theme-foreground-muted); margin-bottom: 0.75rem;">
       Résidence et installation à l'UFR Arts & Sciences Humaines du 2 au 12 avril 2024. Partage d'expériences avec les étudiants et enseignants-chercheurs.
     </p>
-    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-universite-de-tours/publications/ufr-art-sciences-humaines?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-universite-de-tours/publications/ufr-art-sciences-humaines?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
       Consulter la documentation &rarr;
     </a>
   </div>
 
   <div class="card" style="padding: 1.25rem;">
-    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6); text-transform: uppercase; margin-bottom: 0.25rem;">Juin 2023 &middot; Tours</div>
+    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus); text-transform: uppercase; margin-bottom: 0.25rem;">Juin 2023 &middot; Tours</div>
     <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.15rem;">Méta-Humus | Human Tech Days</h3>
     <p style="font-size: 0.9rem; color: var(--theme-foreground-muted); margin-bottom: 0.75rem;">
       Rencontres à la Maison des Sciences de l'Homme (MSH) du Val de Loire du 27 au 29 juin 2023. Exploration des milieux noétiques et des savoirs contributifs.
     </p>
     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-      <a href="https://www.msh-vdl.fr/actualite/human-tech-days-meta-humus/" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+      <a href="https://www.msh-vdl.fr/actualite/human-tech-days-meta-humus/" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
         Présentation sur le site de la MSH &rarr;
       </a>
-      <a href="https://tekhne.neguentropie.art/+neguentropie/meta-humus/publications/meta-humus-msh-val-de-loire-htd-2023?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+      <a href="https://tekhne.neguentropie.art/+neguentropie/meta-humus/publications/meta-humus-msh-val-de-loire-htd-2023?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
         Consulter la documentation &rarr;
       </a>
     </div>
   </div>
 
   <div class="card" style="padding: 1.25rem;">
-    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6); text-transform: uppercase; margin-bottom: 0.25rem;">Avril 2023 &middot; Paris</div>
+    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus); text-transform: uppercase; margin-bottom: 0.25rem;">Avril 2023 &middot; Paris</div>
     <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.15rem;">Séance inaugurale <em>Si.</em></h3>
     <p style="font-size: 0.9rem; color: var(--theme-foreground-muted); margin-bottom: 0.75rem;">
       <em>La méthodologie de la singularité</em> — Pour un numérique néguanthropique : des technologies pour favoriser la noodiversité (IRISA / Paris).
     </p>
-    <a href="https://tekhne.neguentropie.art/+neguentropie/pour-un-numerique-neguanthropique/publications/presentation-de-neguentropie-irisa?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+    <a href="https://tekhne.neguentropie.art/+neguentropie/pour-un-numerique-neguanthropique/publications/presentation-de-neguentropie-irisa?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
       Voir les diapositives de la séance &rarr;
     </a>
   </div>
 
   <div class="card" style="padding: 1.25rem;">
-    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6); text-transform: uppercase; margin-bottom: 0.25rem;">Mai 2022 &middot; Blois</div>
+    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus); text-transform: uppercase; margin-bottom: 0.25rem;">Mai 2022 &middot; Blois</div>
     <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.15rem;">La Fabrique de Blois &middot; HTD 2022</h3>
     <p style="font-size: 0.9rem; color: var(--theme-foreground-muted); margin-bottom: 0.75rem;">
       Rencontres des 6 et 13 mai 2022 à La Fabrique de Blois. Montage et expérimentation de la structure géodésique en bambou avec les publics jeunes.
     </p>
-    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-la-fabrique-de-blois-2022/publications/neguentropie-la-fabrique-de-blois-2022?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+    <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-la-fabrique-de-blois-2022/publications/neguentropie-la-fabrique-de-blois-2022?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
       Consulter la documentation &rarr;
     </a>
   </div>
 
   <div class="card" style="padding: 1.25rem;">
-    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6); text-transform: uppercase; margin-bottom: 0.25rem;">Mai 2021 &middot; Blois & Saint-Pierre-des-Corps</div>
+    <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus); text-transform: uppercase; margin-bottom: 0.25rem;">Mai 2021 &middot; Blois & Saint-Pierre-des-Corps</div>
     <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.15rem;">Premières rencontres HTD 2021</h3>
     <p style="font-size: 0.9rem; color: var(--theme-foreground-muted); margin-bottom: 0.75rem;">
       Rencontres à La Fabrique (Blois) et aux Ateliers de la Morinerie (Saint-Pierre-des-Corps). Récits fondateurs <em>Néguentropie-Frontière</em>.
     </p>
     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-      <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-a-la-fabrique-de-blois/publications/neguentropie-la-fabrique-de-blois?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+      <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-a-la-fabrique-de-blois/publications/neguentropie-la-fabrique-de-blois?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
         Fabrique de Blois &rarr;
       </a>
-      <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/neguentropie-fontiere?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+      <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/neguentropie-fontiere?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
         Récit de la rencontre &rarr;
       </a>
-      <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/recit-360-de-la-premiere-rencontre-neguentropie-frontiere?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+      <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/recit-360-de-la-premiere-rencontre-neguentropie-frontiere?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus); font-weight: 500;">
         Récit « 360 » &rarr;
       </a>
     </div>
@@ -166,7 +166,7 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
 Tous les récits, protocoles d'ateliers, photographies et traces de fabrication sont documentés et archivés sur la plateforme contributive :
 
 <p>
-  <a href="https://tekhne.neguentropie.art/" target="_blank" rel="noopener noreferrer" style="font-size: 1.1rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6);">
+  <a href="https://tekhne.neguentropie.art/" target="_blank" rel="noopener noreferrer" style="font-size: 1.1rem; font-weight: bold; color: var(--theme-foreground-focus);">
     &rarr; https://tekhne.neguentropie.art/
   </a>
 </p>
