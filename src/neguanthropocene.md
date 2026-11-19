@@ -15,7 +15,7 @@ toc: true
     Erwan Bozec &middot; Philippe Carré &middot; Manuel Herreno &middot; Jean-Paul Thibeau &middot; Camille Guyon Taillens &middot; Olivier Heinry<br>
     <span style="color: var(--theme-foreground-muted); font-size: 0.85rem;">
       À partir de l'œuvre initiale <em>Néguentropie</em> (2020) par Erwan Bozec, Philippe Rivière, Luc Léger, Aline Perdereau.<br>
-      Copyleft : cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la <a href="http://www.artlibre.org" target="_blank" rel="noopener noreferrer">Licence Art Libre</a>.
+      Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la <a href="https://artlibre.org" target="_blank" rel="noopener noreferrer">Licence Art Libre</a>.
     </span>
   </p>
 </div>
@@ -171,9 +171,9 @@ Pour valoriser les apprentissages informels et les savoir-faire mobilisés lors 
 ---
 
 #### Néguanthropocène &mdash; Erwan Bozec, Philippe Carré, Manuel Herreno, Jean-Paul Thibeau, Camille Guyon Taillens, Olivier Heinry
-Copyleft : [Licence Art Libre](http://www.artlibre.org) &middot; Projet issu de *Néguentropie* (2020)
+Copyleft : sauf mention contraire, [Licence Art Libre](https://artlibre.org) &middot; Projet issu de *Néguentropie* (2020)
 
 <div style="text-align: center;">
-  <img src="artefacts-logo1.png" alt="Artefacts" width="150"><br>
+  <img src="artefacts-logo1.png" alt="Artéfacts" width="150"><br>
   <a href="https://artefacts.coop/">https://artefacts.coop</a>
 </div>

@@ -8,7 +8,7 @@ toc: false
 
 ```html
   <img src=${await FileAttachment("Neguentropie.png").url()}>
-  <figcaption><span>Image <a href="https://pixflowave.fr/">Erwan Bozec</a> réalisé avec <a href="https://www.blender.org/">Blender</a></span></figcaption>
+  <figcaption><span>Image <a href="https://pixflowave.fr/">Erwan Bozec</a> réalisée avec <a href="https://www.blender.org/">Blender</a></span></figcaption>
 ```
 ## Œuvre
 
@@ -30,7 +30,7 @@ toc: false
   </div>
 ```
 
-### Projection Aireocean | Attracteur étrange de Lorentz
+### Projection Airocean | Attracteur étrange de Lorenz
 
 ```html
 <iframe width="100%" height="400" frameborder="0" style="border-radius: 8px; filter: invert(0.85) hue-rotate(180deg);"
@@ -45,19 +45,12 @@ toc: false
   src="https://observablehq.com/embed/@pixflowave/graph_neguentropie?cells=chartR"></iframe>
 ```
 
-### [Reboute](https://tube.futuretic.fr/c/reboutelatechnologie/videos)
-
-```html
-<iframe title="RB_07 Le projet Néguentropie" width="100%" height="500" src="https://tube.futuretic.fr/videos/embed/c44a1628-d1ba-4f47-a5f4-db6e137e0443" frameborder="0" allowfullscreen="" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
-```
-
----
-
+La vidéo *Reboute #07 — Le projet Néguentropie* est sur la page [Rencontres & Publications](rencontres).
 
 ---
 
 ### Néguentropie - 2020
-#### Résidence artistique - Artéfatcs
+#### Résidence artistique - Artéfacts
 
 ```js
 const Néguentropie = [
@@ -93,9 +86,9 @@ Plot.plot({
 
 ## Rencontres
 
-### [Néguentropie Frontière - 2021](https://do.doc.neguentropie.art/_publications/neguentropie-frontiere/)
+### [Néguentropie Frontière - 2021](https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/neguentropie-fontiere?display=section)
 #### Atelier de la Morinerie - Tours
-[Récit "360"](https://do.doc.neguentropie.art/_publications/neguentropie-fontiere-360/)
+[Récit « 360 »](https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/recit-360-de-la-premiere-rencontre-neguentropie-frontiere?display=slides)
 
 ```js
 const curveBumpX = () => {
@@ -184,13 +177,13 @@ Plot.plot({
 ```
 ```js
 const NéguentropieFrontiére = [
-  "Néguentropie Frontiére/Mélissa Plet-Whyckhuyse",
-  "Néguentropie Frontiére/Aline Perdereau",
-  "Néguentropie Frontiére/Erwan Bozec",
+  "Néguentropie Frontière/Mélissa Plet-Whyckhuyse",
+  "Néguentropie Frontière/Aline Perdereau",
+  "Néguentropie Frontière/Erwan Bozec",
 ]
 ```
 
-### [Néguentropie](https://do.doc.neguentropie.art/_publications/neguentropie/)
+### [Néguentropie](https://tekhne.neguentropie.art/+neguentropie/neguentropie-a-la-fabrique-de-blois/publications/neguentropie-la-fabrique-de-blois?display=section)
 #### La Fabrique de Blois - 2021
 
 ```js
@@ -225,7 +218,7 @@ const NéguentropieLaFabriqueDeBlois2021 = [
 ]
 ```
 
-### [Néguentropie](https://do.doc.neguentropie.art/_publications/neguentropie/)
+### [Néguentropie](https://tekhne.neguentropie.art/+neguentropie/neguentropie-la-fabrique-de-blois-2022/publications/neguentropie-la-fabrique-de-blois-2022?display=section)
 #### La Fabrique de Blois - 2022
 
 ```js
@@ -253,14 +246,14 @@ Plot.plot({
 
 ```js
 const NéguentropieLaFabriqueDeBlois = [
-  "Néguentropie/Anne Alomber",
+  "Néguentropie/Anne Alombert",
   "Néguentropie/Erwan Bozec",
   "Néguentropie/Antoine Moreau",
   "Néguentropie/La Fabrique de Blois",
 ]
 ```
 
-### [Pour un numérique néguanthropique](https://do.doc.neguentropie.art/_publications/presentation-de-neguentropie-irisa/) - 2023
+### [Pour un numérique néguanthropique](https://tekhne.neguentropie.art/+neguentropie/pour-un-numerique-neguanthropique/publications/presentation-de-neguentropie-irisa?display=slides) - 2023
 ##### Des technologies pour favoriser la noodiversité
 #### Si. — Séance inaugurale - La méthodologie de la singularité - Paris
 
@@ -298,13 +291,13 @@ Plot.plot({
 
 ```js
 const Néguanthropique = [
-  "Pour un Numérique Néguanthropique/Anne Alomber",
+  "Pour un Numérique Néguanthropique/Anne Alombert",
   "Pour un Numérique Néguanthropique/Erwan Bozec",
 ]
 ```
 
 ### [Méta-Humus - 2023](https://www.msh-vdl.fr/actualite/human-tech-days-meta-humus/)
-#### Maison des Sciences de L'homme - Val de de Loire
+#### Maison des Sciences de l'Homme - Val de Loire
 
 ```js
 Plot.plot({
@@ -338,7 +331,7 @@ const MétaHumus = [
 ]
 ```
 
-## Bifurcations émergentes 
+## Bifurcations & Projets émergents
 
 ### [Néguanthropocène](neguanthropocene) - 2021
 
@@ -446,19 +439,15 @@ const Humus = [
 ```
 
 ### Publications & Rencontres
-- **Publication 2024 (Revue *Cartes & Géomatique*, CFC)** : *Néguentropie. Inscrire le monde sous licence art libre pour tenter de le réenchanter* par Erwan Bozec suite au Printemps des cartes 2024. [Notice HAL (hal-05035112)](https://hal.science/CFC-CARTES-ET-GEOMATIQUE/hal-05035112v1) &middot; [Découvrir la page Rencontres & Publications](rencontres)
-- Publication de Philippe Rivière sur [Observable](https://observablehq.com/@visionscarto/neguentropie) dans le cadre du ***#30DayMapChallenge***
-- Inscription des différents projets issus de Néguentropie sur le ***Centre de Ressources pour les Arts et les Cultures - Numériques en région Centre-Val de Loire***, [CRACN Néguentropie](https://cracn.fr/books/neguentropie)
-- Publication sur le site [Organoesis](https://organoesis.org/projets-contributifs/neguentropie) suite à la rencontre avec ***Anne Alombert.***
-- Publication sur le site [oeuvres.artlibre](https://oeuvres.artlibre.org/neguentropie) suite à la rencontre avec ***Antoine Moreau.***
+L'article paru dans *Cartes & Géomatique* (2024), la chronologie des rencontres, la vidéo Reboute et les autres publications sont réunis sur la page [Rencontres & Publications](rencontres).
 
 ---
-## A Vous de Bifurquer !
-### [https://do.doc.neguentropie.art](https://do.doc.neguentropie.art)
+## À vous de bifurquer !
+### Espace contributif : [tekhne.neguentropie.art](https://tekhne.neguentropie.art/)
 ---
-## [Documentation](https://do.doc.neguentropie.art/_publications/documentation/)
+## [Documentation](https://neguentropie.art/?section=section-1759686184677.meta.txt)
 ---
-## Co-auteur | Néguantropologue
+## Co-auteurs | Néguanthropologues
 
 ### [Erwan Bozec](https://www.artefacts.coop/cooperataires/pixflowave-erwan-bozec/)
 Artiste | Néguanthropologue d'expériences collectives favorisant “l’être-au-monde” et l’autonomie du citoyen.
@@ -484,11 +473,16 @@ De formation initiale en développement informatique, il utilise depuis plus de 
 
 
 
-#### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020 
-Copyleft: cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
+#### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie, 2020
+Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](https://artlibre.org).
+
+**Sources et crédits de cette page**
+- Image d'accueil : Erwan Bozec, réalisée avec [Blender](https://www.blender.org/).
+- Projection Airocean et attracteur de Lorenz, graphe réticulé : notebooks [ObservableHQ](https://observablehq.com/) de Pixflowave ([Airocean × Lorenz](https://observablehq.com/@pixflowave/airocean-attracteur-de-lorentz), [graphe Néguentropie](https://observablehq.com/@pixflowave/graph_neguentropie)), d'après la carte Airocean de Philippe Rivière.
+- Arbres des participants : [Observable Plot](https://observablehq.com/plot/).
 
 <div style="text-align: center;">
-  <img src="artefacts-logo1.png" alt="Artefacts" width="150"><br>
+  <img src="artefacts-logo1.png" alt="Artéfacts" width="150"><br>
   <a href="https://artefacts.coop/">https://artefacts.coop</a>
 </div>
 

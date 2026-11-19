@@ -372,6 +372,6 @@ Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier
 - Carte des sites : fonds © swisstopo · aérodromes et terrains © [contributeurs OpenStreetMap](https://www.openstreetmap.org/copyright) (ODbL), extraits avec [GeoDesk](https://www.geodesk.com/) des données [openplanetdata.com](https://openplanetdata.com/) · altitudes © swisstopo · surfaces de biodiversité : geodienste.ch, cantons / OFAG.
 
 <div style="text-align: center;">
-  <img src="artefacts-logo1.png" alt="Artefacts" width="150"><br>
+  <img src="artefacts-logo1.png" alt="Artéfacts" width="150"><br>
   <a href="https://artefacts.coop/">https://artefacts.coop</a>
 </div>

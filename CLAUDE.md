@@ -56,7 +56,8 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 | Date | Commit | Changement |
 |---|---|---|
-| 2026-11-18 | (à venir) | Terrains et aérodromes via GeoDesk au lieu d'Overpass, multipolygones pris en compte, altitudes précalculées : build sans réseau |
+| 2026-11-19 | (à venir) | Cohérence du site : pied de page commun (Framework, Plot, D3, Leaflet, three.js, Raleway, Licence Art Libre), crédits harmonisés sur toutes les pages, liens do.doc remplacés par tekhne, accueil renvoyant vers Rencontres, coquilles, pages d'exemple supprimées |
+| 2026-11-18 | 62668b9 | Terrains et aérodromes via GeoDesk au lieu d'Overpass, multipolygones pris en compte, altitudes précalculées : build sans réseau |
 | 2026-11-18 | dfcb4ce | Texte Airocean : origine du nom (1954) et transformation de Gray |
 | 2026-11-17 | 41e48c1 | Crédits Airocean, Natural Earth et NASA, attribution OSM permanente, étiquettes affichées par défaut |
 | 2026-11-17 | 47b3f9a | Carte : fonds swisstopo par défaut, OpenStreetMap seulement sur demande |
@@ -73,7 +74,11 @@ Déjà en place :
 - Terrains et aérodromes précalculés à partir d'une bibliothèque GeoDesk locale : plus aucune requête Overpass, ni au build ni à la main, et un seul téléchargement partiel (tuiles de la zone) par an chez openplanetdata.com.
 - Attributions : swisstopo et geodienste.ch / OFAG sur leurs couches. La mention « © contributeurs OpenStreetMap » est affichée en permanence sur la carte (`attributionOsm`, ajoutée via `map.attributionControl`), car les aérodromes et les terrains viennent d'OSM.
 - Ligne « Carte des sites » des crédits : OSM (ODbL) extrait avec GeoDesk des données openplanetdata.com, altitudes © swisstopo (ajout du 2026-11-18 ; GeoDesk, sous licence Apache 2.0, n'exige pas de mention, c'est une politesse).
-- Logo Artefacts centré (avec son lien) en bas des 4 pages : index, rencontres, neguanthropocene, enveloppe-icosaedrique-3d.
+- **Orthographe** : écrire « Artéfacts » dans les textes (choix d'Erwan, 2026-11-19) ; seules les adresses restent `artefacts.coop`.
+- Logo Artéfacts centré (avec son lien) en bas des 6 pages du menu, avec le même bloc de licence : « sauf mention contraire », Licence Art Libre en https (harmonisé le 2026-11-19). Un bloc « Sources et crédits de cette page » existe sur toutes les pages sauf Néguanthropocène, qui a sa propre section Références.
+- Pied de page commun (`footer` dans [observablehq.config.js](observablehq.config.js), depuis le 2026-11-19) : Observable Framework, Observable Plot, D3, Leaflet, three.js, Raleway et Licence Art Libre. Il remplace « Built with Observable ». Les notebooks ObservableHQ intégrés sur l'accueil sont crédités dans le bloc « Sources ».
+- **Liens de documentation** (choix d'Erwan, 2026-11-19) : uniquement tekhne.neguentropie.art (dodoc, API `/_api2/spaces/neguentropie/projects` pour retrouver les adresses des publications). Plus de liens vers do.doc.neguentropie.art. La page « Documentation » est la section `section-1759686184677` de la publication Néguentropie, servie sur https://neguentropie.art/?section=section-1759686184677.meta.txt.
+- **Accueil** : pas de doublon avec Rencontres. La vidéo Reboute et la liste des publications ne sont que sur [src/rencontres.md](src/rencontres.md) ; l'accueil y renvoie (choix d'Erwan, 2026-11-19).
 - Bloc « Sources et crédits de cette page » en bas de [src/enveloppe-icosaedrique-3d.md](src/enveloppe-icosaedrique-3d.md), et ligne de crédit à la fin de `#hint` dans la vue 3D. Licence Art Libre « sauf mention contraire », lien en https.
 - **Sources des textures de la vue 3D** (crédits ajoutés le 2026-11-17 en bas de page et sous la vue 3D) :
   - Carte vectorielle Airocean (`TEXB`, mode « Vecteur ») : créée par Philippe Rivière (son compte Observable s'appelle « Fil », d'où les adresses `@fil`), déjà crédité en bas de page (précision d'Erwan, 2026-11-17).
@@ -89,6 +94,9 @@ Déjà en place :
 - **Raleway via Google Fonts** : chaque visiteur envoie son adresse IP à Google. Raleway est sous licence OFL, on peut donc l'héberger dans le dépôt, à la fois dans le site et dans la vue 3D.
 - Pas de `meta description` ni de balises Open Graph : en ajouter une par page avec `head:` dans l'en-tête du fichier .md.
 - Remplacer le favicon Observable.
+- Accueil : l'arbre Plot est recopié 9 fois (le même `id="gradient"` est donc présent 9 fois) et `curveBumpX` est réécrite à la main (Plot propose `curve: "bump-x"`). À regrouper dans un composant.
+- Photos de Néguanthropocène hébergées sur imgur : les rapatrier dans `src/`.
+- Le style `.hero` est recopié dans 3 pages, et le convertisseur a son propre style (émojis, dégradé violet/rouge codé en dur).
 
 ## À faire / idées
 

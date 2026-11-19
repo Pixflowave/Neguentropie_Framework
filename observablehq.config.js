@@ -39,7 +39,8 @@ export default {
   // Some additional configuration options and their defaults:
   // theme: "default", // try "light", "dark", "slate", etc.
   // header: "", // what to show in the header (HTML)
-  // footer: "Built with Observable.", // what to show in the footer (HTML)
+  // Pied de page commun : outils libres qui font le site.
+  footer: `Site réalisé avec <a href="https://observablehq.com/framework/">Observable Framework</a> (licence ISC) · graphiques <a href="https://observablehq.com/plot/">Observable Plot</a> et <a href="https://d3js.org/">D3</a> · cartes <a href="https://leafletjs.com/">Leaflet</a> · 3D <a href="https://threejs.org/">three.js</a> · police <a href="https://fonts.google.com/specimen/Raleway">Raleway</a> (OFL) · contenus sous <a href="https://artlibre.org">Licence Art Libre</a> sauf mention contraire.`,
   // sidebar: true, // whether to show the sidebar
   // toc: true, // whether to show the table of contents
   // pager: true, // whether to show previous & next links in the footer

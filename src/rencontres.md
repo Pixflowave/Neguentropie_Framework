@@ -80,11 +80,16 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
     <div style="font-size: 0.8rem; font-weight: bold; color: var(--theme-foreground-focus, #3b82f6); text-transform: uppercase; margin-bottom: 0.25rem;">Juin 2023 &middot; Tours</div>
     <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.15rem;">Méta-Humus | Human Tech Days</h3>
     <p style="font-size: 0.9rem; color: var(--theme-foreground-muted); margin-bottom: 0.75rem;">
-      Rencontres à la Maison des Sciences Humaines (MSH) du Val de Loire du 27 au 29 juin 2023. Exploration des milieux noétiques et des savoirs contributifs.
+      Rencontres à la Maison des Sciences de l'Homme (MSH) du Val de Loire du 27 au 29 juin 2023. Exploration des milieux noétiques et des savoirs contributifs.
     </p>
-    <a href="https://www.msh-vdl.fr/actualite/human-tech-days-meta-humus/" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
-      Présentation sur le site de la MSH &rarr;
-    </a>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <a href="https://www.msh-vdl.fr/actualite/human-tech-days-meta-humus/" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+        Présentation sur le site de la MSH &rarr;
+      </a>
+      <a href="https://tekhne.neguentropie.art/+neguentropie/meta-humus/publications/meta-humus-msh-val-de-loire-htd-2023?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+        Consulter la documentation &rarr;
+      </a>
+    </div>
   </div>
 
   <div class="card" style="padding: 1.25rem;">
@@ -122,6 +127,9 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
       <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/neguentropie-fontiere?display=section" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
         Récit de la rencontre &rarr;
       </a>
+      <a href="https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/recit-360-de-la-premiere-rencontre-neguentropie-frontiere?display=slides" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: var(--theme-foreground-focus, #3b82f6); font-weight: 500;">
+        Récit « 360 » &rarr;
+      </a>
     </div>
   </div>
 
@@ -146,6 +154,13 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
   </iframe>
 </div>
 
+### Autres publications & références
+
+- Publication de Philippe Rivière sur [Observable](https://observablehq.com/@visionscarto/neguentropie) dans le cadre du ***#30DayMapChallenge***.
+- Inscription des différents projets issus de Néguentropie sur le ***Centre de Ressources pour les Arts et les Cultures Numériques en région Centre-Val de Loire*** : [CRACN Néguentropie](https://cracn.fr/books/neguentropie).
+- Publication sur le site [Organoesis](https://organoesis.org/projets-contributifs/neguentropie) suite à la rencontre avec ***Anne Alombert***.
+- Publication sur le site [oeuvres.artlibre](https://oeuvres.artlibre.org/neguentropie) suite à la rencontre avec ***Antoine Moreau***.
+
 ### Espace de documentation contributive
 
 Tous les récits, protocoles d'ateliers, photographies et traces de fabrication sont documentés et archivés sur la plateforme contributive :
@@ -159,9 +174,13 @@ Tous les récits, protocoles d'ateliers, photographies et traces de fabrication 
 ---
 
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie
-Copyleft : cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](http://www.artlibre.org)
+Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](https://artlibre.org).
+
+**Sources et crédits de cette page**
+- Article : © Erwan Bozec, revue *Cartes & Géomatique* (Comité français de cartographie), notice [HAL](https://hal.science/hal-05035112v1).
+- Vidéo : *Reboute #07*, hébergée sur l'instance PeerTube [tube.futuretic.fr](https://tube.futuretic.fr/c/reboutelatechnologie/videos).
 
 <div style="text-align: center;">
-  <img src="artefacts-logo1.png" alt="Artefacts" width="150"><br>
+  <img src="artefacts-logo1.png" alt="Artéfacts" width="150"><br>
   <a href="https://artefacts.coop/">https://artefacts.coop</a>
 </div>

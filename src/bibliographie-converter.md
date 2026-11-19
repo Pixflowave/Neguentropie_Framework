@@ -1,5 +1,5 @@
 ---
-title: Convertisseur Bibliographie → JSON
+title: Convertisseur Bibliographie CSL-JSON
 toc: false
 ---
 
@@ -950,6 +950,20 @@ view(Inputs.button("📥 Télécharger le JSON Fusionné", {
 
 </div>
 
+</div>
+
+---
+
+#### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie
+Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier, la diffuser et la modifier selon les termes de la [Licence Art Libre](https://artlibre.org).
+
+**Sources et crédits de cette page**
+- Analyse des références : [AnyStyle](https://anystyle.io/) (export CSL-JSON).
+- Vérification : catalogues et API de la [BnF](https://catalogue.bnf.fr/), [HAL](https://hal.science/), [Crossref](https://www.crossref.org/), [Open Library](https://openlibrary.org/) et [Retraction Watch](https://retractionwatch.com/).
+
+<div style="text-align: center;">
+  <img src="artefacts-logo1.png" alt="Artéfacts" width="150"><br>
+  <a href="https://artefacts.coop/">https://artefacts.coop</a>
 </div>
 
 <style>
