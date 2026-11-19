@@ -4,6 +4,8 @@ Site Observable Framework publié sur GitHub Pages :
 https://pixflowave.github.io/Neguentropie_Framework/
 
 - Le déploiement se fait par GitHub Actions ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) à chaque push sur `main` (environ 4 min). Plus de build quotidien depuis le 2026-11-17.
+  - Un push qui ne touche que `CLAUDE.md` ou `scripts/` ne déclenche pas de déploiement (`paths-ignore`, 2026-11-19). Les scripts écrivent dans `src/data/`, qui, lui, déploie.
+  - Pour limiter les déploiements (souhait d'Erwan, 2026-11-19) : commiter en local au fil de l'eau et ne pousser qu'une fois le lot terminé.
 - `npm run dev` : aperçu local · `npm run build` : génère `dist/`.
 - Répondre en français. Ne faire de commit ou de push qu'avec l'accord d'Erwan.
 - **Police** : Raleway sur tout le site, chargée depuis Google Fonts dans le `head` de [observablehq.config.js](observablehq.config.js). Elle remplace `--serif` et `--sans-serif`, avec des chiffres alignés (`font-variant-numeric: lining-nums`). La vue 3D charge aussi Raleway de son côté.
@@ -56,7 +58,7 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 | Date | Commit | Changement |
 |---|---|---|
-| 2026-11-19 | (à venir) | Cohérence du site : pied de page commun (Framework, Plot, D3, Leaflet, three.js, Raleway, Licence Art Libre), crédits harmonisés sur toutes les pages, liens do.doc remplacés par tekhne, accueil renvoyant vers Rencontres, coquilles, pages d'exemple supprimées |
+| 2026-11-19 | 5acc4ae | Cohérence du site : pied de page commun (Framework, Plot, D3, Leaflet, three.js, Raleway, Licence Art Libre), crédits harmonisés sur toutes les pages, liens do.doc remplacés par tekhne, accueil renvoyant vers Rencontres, coquilles, pages d'exemple supprimées |
 | 2026-11-18 | 62668b9 | Terrains et aérodromes via GeoDesk au lieu d'Overpass, multipolygones pris en compte, altitudes précalculées : build sans réseau |
 | 2026-11-18 | dfcb4ce | Texte Airocean : origine du nom (1954) et transformation de Gray |
 | 2026-11-17 | 41e48c1 | Crédits Airocean, Natural Earth et NASA, attribution OSM permanente, étiquettes affichées par défaut |

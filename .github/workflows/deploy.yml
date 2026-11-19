@@ -1,8 +1,13 @@
 name: Deploy
 
 on:
-  # Run this workflow whenever a new commit is pushed to main.
-  push: {branches: [main]}
+  # Run this workflow whenever a new commit is pushed to main,
+  # sauf si le push ne touche que des fichiers sans effet sur le site.
+  push:
+    branches: [main]
+    paths-ignore:
+      - "CLAUDE.md"
+      - "scripts/**"
   # Run this workflow when triggered manually in GitHub’s UI.
   workflow_dispatch: {}
 
