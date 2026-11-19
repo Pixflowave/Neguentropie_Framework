@@ -10,9 +10,9 @@ toc: false
 
 <div class="converter-container">
 
-## 🔄 Fusion CSL-JSON [AnyStyle.io](https://anystyle.io)
+## 🔄 Fusion d'une bibliographie
 
-Importez un fichier CSL-JSON exporté depuis AnyStyle.io et fusionnez-le avec le graphe existant.
+Collez une bibliographie, en texte brut (un scan, un copier-coller) ou en CSL-JSON exporté depuis [AnyStyle.io](https://anystyle.io), et fusionnez-la avec le graphe existant.
 
 ```js
 // Import existing graph data
@@ -33,27 +33,74 @@ const selectedSourceBook = view(Inputs.select(existingNodes, {
 }));
 ```
 
-### 2. Coller le CSL-JSON
-Collez le contenu de votre fichier JSON exporté.
+### 2. Coller la bibliographie
+Deux formats sont reconnus automatiquement :
+- **texte brut**, une référence par ligne, par exemple le scan d'une bibliographie de livre : `A. Supiot, La Gouvernance par les nombres, Paris, Fayard, 2015.` Les erreurs de lecture courantes sont corrigées, et chaque correction est listée ;
+- **CSL-JSON**, une liste qui commence par `[`, par exemple un export d'AnyStyle.
 
 ```js
-const cslInput = view(Inputs.textarea({
-  placeholder: `[
-  {
-    "author": [
-      {
-        "family": "Stiegler",
-        "given": "Bernard"
-      }
-    ],
-    "title": "La technique et le temps",
-    ...
-  }
-]`,
+const saisie = view(Inputs.textarea({
+  placeholder: `A. Supiot, La Gouvernance par les nombres, Paris, Fayard, 2015.
+A. Alombert, « Comment penser ChatGPT ? », Conseil national du numérique, avril 2023 : https://cnnumerique.fr/comment-penser-chatgpt
+
+ou
+
+[{"author": [{"family": "Stiegler", "given": "Bernard"}], "title": "La technique et le temps", …}]`,
   rows: 10,
   width: "100%",
   submit: false
 }));
+```
+
+```js
+import {texteVersCSL} from "./components/texte-brut.js";
+```
+
+```js
+// Format : CSL-JSON si le texte commence par « [ », texte brut sinon.
+const formatSaisie = !saisie?.trim() ? null : saisie.trim().startsWith("[") ? "csl" : "texte";
+const analyseTexte = formatSaisie === "texte" ? texteVersCSL(saisie) : null;
+// Ce que la suite de la page reçoit : toujours du CSL-JSON.
+const cslInput = formatSaisie === "texte" ? JSON.stringify(analyseTexte.entrees, null, 2) : (saisie ?? "");
+```
+
+```js
+if (analyseTexte) {
+  const a = analyseTexte;
+  const sansTitre = a.lignes.filter((l) => !l.entree.title);
+  const TYPES = {book: "livre", chapter: "chapitre", "article-journal": "article", article: "article", webpage: "page web"};
+  let numero = 0;
+  const lignes = a.lignes.map((l) => ({
+    ligne: l.n,
+    entree: l.entree.title ? ++numero : "",
+    auteurs: (l.entree.author ?? []).map((x) => x.literal ?? `${x.given} ${x.family}`).join(" ; "),
+    titre: l.entree.title ?? "",
+    annee: l.entree.issued ? String(l.entree.issued["date-parts"][0][0]) : "",
+    type: TYPES[l.entree.type] ?? l.entree.type ?? "",
+    source: l.entree["container-title"] ?? l.entree.publisher ?? "",
+    doutes: l.doutes.join(" ; ")
+  }));
+  const LARGEURS = {n: 48, ligne: 48, entree: 40, auteurs: 160, titre: 320, annee: 52, type: 80, source: 170, doutes: 280, raison: 260, avant: 220, apres: 220, mot: 200};
+  const tableau = (lignes, colonnes) => Inputs.table(lignes, {columns: Object.keys(colonnes), header: colonnes, width: LARGEURS, rows: 12, select: false});
+  const colonnesRef = {ligne: "Ligne", entree: "N°", auteurs: "Auteurs", titre: "Titre", annee: "Année", type: "Type", source: "Revue ou éditeur", doutes: "À vérifier"};
+  const aVerifier = lignes.filter((l) => l.doutes);
+  display(html`<div>
+    <p><strong>Texte brut :</strong> ${a.entrees.length} références lues
+      (${a.entrees.filter((e) => e.issued).length} avec une année),
+      ${a.corrections.length} corrections, ${a.lignes.filter((l) => l.doutes.length).length} références à vérifier.
+      ${sansTitre.length ? html`<br>${sansTitre.length} ligne(s) sans titre, ignorée(s).` : ""}</p>
+    ${a.corrections.length ? html`<details class="rapport"><summary>Corrections appliquées (${a.corrections.length})</summary>
+      ${tableau(a.corrections, {n: "Ligne", raison: "Correction", avant: "Avant", apres: "Après"})}</details>` : ""}
+    ${a.coupures.length ? html`<details class="rapport" open><summary>Mots peut-être coupés, à corriger dans le texte (${a.coupures.length})</summary>
+      ${tableau(a.coupures, {n: "Ligne", mot: "Mot"})}</details>` : ""}
+    ${aVerifier.length ? html`<details class="rapport" open><summary>Références à vérifier (${aVerifier.length})</summary>
+      ${tableau(aVerifier, colonnesRef)}</details>` : ""}
+    <details class="rapport"><summary>Toutes les références lues (${a.lignes.length})</summary>
+      ${tableau(lignes, colonnesRef)}</details>
+    <details class="rapport"><summary>CSL-JSON produit</summary>
+      ${Inputs.textarea({value: cslInput, rows: 12, width: "100%", readonly: true})}</details>
+  </div>`);
+}
 ```
 
 ### 🔍 Vérification CSL (optionnel)

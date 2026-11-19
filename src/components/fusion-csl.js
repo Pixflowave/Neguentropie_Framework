@@ -114,6 +114,33 @@ export function trouverPersonne(nom, tousLesIds, personnes) {
   return null;
 }
 
+/**
+ * Un titre existant proche de `titre`, sans être identique : l'un commence
+ * par l'autre (« Bifurquer » / « Bifurquer. Il n'y a pas d'alternative »),
+ * ou ils partagent presque tous leurs mots (« Derrida et Simondon » /
+ * « Simondon et Derrida », un « Tome I » en plus). Sert seulement à avertir.
+ */
+export function titreProche(titre, existants) {
+  const a = normaliserTexte(titre);
+  const motsA = new Set(a.split(" ").filter((m) => m.length >= 3));
+  let meilleur = null;
+  let score = 0;
+  for (const id of existants) {
+    const b = normaliserTexte(id);
+    if (!b || b === a) continue;
+    const court = a.length < b.length ? a : b;
+    const long = a.length < b.length ? b : a;
+    if (court.length >= 6 && long.startsWith(court + " ")) return id;
+    const motsB = new Set(b.split(" ").filter((m) => m.length >= 3));
+    if (motsA.size < 2 || motsB.size < 2) continue;
+    let communs = 0;
+    for (const m of motsA) if (motsB.has(m)) communs++;
+    const s = communs / Math.min(motsA.size, motsB.size);
+    if (s >= 0.8 && communs >= 3 && s > score) { score = s; meilleur = id; }
+  }
+  return meilleur;
+}
+
 function typeArete(type) {
   return type === "webpage" ? "Site Web" : type === "report" ? "Rapport" : type === "article-journal" ? "Article" : "Livre";
 }
@@ -148,6 +175,10 @@ export function mergeCSL(cslText, graphe, sourceId, verifications = [], complete
     if (TYPES_PERSONNE.has(e.type)) personnes.add(e.target);
   }
   const aretes = new Set(g.edges.map((e) => `${e.source}\u0000${e.target}`));
+  // Titres du graphe d'origine, pour signaler les titres proches
+  // (cible d'une arête Livre, Article… ou nœud qui n'est pas une personne)
+  const oeuvres = new Set(g.edges.filter((e) => TYPES_AUTEUR.has(e.type)).map((e) => e.target));
+  const titresExistants = g.nodes.filter((x) => oeuvres.has(x.id) || !personnes.has(x.id)).map((x) => x.id);
 
   const rapport = {oeuvres: [], auteurs: [], rapprochements: [], ecartees: [], avertissements: [], completees: []};
   let nouveauxNoeuds = 0;
@@ -212,6 +243,10 @@ export function mergeCSL(cslText, graphe, sourceId, verifications = [], complete
       rapport.rapprochements.push({n, genre: "œuvre", saisi: titreFinal, noeud: existant});
       titreFinal = existant;
     } else {
+      const proche = titreProche(titreFinal, titresExistants);
+      if (proche) {
+        rapport.avertissements.push({n, titre: titreFinal, message: `Titre proche du nœud existant « ${proche} » : même œuvre ? (nouveau nœud créé)`});
+      }
       const noeud = {id: titreFinal, url};
       if (an) noeud.year = an;
       g.nodes.push(noeud);

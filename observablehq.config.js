@@ -12,7 +12,7 @@ const DESCRIPTIONS = {
   "/neguanthropocene": "Néguanthropocène (2021) : une démarche participative pour interroger l'activité humaine et s'émanciper par le collectif.",
   "/Symposium_neguanthropique": "Symposium néguanthropique : quelles bifurcations ? Consultation ouverte et anonyme sur Pol.is, dans le prolongement de l'œuvre Néguentropie.",
   "/enveloppe-icosaedrique-3d": "Enveloppe icosaédrique de 3 750 m³ portant la carte Airocean : vue 3D de la montgolfière et carte des sites de vol autour de Cossonay.",
-  "/bibliographie-converter": "Outil pour vérifier des bibliographies CSL-JSON (BnF, HAL, Crossref, Open Library) et les fusionner avec le graphe Néguentropie.",
+  "/bibliographie-converter": "Outil pour lire des bibliographies (texte brut ou CSL-JSON), les vérifier (BnF, HAL, Crossref, Open Library) et les fusionner avec le graphe Néguentropie.",
   "/rencontres": "Rencontres, ateliers, résidences et publications de Néguentropie depuis 2021, dont l'article paru dans Cartes & Géomatique (2024)."
 };
 const attr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");

@@ -17,6 +17,14 @@ Cocher chaque point une fois corrigé et vérifié, avec la date.
 - Tests : `npm run test:convertisseur` ([scripts/test-convertisseur.mjs](../scripts/test-convertisseur.mjs)), sans réseau, 16 cas dont tous ceux ci-dessous. Vérifié aussi dans Chrome sans fenêtre (rapport affiché, JSON téléchargé correct).
 - Option de la page renommée : « Compléter avec les références vérifiées (adresse, année, auteurs manquants) ».
 
+**Lot 1 bis (2026-11-20) : entrée « texte brut ».** Sur le scan iPhone d'une vraie bibliographie, AnyStyle ne gardait l'année que de 3 entrées sur 163 (export `../Bib_Le_capital_que_je_ne_suis_pas.json`, hors dépôt), collait l'éditeur au titre et rangeait des titres parmi les auteurs. D'où un analyseur maison pour le style des bibliographies de l'édition française en sciences humaines.
+- [src/components/texte-brut.js](../src/components/texte-brut.js) : `nettoyerTexte` (références collées séparées, erreurs de lecture courantes, mots et hôtes d'adresse coupés recollés seulement si le mot entier figure ailleurs dans le texte, sinon signalés), `analyserReference` (livre, article, chapitre, page web ; auteurs à initiales, « et », « and », « et al. », « (dir.) », institutions) et `texteVersCSL`. Chaque correction et chaque doute sont renvoyés.
+- Page : format détecté tout seul (`[` en tête = CSL-JSON, sinon texte brut). Le texte est converti en CSL-JSON, puis vérification et fusion s'appliquent comme avant. Affichés : corrections, mots peut-être coupés, références à vérifier, toutes les références lues, CSL-JSON produit.
+- Scan d'essai : [test_Biblio.md](test_Biblio.md) (bibliographie de *Le capital que je ne suis pas*, 158 lignes). Résultat : 162 références, 158 avec une année, 29 corrections, 20 références à vérifier (toutes fondées).
+- Fusion : nouvel avertissement « titre proche d'un nœud existant » (`titreProche`), sans rapprochement automatique : « Bifurquer » / « Bifurquer. Il n'y a pas d'alternative », tomes de *La Technique et le Temps* et du *Geste et la Parole*, « Simondon et Derrida » / « Derrida et Simondon »… 13 cas sur le scan d'essai.
+- La règle « personne = source d'une arête Livre, Article… » se trompe parfois sur le graphe actuel (« Bifurquer » → « Vocabulaire de l'Internation » en Article, « Les Liens qui Libèrent » → « Bifurquer » en Livre). Pour les titres, un nœud cible d'une telle arête compte toujours comme œuvre.
+- Le graphe contient un nœud mal formé : « Condition de l'homme moderne (1958 » (parenthèse non fermée). À traiter avec le nettoyage du graphe.
+
 ## Règles pour les corrections
 
 - Répondre en français. Commit local à chaque étape, push seulement avec l'accord d'Erwan, une fois le lot terminé.
