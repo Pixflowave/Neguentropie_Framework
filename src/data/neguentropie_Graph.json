@@ -310,7 +310,7 @@
     },
     {
       "id": "Ressources Educatives Libres",
-      "url": "https://www.unesco.org/fr/education/digital"
+      "url": "https://www.unesco.org/fr/open-educational-resources"
     },
     {
       "id": "17 Objectifs de développement durable",
@@ -518,7 +518,7 @@
     },
     {
       "id": "Shakespeare–to–peer par Bernard Stiegler",
-      "url": "https://archive-magazine.jeudepaume.org/2011/08/shakespeare-to-peer/index.html"
+      "url": "https://web.archive.org/web/20241221151408/https://archive-magazine.jeudepaume.org/2011/08/shakespeare-to-peer/index.html"
     },
     {
       "id": "IRI",
@@ -622,7 +622,7 @@
     },
     {
       "id": "Jacques Derrida",
-      "url": "https://www.radiofrance.fr/dossiers/jacques-derrida-l-integrale-en-cinq-entretiens-1998"
+      "url": "https://fr.wikipedia.org/wiki/Jacques_Derrida"
     },
     {
       "id": "De la grammatologie",
@@ -658,7 +658,7 @@
     },
     {
       "id": "Reboute",
-      "url": "https://tube.futuretic.fr/c/reboutelatechnologie/videos"
+      "url": "https://tube.futuretic.fr/videos/watch/84b0cdc0-334c-4bac-b8af-a0f07b788713"
     },
     {
       "id": "CRACN",
@@ -804,11 +804,11 @@
       "url": "https://revueinstitutions.blogspot.com/p/blog-page.html"
     },
     {
-      "id" :"Fédération inter-associations culturelles (FIAC)",
+      "id": "Fédération inter-associations culturelles (FIAC)",
       "url": "https://shs.cairn.info/editeur/FIAC?lang=fr&tab=apercu"
     },
     {
-      "id" :"Cairn",
+      "id": "Cairn",
       "url": "https://shs.cairn.info/editeur/"
     },
     {
@@ -856,7 +856,7 @@
     },
     {
       "id": "Institut du Cerveau",
-      "url": "https://institutducerveau-icm.org/fr/"
+      "url": "https://institutducerveau.org/"
     },
     {
       "id": "Pierre Delion",
@@ -876,7 +876,7 @@
     },
     {
       "id": "Anthropopsychiatrie",
-      "url": "https://www.szondi.fr/textes-audios-videos/lanthropopsychiatrie/introduction-aux-concepts-de-lanthropopsychiatrie/"
+      "url": "https://www.editions-hermann.fr/livre/l-anthropopsychiatrie-de-jacques-schotte-jean-louis-feys"
     },
     {
       "id": "Jacques Schotte"
@@ -899,12 +899,12 @@
     },
     {
       "id": "Écrits sur l'aliénation et la liberté",
-      "url": "https://www.editionsladecouverte.fr/ecrits_sur_l_alienation_et_la_liberte-9782707186386"
+      "url": "https://www.editionsladecouverte.fr/ecrits_sur_l_alienation_et_la_liberte-9782348036262"
     },
     {
       "id": "Lucien Bonnafé",
       "url": "https://fr.wikipedia.org/wiki/Lucien_Bonnafé"
-    },    
+    },
     {
       "id": "François Tosquelles",
       "url": "https://www.radiofrance.fr/franceculture/podcasts/les-nuits-de-france-culture/entretien-avec-francois-tosquelles-1-2-1ere-diffusion-04-10-1985-5305009"
@@ -1058,8 +1058,8 @@
       "url": "https://spaceshipearth.live/"
     },
     {
-      "id": "Le soufle de l'architecte",
-      "url": "https://www.fondationcartier.com/expositions/bijoy-jain-studio-mumbai-le-souffle-de-larchitecte"
+      "id": "Le souffle de l'architecte",
+      "url": "https://web.archive.org/web/20240714120445/https://medias.fondationcartier.com/fondation/documents/school-guides/DOSSIER_Peda_BijoyJain_DEF.pdf"
     },
     {
       "id": "osarch",
@@ -1087,7 +1087,7 @@
     },
     {
       "id": "Horizocom",
-      "url": "https://www.horizom.co/"
+      "url": "https://horizom.com/"
     },
     {
       "id": "Bombouscoopic",
@@ -1191,7 +1191,7 @@
     },
     {
       "id": "Technologie",
-      "url": "https://fr.wikipedia.org/wiki/Technologie/"
+      "url": "https://fr.wikipedia.org/wiki/Technologie"
     },
     {
       "id": "Software Heritage",
@@ -1266,12 +1266,12 @@
       "url": "https://fr.wikipedia.org/wiki/Édition"
     },
     {
-      "id":"Whoisbn",
-      "url":"https://whoisbn.net/fr/"
+      "id": "Whoisbn",
+      "url": "https://whoisbn.net/fr/"
     },
     {
       "id": "Victor Chaix",
-      "url": "https://llm.umontreal.ca/repertoire-departement/doctorantes-doctorants/victor-chaix-illui/"
+      "url": "https://www.ecrituresnumeriques.ca/en/personnes/victor-chaix"
     },
     {
       "id": "Maël Montévil",
@@ -1311,7 +1311,7 @@
     },
     {
       "id": "NEST",
-      "url": "https://www.nestproject.eu"
+      "url": "https://cordis.europa.eu/project/id/101007915/fr"
     },
     {
       "id": "Des choses cachées depuis la fondation du monde",
@@ -1587,7 +1587,7 @@
     },
     {
       "id": "Pascal chauchefoin",
-      "url": "https://ruralites.labo.univ-poitiers.fr/membres/pascal-chauchefoin/"
+      "url": "https://shs.cairn.info/publications-de-Pascal-Chauchefoin--23134?lang=fr"
     },
     {
       "id": "Espace Mendes France",
@@ -1671,7 +1671,7 @@
     },
     {
       "id": "Cern",
-      "url": "https://home.web.cern.ch/fr"
+      "url": "https://home.cern/fr"
     },
     {
       "id": "Inrupt",
@@ -1810,6 +1810,21 @@
       "id": "Échographies de la télévision : entretiens filmés",
       "url": "https://catalogue.bnf.fr/ark:/12148/cb35847212h",
       "year": "1996"
+    },
+    {
+      "id": "Derrida – L'enseignement (À voix nue, 1998)",
+      "url": "https://tube.futuretic.fr/w/xyoi2mE7UEtbZWBnYauAZV",
+      "year": "1998"
+    },
+    {
+      "id": "Derrida – Enfance en Algérie (À voix nue, 1998)",
+      "url": "https://tube.futuretic.fr/w/cvhRXhf3JNksikaMVkx8Ht",
+      "year": "1998"
+    },
+    {
+      "id": "Derrida – Littérature et philosophie (À voix nue, 1998)",
+      "url": "https://tube.futuretic.fr/w/iSyhBeWAC3GXuk7pSZn1tN",
+      "year": "1998"
     }
   ],
   "edges": [
@@ -3605,7 +3620,7 @@
     },
     {
       "source": "Architecture",
-      "target": "Le soufle de l'architecte",
+      "target": "Le souffle de l'architecte",
       "type": "Livre"
     },
     {
@@ -5232,7 +5247,21 @@
       "source": "Psychanalyse",
       "target": "Jean Oury",
       "type": "Individu"
+    },
+    {
+      "source": "Jacques Derrida",
+      "target": "Derrida – L'enseignement (À voix nue, 1998)",
+      "type": "Émission"
+    },
+    {
+      "source": "Jacques Derrida",
+      "target": "Derrida – Enfance en Algérie (À voix nue, 1998)",
+      "type": "Émission"
+    },
+    {
+      "source": "Jacques Derrida",
+      "target": "Derrida – Littérature et philosophie (À voix nue, 1998)",
+      "type": "Émission"
     }
-
   ]
 }
