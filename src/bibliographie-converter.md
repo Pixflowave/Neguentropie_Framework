@@ -4,7 +4,7 @@ toc: false
 ---
 
 <div class="hero">
-  <h1>📚 Convertisseur Bibliographie CSL-JSON</h1>
+  <h1>Convertisseur Bibliographie CSL-JSON</h1>
   <h2>Importez vos bibliographies au format CSL-JSON et fusionnez-les avec le graphique Néguentropie</h2>
 </div>
 
@@ -968,38 +968,6 @@ Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier
 
 <style>
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: var(--sans-serif);
-  margin: 2rem 0 4rem;
-  text-wrap: balance;
-  text-align: center;
-}
-
-.hero h1 {
-  margin: 1rem 0;
-  padding: 1rem 0;
-  max-width: none;
-  font-size: clamp(2rem, 8vw, 4rem);
-  font-weight: 900;
-  line-height: 1.1;
-  background: linear-gradient(135deg, #9333ea, #dc2626, #eab308);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero h2 {
-  margin: 0;
-  max-width: 40em;
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
-  font-style: initial;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--theme-foreground-muted);
-}
 
 .converter-container {
   max-width: 1200px;

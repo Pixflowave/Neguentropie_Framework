@@ -11,7 +11,9 @@ https://pixflowave.github.io/Neguentropie_Framework/
 - **Police** : Raleway sur tout le site, hébergée dans le dépôt depuis le 2026-11-19 (plus aucun appel à Google Fonts).
   - Fichiers sources : [polices/](polices/) (jeu latin, droit et italique, variable 100-900, paquet `@fontsource-variable/raleway` 5.1.1, licence OFL dans `polices/OFL.txt`).
   - `npm run police` ([scripts/generer-police.mjs](scripts/generer-police.mjs)) les intègre en base64 dans [src/raleway.css](src/raleway.css) et dans la vue 3D, entre les marqueurs `raleway:debut` et `raleway:fin`. Ce passage par le base64 est nécessaire, car Framework (esbuild) ne sait pas copier un fichier `.woff2` référencé dans le CSS.
-  - [src/style.css](src/style.css) (option `style` de la config) reprend le thème par défaut (air clair et near-midnight sombre), importe `raleway.css`, remplace `--serif` et `--sans-serif` et aligne les chiffres (`lining-nums`).
+  - [src/style.css](src/style.css) (option `style` de la config) importe `raleway.css` et remplace `--serif` et `--sans-serif`. Pas de `lining-nums` : on laisse les chiffres de Raleway comme sur pixflowave.fr.
+  - **Typographie de pixflowave.fr** (2026-11-19, Erwan trouvait les titres trop gros) : texte 15 px, interligne 1,65 ; titres en graisse 600, h1 26 px, h2 20 px, h3 17 px, h4 à h6 15 px.
+  - Le grand titre `.hero h1` (accueil, Symposium, convertisseur) suit le nom du site Pixflowave : 36 px, graisse 300, lettres espacées de 0,15 em, en or. Le style `.hero` n'est plus défini que dans `style.css`.
   - `globalStylesheets: []` empêche Framework de charger Source Serif 4 chez Google.
   - Les caractères hors du jeu latin (« ł » polonais, par exemple) s'affichent dans la police du système.
 - **Favicon** (2026-11-19) : icosaèdre vu par un sommet, avec le dégradé violet → rouge → or des arbres de l'accueil. [src/favicon.svg](src/favicon.svg), plus [src/favicon.png](src/favicon.png) en 32 px pour les navigateurs qui ne lisent pas le SVG (rendu avec Chrome sans fenêtre).
@@ -128,7 +130,7 @@ Déjà en place :
 - Carte Leaflet : `map.invalidateSize()` avant chaque `fitBounds` (elle s'était ouverte une fois au zoom 0). Les textes venant des données (`p.name`, `p.type`, `p.tourism`, `t.genre`) passent par `esc()` avant d'être insérés en HTML.
 
 À corriger :
-- Le style `.hero` est recopié dans 3 pages, et le convertisseur a son propre style (émojis, dégradé violet/rouge codé en dur).
+- Le convertisseur garde son propre style (émojis, dégradé violet/rouge codé en dur dans ses cartes et ses boutons).
 
 ## À faire / idées
 
