@@ -8,7 +8,12 @@ https://pixflowave.github.io/Neguentropie_Framework/
   - Pour limiter les déploiements (souhait d'Erwan, 2026-11-19) : commiter en local au fil de l'eau et ne pousser qu'une fois le lot terminé.
 - `npm run dev` : aperçu local · `npm run build` : génère `dist/`.
 - Répondre en français. Ne faire de commit ou de push qu'avec l'accord d'Erwan.
-- **Police** : Raleway sur tout le site, chargée depuis Google Fonts dans le `head` de [observablehq.config.js](observablehq.config.js). Elle remplace `--serif` et `--sans-serif`, avec des chiffres alignés (`font-variant-numeric: lining-nums`). La vue 3D charge aussi Raleway de son côté.
+- **Police** : Raleway sur tout le site, hébergée dans le dépôt depuis le 2026-11-19 (plus aucun appel à Google Fonts).
+  - Fichiers sources : [polices/](polices/) (jeu latin, droit et italique, variable 100-900, paquet `@fontsource-variable/raleway` 5.1.1, licence OFL dans `polices/OFL.txt`).
+  - `npm run police` ([scripts/generer-police.mjs](scripts/generer-police.mjs)) les intègre en base64 dans [src/raleway.css](src/raleway.css) et dans la vue 3D, entre les marqueurs `raleway:debut` et `raleway:fin`. Ce passage par le base64 est nécessaire, car Framework (esbuild) ne sait pas copier un fichier `.woff2` référencé dans le CSS.
+  - [src/style.css](src/style.css) (option `style` de la config) reprend le thème par défaut (air clair et near-midnight sombre), importe `raleway.css`, remplace `--serif` et `--sans-serif` et aligne les chiffres (`lining-nums`).
+  - `globalStylesheets: []` empêche Framework de charger Source Serif 4 chez Google.
+  - Les caractères hors du jeu latin (« ł » polonais, par exemple) s'affichent dans la police du système.
 - **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »
@@ -101,7 +106,6 @@ Déjà en place :
 - Carte Leaflet : `map.invalidateSize()` avant chaque `fitBounds` (elle s'était ouverte une fois au zoom 0). Les textes venant des données (`p.name`, `p.type`, `p.tourism`, `t.genre`) passent par `esc()` avant d'être insérés en HTML.
 
 À corriger :
-- **Raleway via Google Fonts** : chaque visiteur envoie son adresse IP à Google. Raleway est sous licence OFL, on peut donc l'héberger dans le dépôt, à la fois dans le site et dans la vue 3D.
 - Pas de `meta description` ni de balises Open Graph : en ajouter une par page avec `head:` dans l'en-tête du fichier .md.
 - Remplacer le favicon Observable.
 - Le style `.hero` est recopié dans 3 pages, et le convertisseur a son propre style (émojis, dégradé violet/rouge codé en dur).

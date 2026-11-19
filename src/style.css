@@ -1,0 +1,16 @@
+/* Thème par défaut de Framework (clair ou sombre selon le système). */
+@import url("observablehq:default.css");
+@import url("observablehq:theme-air.css") (prefers-color-scheme: light);
+@import url("observablehq:theme-near-midnight.css") (prefers-color-scheme: dark);
+
+/* Raleway hébergée dans le dépôt (pas d'appel à Google), générée par npm run police. */
+@import url("./raleway.css");
+
+:root {
+  --serif: Raleway, system-ui, sans-serif;
+  --sans-serif: Raleway, system-ui, sans-serif;
+}
+
+body {
+  font-variant-numeric: lining-nums;
+}

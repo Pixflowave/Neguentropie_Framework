@@ -10,7 +10,8 @@
     "osm": "node scripts/osm.mjs",
     "terrains": "node scripts/generer-terrains.mjs",
     "aerodromes": "node scripts/generer-aerodromes.mjs",
-    "reliefs": "node scripts/generer-reliefs.mjs"
+    "reliefs": "node scripts/generer-reliefs.mjs",
+    "police": "node scripts/generer-police.mjs"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",
