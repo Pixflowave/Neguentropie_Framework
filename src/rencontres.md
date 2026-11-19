@@ -139,14 +139,14 @@ Les rencontres, ateliers et résidences de **Néguentropie** constituent des mom
 
 ## Vidéos & Documents contributifs
 
-### Reboute #07 — Le projet Néguentropie
+### Reboute Arts et Technologies (ré) approprié - Projet Néguentropie
 
 <div class="card" style="padding: 0; overflow: hidden; border-radius: 8px; max-width: 900px; margin: 1rem 0;">
   <iframe
-    title="RB_07 Le projet Néguentropie"
+    title="Reboute Arts et Technologies (ré) approprié - Projet Néguentropie"
     width="100%"
     height="480"
-    src="https://tube.futuretic.fr/videos/embed/c44a1628-d1ba-4f47-a5f4-db6e137e0443"
+    src="https://tube.futuretic.fr/videos/embed/hokQhxiEMJegDSWxzWWqSP"
     frameborder="0"
     allowfullscreen=""
     sandbox="allow-same-origin allow-scripts allow-popups"
@@ -178,7 +178,7 @@ Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier
 
 **Sources et crédits de cette page**
 - Article : © Erwan Bozec, revue *Cartes & Géomatique* (Comité français de cartographie), notice [HAL](https://hal.science/hal-05035112v1).
-- Vidéo : *Reboute #07*, hébergée sur l'instance PeerTube [tube.futuretic.fr](https://tube.futuretic.fr/c/reboutelatechnologie/videos).
+- Vidéo : *Reboute Arts et Technologies (ré) approprié - Projet Néguentropie*, chaîne [Pixflowave](https://tube.futuretic.fr/video-channels/pixflowave) sur l'instance PeerTube tube.futuretic.fr, sous licence [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr).
 
 <div style="text-align: center;">
   <img src="artefacts-logo1.png" alt="Artéfacts" width="150"><br>

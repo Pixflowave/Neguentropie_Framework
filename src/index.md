@@ -57,7 +57,7 @@ display(cadre(await graphe(), {
 }))
 ```
 
-La vidéo *Reboute #07 — Le projet Néguentropie* est sur la page [Rencontres & Publications](rencontres).
+La vidéo *Reboute — le projet Néguentropie* est sur la page [Rencontres & Publications](rencontres).
 
 ---
 
