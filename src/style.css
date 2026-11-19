@@ -126,3 +126,17 @@ h4, h5, h6 { font-size: 15px; }
   line-height: 1.5;
   color: var(--theme-foreground-muted);
 }
+
+/* Consultation Pol.is (Symposium) : Pol.is n'a pas de thème sombre et son iframe
+   ne peut pas être stylée d'ici ; on encadre donc le module blanc. */
+.polis-cadre {
+  max-width: 900px;
+  margin: 1rem 0 2rem;
+  border: 1px solid var(--theme-foreground-focus);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+.polis-cadre iframe {
+  display: block;
+}
