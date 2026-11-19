@@ -38,7 +38,7 @@ https://pixflowave.github.io/Neguentropie_Framework/
     - pixflowave.fr est fait pour les importer à la place d'api.observablehq.com.
     - Les données du graphe ne changent en ligne qu'après un push.
   - L'ancien `components/notebook.js` (runtime Observable 5.9.9 depuis jsDelivr) a été supprimé. `npm:@observablehq/runtime` ne convient pas : Framework le remplace par son runtime interne, sans `Library`.
-- **Pol.is (page Symposium)** : pas de thème sombre, et son iframe ne peut pas être stylée depuis le site. Le module est encadré (`.polis-cadre` dans `style.css` : liseré or, coins arrondis) ; la bordure de Pol.is est retirée avec `data-border='none'`, `data-border_radius='0'` et `data-padding='0'`. La conversation a un champ `bgcolor` (vide), mais l'interface d'administration ne semble plus le proposer (2026-11-19). En capture Chrome sans fenêtre, l'iframe ne se charge pas : vérifier dans un vrai navigateur.
+- **Pol.is (page Symposium)** : pas de thème sombre, et son iframe ne peut pas être stylée depuis le site. Le module est encadré (`.polis-cadre` dans `style.css` : liseré or, coins arrondis) ; la bordure de Pol.is est retirée avec `data-border='none'`, `data-border_radius='0'` et `data-padding='0'`. La conversation a un champ `bgcolor` (vide), mais l'interface d'administration ne le propose plus : l'onglet Configure n'a aucun réglage de couleur (vérifié par Erwan le 2026-11-19). En capture Chrome sans fenêtre, l'iframe ne se charge pas : vérifier dans un vrai navigateur.
 - **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »
