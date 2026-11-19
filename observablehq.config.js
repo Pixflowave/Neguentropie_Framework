@@ -24,7 +24,8 @@ export default {
   // Content to add to the head of the page, e.g. for a favicon:
   // Framework 1.13 écrit <html> sans langue : on déclare le français au chargement.
   head: `<script>document.documentElement.lang="fr"</script>
-<link rel="icon" href="observable.png" type="image/png" sizes="32x32">`,
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="32x32">`,
 
   // Thème par défaut + Raleway hébergée dans le dépôt (src/style.css).
   // Pas de feuille globale : Framework chargerait sinon Source Serif 4 chez Google.

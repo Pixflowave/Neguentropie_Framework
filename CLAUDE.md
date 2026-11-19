@@ -14,6 +14,7 @@ https://pixflowave.github.io/Neguentropie_Framework/
   - [src/style.css](src/style.css) (option `style` de la config) reprend le thème par défaut (air clair et near-midnight sombre), importe `raleway.css`, remplace `--serif` et `--sans-serif` et aligne les chiffres (`lining-nums`).
   - `globalStylesheets: []` empêche Framework de charger Source Serif 4 chez Google.
   - Les caractères hors du jeu latin (« ł » polonais, par exemple) s'affichent dans la police du système.
+- **Favicon** (2026-11-19) : icosaèdre vu par un sommet, avec le dégradé violet → rouge → or des arbres de l'accueil. [src/favicon.svg](src/favicon.svg), plus [src/favicon.png](src/favicon.png) en 32 px pour les navigateurs qui ne lisent pas le SVG (rendu avec Chrome sans fenêtre).
 - **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »
@@ -107,7 +108,6 @@ Déjà en place :
 
 À corriger :
 - Pas de `meta description` ni de balises Open Graph : en ajouter une par page avec `head:` dans l'en-tête du fichier .md.
-- Remplacer le favicon Observable.
 - Le style `.hero` est recopié dans 3 pages, et le convertisseur a son propre style (émojis, dégradé violet/rouge codé en dur).
 
 ## À faire / idées
