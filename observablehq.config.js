@@ -10,7 +10,7 @@ const DESCRIPTION = "Néguentropie, installation artistique sous Licence Art Lib
 const DESCRIPTIONS = {
   "/index": "Néguentropie, installation artistique sous Licence Art Libre : une invitation à la recherche du point gris, entre cartographie, construction collective et bifurcations.",
   "/neguanthropocene": "Néguanthropocène (2021) : une démarche participative pour interroger l'activité humaine et s'émanciper par le collectif.",
-  "/Symposium_neguanthropique": "Symposium néguanthropique : consultation ouverte sur Polis autour des projets issus de Néguentropie.",
+  "/Symposium_neguanthropique": "Symposium néguanthropique : quelles bifurcations ? Consultation ouverte et anonyme sur Pol.is, dans le prolongement de l'œuvre Néguentropie.",
   "/enveloppe-icosaedrique-3d": "Enveloppe icosaédrique de 3 750 m³ portant la carte Airocean : vue 3D de la montgolfière et carte des sites de vol autour de Cossonay.",
   "/bibliographie-converter": "Outil pour vérifier des bibliographies CSL-JSON (BnF, HAL, Crossref, Open Library) et les fusionner avec le graphe Néguentropie.",
   "/rencontres": "Rencontres, ateliers, résidences et publications de Néguentropie depuis 2021, dont l'article paru dans Cartes & Géomatique (2024)."
