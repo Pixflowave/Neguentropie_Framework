@@ -1,7 +1,10 @@
 # Neguentropie_Framework
 
-Site Observable Framework publié sur GitHub Pages :
-https://pixflowave.github.io/Neguentropie_Framework/
+Site Observable Framework publié sur GitHub Pages, sous le sous-domaine (choix d'Erwan, 2026-11-19) :
+https://framework.neguentropie.art/
+
+- Domaine personnalisé GitHub Pages : `CNAME framework → pixflowave.github.io` dans le DNS IONOS de neguentropie.art ; domaine vérifié dans les réglages du compte GitHub ; « Custom domain » + « Enforce HTTPS » dans Settings → Pages du dépôt. L'ancienne adresse https://pixflowave.github.io/Neguentropie_Framework/ redirige vers le sous-domaine.
+- `neguentropie.art` (domaine nu) reste la publication do•doc sur le VPS ; `tekhne.` et `do.doc.` sont d'autres sous-domaines, indépendants.
 
 - Le déploiement se fait par GitHub Actions ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) à chaque push sur `main` (environ 4 min). Plus de build quotidien depuis le 2026-11-17.
   - Un push qui ne touche que `CLAUDE.md` ou `scripts/` ne déclenche pas de déploiement (`paths-ignore`, 2026-11-19). Les scripts écrivent dans `src/data/`, qui, lui, déploie.
@@ -33,7 +36,7 @@ https://pixflowave.github.io/Neguentropie_Framework/
     - La découpe est précalculée par `npm run airocean` ([scripts/generer-airocean.mjs](scripts/generer-airocean.mjs)) dans [src/data/airocean-triangles.json](src/data/airocean-triangles.json) (100 Ko, environ 4 min de calcul).
     - Le script utilise d3-geo-polygon 2.0.1, d3-geo-projection 4.0.0, polybooljs 1.2.2 et visionscarto-world-atlas 0.0.6 (110m), en dépendances de développement.
     - Ne le relancer que si la projection, la subdivision ou la carte changent.
-  - **Modules exportés** (`dynamicPaths` dans la config) : `https://pixflowave.github.io/Neguentropie_Framework/graphiques/graphe.js` et `…/lorenz.js`. Chacun exporte une fonction asynchrone (`graphe({hauteur})`, `lorenz(options)`) qui renvoie un élément à insérer.
+  - **Modules exportés** (`dynamicPaths` dans la config) : `https://framework.neguentropie.art/graphiques/graphe.js` et `…/lorenz.js`. Chacun exporte une fonction asynchrone (`graphe({hauteur})`, `lorenz(options)`) qui renvoie un élément à insérer.
     - `FileAttachment` y résout les fichiers par rapport à `import.meta.url` : ils fonctionnent importés depuis un autre site. GitHub Pages répond avec `access-control-allow-origin: *`.
     - pixflowave.fr est fait pour les importer à la place d'api.observablehq.com.
     - Les données du graphe ne changent en ligne qu'après un push.

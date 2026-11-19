@@ -3,7 +3,7 @@ import MarkdownItFootnote from "markdown-it-footnote";
 
 // Adresses fixes pour les balises Open Graph (les fichiers du site ont une
 // empreinte dans leur nom, l'image de partage est donc prise sur GitHub).
-const SITE = "https://pixflowave.github.io/Neguentropie_Framework";
+const SITE = "https://framework.neguentropie.art";
 const IMAGE = "https://raw.githubusercontent.com/Pixflowave/Neguentropie_Framework/main/src/Neguentropie.png";
 const DESCRIPTION = "Néguentropie, installation artistique sous Licence Art Libre : cartographie, construction collective et bifurcations.";
 // Description de chaque page (Framework 1.13 ignore les champs inconnus de l'en-tête des pages).
@@ -73,7 +73,7 @@ export default {
   root: "src",
 
   // Modules publiés à adresse fixe, importables par d'autres sites (pixflowave.fr) :
-  // https://pixflowave.github.io/Neguentropie_Framework/graphiques/graphe.js et lorenz.js
+  // https://framework.neguentropie.art/graphiques/graphe.js et lorenz.js
   dynamicPaths: ["/graphiques/graphe.js", "/graphiques/lorenz.js"],
   markdownIt: (md) => md.use(MarkdownItFootnote),
 

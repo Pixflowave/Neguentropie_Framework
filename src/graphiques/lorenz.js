@@ -6,7 +6,7 @@
 // seul l'attracteur, très léger, est calculé ici.
 //
 // Module exporté (dynamicPaths) : pixflowave.fr l'importe aussi.
-//   import {lorenz} from "https://pixflowave.github.io/Neguentropie_Framework/graphiques/lorenz.js";
+//   import {lorenz} from "https://framework.neguentropie.art/graphiques/lorenz.js";
 //   element.append(await lorenz());
 import {FileAttachment} from "observablehq:stdlib";
 

@@ -4,7 +4,7 @@
 // le graphe s'affiche tout de suite ; glisser un nœud relance la simulation.
 //
 // Module exporté (dynamicPaths) : pixflowave.fr l'importe aussi.
-//   import {graphe} from "https://pixflowave.github.io/Neguentropie_Framework/graphiques/graphe.js";
+//   import {graphe} from "https://framework.neguentropie.art/graphiques/graphe.js";
 //   element.append(await graphe());
 import * as d3 from "npm:d3";
 import {FileAttachment} from "observablehq:stdlib";

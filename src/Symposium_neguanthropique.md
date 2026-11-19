@@ -13,7 +13,7 @@ Bernard Stiegler appelait « néguanthropie » ce qui, dans nos activités, prod
 Votez sur chaque proposition (d'accord, pas d'accord, passer), puis ajoutez les vôtres, une idée par proposition. La participation est anonyme ; les nouvelles propositions apparaissent après relecture.
 
 <div class="polis-cadre">
-  <div class='polis' data-conversation_id='7ekm9ctpnd' data-parent_url='https://pixflowave.github.io/Neguentropie_Framework/Symposium_neguanthropique' data-border='none' data-border_radius='0' data-padding='0'></div>
+  <div class='polis' data-conversation_id='7ekm9ctpnd' data-parent_url='https://framework.neguentropie.art/Symposium_neguanthropique' data-border='none' data-border_radius='0' data-padding='0'></div>
 </div>
 <script async src='https://pol.is/embed.js'></script>
 
