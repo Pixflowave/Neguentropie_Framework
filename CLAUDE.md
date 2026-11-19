@@ -7,7 +7,7 @@ https://framework.neguentropie.art/
 - `neguentropie.art` (domaine nu) reste la publication do•doc sur le VPS ; `tekhne.` et `do.doc.` sont d'autres sous-domaines, indépendants.
 
 - Le déploiement se fait par GitHub Actions ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)) à chaque push sur `main` (environ 4 min). Plus de build quotidien depuis le 2026-11-17.
-  - Un push qui ne touche que `CLAUDE.md` ou `scripts/` ne déclenche pas de déploiement (`paths-ignore`, 2026-11-19). Les scripts écrivent dans `src/data/`, qui, lui, déploie.
+  - Un push qui ne touche que des fichiers `CLAUDE.md` (racine ou sous-dossiers, `**/CLAUDE.md`) ou `scripts/` ne déclenche pas de déploiement (`paths-ignore`, 2026-11-19). Les scripts écrivent dans `src/data/`, qui, lui, déploie.
   - Pour limiter les déploiements (souhait d'Erwan, 2026-11-19) : commiter en local au fil de l'eau et ne pousser qu'une fois le lot terminé.
 - `npm run dev` : aperçu local · `npm run build` : génère `dist/`.
 - Répondre en français. Ne faire de commit ou de push qu'avec l'accord d'Erwan.
@@ -146,6 +146,7 @@ Déjà en place :
 
 À corriger :
 - Le convertisseur garde son propre style (émojis, dégradé violet/rouge codé en dur dans ses cartes et ses boutons).
+- **Convertisseur bibliographique** : audit complet du 2026-11-19 dans [audit-convertisseur/CLAUDE.md](audit-convertisseur/CLAUDE.md), à lire avant toute modification du convertisseur ou de ses modules. Points critiques : la fusion peut corrompre le graphe (résultats incertains acceptés, titres tronqués, entrées écartées sans message).
 
 ## À faire / idées
 
