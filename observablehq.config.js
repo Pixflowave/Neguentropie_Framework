@@ -71,6 +71,10 @@ export default {
   // The path to the source root.
 
   root: "src",
+
+  // Modules publiés à adresse fixe, importables par d'autres sites (pixflowave.fr) :
+  // https://pixflowave.github.io/Neguentropie_Framework/graphiques/graphe.js et lorenz.js
+  dynamicPaths: ["/graphiques/graphe.js", "/graphiques/lorenz.js"],
   markdownIt: (md) => md.use(MarkdownItFootnote),
 
   // Some additional configuration options and their defaults:

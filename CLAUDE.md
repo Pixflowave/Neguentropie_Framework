@@ -24,10 +24,18 @@ https://pixflowave.github.io/Neguentropie_Framework/
   - Sur un fond or, écrire le texte en `var(--theme-background)`, jamais en blanc.
   - La vue 3D utilise la même palette (`--bg`, `--fg`, `accent-color`).
   - Référence : `src/styles/global.css` du dépôt pixflowave-fr.
-- **Notebooks ObservableHQ de l'accueil** : ils sont dessinés dans la page par [src/components/notebook.js](src/components/notebook.js), comme sur pixflowave.fr, avec `@pixflowave/graph_neguentropie` (cellule `chartR`) et `@pixflowave/airocean-attracteur-de-lorenz` (cellule `dual`, nouvelle adresse sans « t », dernière version publiée).
-  - Pas d'iframe ni de filtre `invert` : les couleurs sont réglées dans les notebooks, pour ce fond.
-  - Le runtime `@observablehq/runtime@5.9.9` est chargé à la demande depuis jsDelivr. `npm:@observablehq/runtime` ne convient pas : Framework le remplace par son runtime interne, qui n'exporte pas `Library`, et toute la page plante.
-  - En capture Chrome sans fenêtre, le notebook Lorenz reste vide, sur pixflowave.fr aussi : c'est normal.
+- **Graphiques de l'accueil : Framework est la source** (2026-11-19, choix d'Erwan). Les notebooks `@pixflowave/graph_neguentropie` et `@pixflowave/airocean-attracteur-de-lorenz` sont portés dans [src/graphiques/](src/graphiques/). On modifie désormais le code ici, pas sur Observable. Les notebooks restent en ligne, et un lien « Notebook sur ObservableHQ ↗ » y renvoie ([src/components/cadre.js](src/components/cadre.js)).
+  - [src/graphiques/graphe.js](src/graphiques/graphe.js) : graphe réticulé (recherche, zoom, glisser). La disposition est calculée au build par le chargeur [src/data/graphe-neguentropie.json.js](src/data/graphe-neguentropie.json.js), avec les mêmes forces que le notebook. Glisser un nœud relance la simulation.
+  - Données du graphe : [src/data/neguentropie_Graph.json](src/data/neguentropie_Graph.json), seule source depuis le 2026-11-19. Elle a été reprise du dépôt Pixflowave/Neguentropie (451 nœuds, mars 2026), que le notebook lisait. Le convertisseur bibliographique lit le même fichier.
+  - [src/graphiques/lorenz.js](src/graphiques/lorenz.js) : attracteur de Lorenz (Runge-Kutta 4, réglages du notebook dans `REGLAGES`) sur la carte Airocean découpée en 500 triangles. Ils apparaissent un par un toutes les 20 ms, comme dans le notebook.
+    - La découpe est précalculée par `npm run airocean` ([scripts/generer-airocean.mjs](scripts/generer-airocean.mjs)) dans [src/data/airocean-triangles.json](src/data/airocean-triangles.json) (100 Ko, environ 4 min de calcul).
+    - Le script utilise d3-geo-polygon 2.0.1, d3-geo-projection 4.0.0, polybooljs 1.2.2 et visionscarto-world-atlas 0.0.6 (110m), en dépendances de développement.
+    - Ne le relancer que si la projection, la subdivision ou la carte changent.
+  - **Modules exportés** (`dynamicPaths` dans la config) : `https://pixflowave.github.io/Neguentropie_Framework/graphiques/graphe.js` et `…/lorenz.js`. Chacun exporte une fonction asynchrone (`graphe({hauteur})`, `lorenz(options)`) qui renvoie un élément à insérer.
+    - `FileAttachment` y résout les fichiers par rapport à `import.meta.url` : ils fonctionnent importés depuis un autre site. GitHub Pages répond avec `access-control-allow-origin: *`.
+    - pixflowave.fr est fait pour les importer à la place d'api.observablehq.com.
+    - Les données du graphe ne changent en ligne qu'après un push.
+  - L'ancien `components/notebook.js` (runtime Observable 5.9.9 depuis jsDelivr) a été supprimé. `npm:@observablehq/runtime` ne convient pas : Framework le remplace par son runtime interne, sans `Library`.
 - **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »

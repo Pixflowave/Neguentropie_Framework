@@ -11,7 +11,8 @@
     "terrains": "node scripts/generer-terrains.mjs",
     "aerodromes": "node scripts/generer-aerodromes.mjs",
     "reliefs": "node scripts/generer-reliefs.mjs",
-    "police": "node scripts/generer-police.mjs"
+    "police": "node scripts/generer-police.mjs",
+    "airocean": "node scripts/generer-airocean.mjs"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",
@@ -23,7 +24,11 @@
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {
-    "rimraf": "^5.0.5"
+    "d3-geo-polygon": "2.0.1",
+    "d3-geo-projection": "4.0.0",
+    "polybooljs": "1.2.2",
+    "rimraf": "^5.0.5",
+    "visionscarto-world-atlas": "0.0.6"
   },
   "engines": {
     "node": ">=18"

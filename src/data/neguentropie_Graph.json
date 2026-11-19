@@ -449,6 +449,10 @@
       "url": "https://pharmakon.fr/wordpress/"
     },
     {
+      "id": "« Une limite au-delà de laquelle est l’inconnu »",
+      "url": "https://doi.org/10.4000/elfe.4714"
+    },
+    {
       "id": "Aimer, s’aimer, nous aimer",
       "url": "http://www.editions-galilee.fr/f/index.php?sp=liv&livre_id=3088"
     },
@@ -599,6 +603,14 @@
     {
       "id": "Critique de l’Intelligence Artificielle",
       "url": "https://organoesis.org/recherches/critique-de-lintelligence-artificielle"
+    },
+    {
+      "id": "La question du « Néguanthropocène » chez B. Stiegler. De l’infidélité du milieu au changement d’époque : chocs technologiques et avenir « néguanthropique »",
+      "url": "https://ladeleuziana.org/wp-content/uploads/2016/12/Alombert-–-La-Question-du-neganthropocene-chez-B.-Stiegler.pdf"
+    },
+    {
+      "id": "La Deleuziana",
+      "url": "https://ladeleuziana.org"
     },
     {
       "id": "Henry Maldiney",
@@ -752,6 +764,26 @@
       "url": "https://fr.wikipedia.org/wiki/Psychiatrie"
     },
     {
+      "id": "Sigmund Freud",
+      "url": "https://fr.wikipedia.org/wiki/Sigmund_Freud"
+    },
+    {
+      "id": "Sándor Ferenczi",
+      "url": "https://fr.wikipedia.org/wiki/Sándor_Ferenczi"
+    },
+    {
+      "id": "Mélani Klein",
+      "url": "https://fr.wikipedia.org/wiki/Melanie_Klein"
+    },
+    {
+      "id": "Société de Psychanalyse Freudienne",
+      "url": "https://www.spf.asso.fr"
+    },
+    {
+      "id": "Jacques Lacan",
+      "url": "https://fr.wikipedia.org/wiki/Jacques_Lacan"
+    },
+    {
       "id": "Collectif des 39",
       "url": "https://www.collectifpsychiatrie.fr"
     },
@@ -764,12 +796,31 @@
       "url": "https://psychotherapieinstitutionnelle.net/"
     },
     {
+      "id": "Institutions | Revue de psychothérapie institutionnelle",
+      "url": "https://shs.cairn.info/revue-institutions?lang=fr&tab=a-propos"
+    },
+    {
+      "id": "Connivences",
+      "url": "https://revueinstitutions.blogspot.com/p/blog-page.html"
+    },
+    {
+      "id" :"Fédération inter-associations culturelles (FIAC)",
+      "url": "https://shs.cairn.info/editeur/FIAC?lang=fr&tab=apercu"
+    },
+    {
+      "id" :"Cairn",
+      "url": "https://shs.cairn.info/editeur/"
+    },
+    {
       "id": "Ecole de Psychiatrie institutionnelle de la Chesnaie",
       "url": "https://epiclachesnaieblog.wordpress.com"
     },
     {
-      "id": "Association Culturel de la Borde",
+      "id": "Association Culturelle de la Borde",
       "url": "https://associationculturelledelaborde.org/"
+    },
+    {
+      "id": "Annick de MONCUIT de BOISCUILLÉ"
     },
     {
       "id": "Joseph Gabel",
@@ -852,8 +903,8 @@
     },
     {
       "id": "Lucien Bonnafé",
-      "url": "http://www.champsocial.com/book-saint-alban,466.html"
-    },
+      "url": "https://fr.wikipedia.org/wiki/Lucien_Bonnafé"
+    },    
     {
       "id": "François Tosquelles",
       "url": "https://www.radiofrance.fr/franceculture/podcasts/les-nuits-de-france-culture/entretien-avec-francois-tosquelles-1-2-1ere-diffusion-04-10-1985-5305009"
@@ -885,6 +936,18 @@
     {
       "id": "Jean Oury",
       "url": "https://www.radiofrance.fr/franceculture/podcasts/les-nuits-de-france-culture/a-voix-nue-jean-oury-4-5-1ere-diffusion-27-09-1990-3631406"
+    },
+    {
+      "id": "Le politique par Jean Oury (15-10-2004)",
+      "url": "https://ecole-lacanienne.net/wp-content/uploads/2017/01/Le-politique-par-Jean-Oury-.pdf"
+    },
+    {
+      "id": "École Lacanienne",
+      "url": "https://ecole-lacanienne.net"
+    },
+    {
+      "id": "Psychanalyse",
+      "url": "https://fr.wikipedia.org/wiki/Psychanalyse"
     },
     {
       "id": "Le Collectif",
@@ -1201,6 +1264,10 @@
     {
       "id": "Édition",
       "url": "https://fr.wikipedia.org/wiki/Édition"
+    },
+    {
+      "id":"Whoisbn",
+      "url":"https://whoisbn.net/fr/"
     },
     {
       "id": "Victor Chaix",
@@ -1686,7 +1753,7 @@
       "year": "2023"
     },
     {
-      "id": "Condition de l'homme moderne (1958)",
+      "id": "Condition de l'homme moderne (1958",
       "url": "",
       "year": 2002
     },
@@ -3163,6 +3230,61 @@
     },
     {
       "source": "Psychiatrie",
+      "target": "Sigmund Freud",
+      "type": "Individu"
+    },
+    {
+      "source": "Sigmund Freud",
+      "target": "Psychanalyse",
+      "type": "Discipline"
+    },
+    {
+      "source": "Psychanalyse",
+      "target": "Sándor Ferenczi",
+      "type": "École"
+    },
+    {
+      "source": "Sigmund Freud",
+      "target": "Sándor Ferenczi",
+      "type": "École"
+    },
+    {
+      "source": "Sándor Ferenczi",
+      "target": "Mélani Klein",
+      "type": "École"
+    },
+    {
+      "source": "Psychanalyse",
+      "target": "Mélani Klein",
+      "type": "École"
+    },
+    {
+      "source": "Société de Psychanalyse Freudienne",
+      "target": "François Tosquelles",
+      "type": "Individu"
+    },
+    {
+      "source": "Psychanalyse",
+      "target": "François Tosquelles",
+      "type": "École"
+    },
+    {
+      "source": "Psychanalyse",
+      "target": "Jacques Lacan",
+      "type": "École"
+    },
+    {
+      "source": "Psychanalyse",
+      "target": "Jean Oury",
+      "type": "École"
+    },
+    {
+      "source": "Société de Psychanalyse Freudienne",
+      "target": "Jacques Lacan",
+      "type": "Individu"
+    },
+    {
+      "source": "Psychiatrie",
       "target": "Collectif des 39",
       "type": "Mouvement"
     },
@@ -3183,11 +3305,11 @@
     },
     {
       "source": "Psychotherapie institutionnelle",
-      "target": "Association Culturel de la Borde",
+      "target": "Association Culturelle de la Borde",
       "type": "Institution"
     },
     {
-      "source": "Association Culturel de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Joseph Gabel",
       "type": "Individu"
     },
@@ -3197,7 +3319,7 @@
       "type": "Livre"
     },
     {
-      "source": "Association Culturel de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Julia Kristeva, l'œuvre qui bouscule la littérature",
       "type": "Livre"
     },
@@ -3207,12 +3329,12 @@
       "type": "Émission"
     },
     {
-      "source": "Association Culturel de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Chimères n°84 - Avec Jean Oury",
       "type": "Revue"
     },
     {
-      "source": "Association Culturel de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Neuropsychiatrie",
       "type": "Discipline"
     },
@@ -3237,7 +3359,7 @@
       "type": "Livre"
     },
     {
-      "source": "Association Culturel de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Pierre Delion",
       "type": "Individu"
     },
@@ -3257,7 +3379,7 @@
       "type": "Livre"
     },
     {
-      "source": "Association Culturel de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Anthropopsychiatrie",
       "type": "Discipline"
     },
@@ -3282,7 +3404,7 @@
       "type": "Livre"
     },
     {
-      "source": "Association Culturel de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Frantz Fanon",
       "type": "Individu"
     },
@@ -3307,7 +3429,7 @@
       "type": "Livre"
     },
     {
-      "source": "Association culturelle de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Joana Maso",
       "type": "Individu"
     },
@@ -3323,6 +3445,11 @@
     },
     {
       "source": "François Tosquelles",
+      "target": "Jean Oury",
+      "type": "Individu"
+    },
+    {
+      "source": "Jaques Lacan",
       "target": "Jean Oury",
       "type": "Individu"
     },
@@ -3402,7 +3529,7 @@
       "type": "Livre"
     },
     {
-      "source": "Association culturelle de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Danielle Roulot",
       "type": "Individu"
     },
@@ -3427,7 +3554,7 @@
       "type": "Livre"
     },
     {
-      "source": "Association culturelle de la Borde",
+      "source": "Association Culturelle de la Borde",
       "target": "Catherine Perret",
       "type": "Individu"
     },
@@ -4623,7 +4750,7 @@
     },
     {
       "source": "Néguentropie",
-      "target": "Néguentropie |Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
@@ -4638,17 +4765,17 @@
     },
     {
       "source": "Université de Tours",
-      "target": "Néguentropie | Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
       "source": "Festival Human Tech Days",
-      "target": "Néguentropie | Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
       "source": "Learning Planet Institute",
-      "target": "Néguentropie | Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
@@ -4797,8 +4924,8 @@
       "type": "Dispositif"
     },
     {
-      "source": "Patch Pure Data - ∏node",
-      "target": "∏node",
+      "source": "Pure Data",
+      "target": "Patch Pure Data - ∏node",
       "type": "Dispositif"
     },
     {
@@ -4988,7 +5115,7 @@
     },
     {
       "source": "Clinique de la Borde",
-      "target": "Association Culturel de la Borde",
+      "target": "Association Culturelle de la Borde",
       "type": "Institution"
     },
     {
@@ -5005,6 +5132,107 @@
       "source": "François Tosquelles",
       "target": "De Saint-Alban à La Borde, la psychothérapie institutionnelle",
       "type": "Article"
+    },
+    {
+      "source": "Lucien Bonnafé",
+      "target": "Saint-Alban",
+      "type": "Individu"
+    },
+    {
+      "source": "Édition",
+      "target": "Whoisbn",
+      "type": "Dispositif"
+    },
+    {
+      "source": "Édition",
+      "target": "Cairn",
+      "type": "Institution"
+    },
+    {
+      "source": "Cairn",
+      "target": "Fédération inter-associations culturelles (FIAC)",
+      "type": "Institution"
+    },
+    {
+      "source": "Fédération inter-associations culturelles (FIAC)",
+      "target": "Institutions | Revue de psychothérapie institutionnelle",
+      "type": "Revue"
+    },
+    {
+      "source": "Psychotherapie institutionnelle",
+      "target": "Fédération inter-associations culturelles (FIAC)",
+      "type": "Revue"
+    },
+    {
+      "source": "Psychotherapie institutionnelle",
+      "target": "Association Culturelle de la Borde",
+      "type": "Institution"
+    },
+    {
+      "source": "Association Culturelle de la Borde",
+      "target": "Annick de MONCUIT de BOISCUILLÉ",
+      "type": "Individu"
+    },
+    {
+      "source": "Clinique de la Borde",
+      "target": "Annick de MONCUIT de BOISCUILLÉ",
+      "type": "Individu"
+    },
+    {
+      "source": "Psychotherapie institutionnelle",
+      "target": "Annick de MONCUIT de BOISCUILLÉ",
+      "type": "Individu"
+    },
+    {
+      "source": "Connivences",
+      "target": "Institutions | Revue de psychothérapie institutionnelle",
+      "type": "Individu"
+    },
+    {
+      "source": "Anne Alombert",
+      "target": "La question du « Néguanthropocène » chez B. Stiegler. De l’infidélité du milieu au changement d’époque : chocs technologiques et avenir « néguanthropique »",
+      "type": "Article"
+    },
+    {
+      "source": "Édition",
+      "target": "La Deleuziana",
+      "type": "Revue"
+    },
+    {
+      "source": "La Deleuziana",
+      "target": "La question du « Néguanthropocène » chez B. Stiegler. De l’infidélité du milieu au changement d’époque : chocs technologiques et avenir « néguanthropique »",
+      "type": "Article"
+    },
+    {
+      "source": "Bernard Stiegler",
+      "target": "« Une limite au-delà de laquelle est l’inconnu »",
+      "type": "Article"
+    },
+    {
+      "source": "OpenEdition Journals",
+      "target": "« Une limite au-delà de laquelle est l’inconnu »",
+      "type": "Article"
+    },
+    {
+      "source": "Jean Oury",
+      "target": "Le politique par Jean Oury (15-10-2004)",
+      "type": "Article"
+    },
+    {
+      "source": "École Lacanienne",
+      "target": "Le politique par Jean Oury (15-10-2004)",
+      "type": "Article"
+    },
+    {
+      "source": "Psychanalyse",
+      "target": "École Lacanienne",
+      "type": "Institution"
+    },
+    {
+      "source": "Psychanalyse",
+      "target": "Jean Oury",
+      "type": "Individu"
     }
+
   ]
 }

@@ -4,7 +4,9 @@ toc: false
 
 ```js
 import {arbre} from "./components/arbre.js";
-import {notebook} from "./components/notebook.js";
+import {cadre} from "./components/cadre.js";
+import {graphe} from "./graphiques/graphe.js";
+import {lorenz} from "./graphiques/lorenz.js";
 ```
 
 <div class="hero">
@@ -38,9 +40,9 @@ import {notebook} from "./components/notebook.js";
 ### Projection Airocean | Attracteur étrange de Lorenz
 
 ```js
-display(notebook("@pixflowave/airocean-attracteur-de-lorenz", "dual", {
-  titre: "Attracteur étrange de Lorenz tracé sur la projection Airocean",
-  hauteur: 400
+display(cadre(await lorenz(), {
+  titre: "Attracteur étrange de Lorenz tracé sur la carte Airocean",
+  notebook: "@pixflowave/airocean-attracteur-de-lorenz"
 }))
 ```
 
@@ -48,8 +50,9 @@ display(notebook("@pixflowave/airocean-attracteur-de-lorenz", "dual", {
 #### Graphe réticulé
 
 ```js
-display(notebook("@pixflowave/graph_neguentropie", "chartR", {
+display(cadre(await graphe(), {
   titre: "Graphe réticulé des bifurcations noétiques",
+  notebook: "@pixflowave/graph_neguentropie",
   hauteur: 600
 }))
 ```
@@ -241,7 +244,7 @@ Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier
 
 **Sources et crédits de cette page**
 - Image d'accueil : Erwan Bozec, réalisée avec [Blender](https://www.blender.org/).
-- Projection Airocean et attracteur de Lorenz, graphe réticulé : notebooks [ObservableHQ](https://observablehq.com/) de Pixflowave ([Airocean × Lorenz](https://observablehq.com/@pixflowave/airocean-attracteur-de-lorenz), [graphe Néguentropie](https://observablehq.com/@pixflowave/graph_neguentropie)), d'après la carte Airocean de Philippe Rivière.
+- Projection Airocean et attracteur de Lorenz, graphe réticulé : Pixflowave, d'après ses notebooks [ObservableHQ](https://observablehq.com/) ([Airocean × Lorenz](https://observablehq.com/@pixflowave/airocean-attracteur-de-lorenz), [graphe Néguentropie](https://observablehq.com/@pixflowave/graph_neguentropie)), portés dans Framework. Carte : Philippe Rivière ([pavage de l'icosaèdre](https://observablehq.com/@fil/triangular-tiling-of-icosahedron), [projection Airocean](https://observablehq.com/@fil/airocean-projection)), contours [Natural Earth](https://www.naturalearthdata.com/) ; attracteur : Edward N. Lorenz (1963).
 - Arbres des participants : [Observable Plot](https://observablehq.com/plot/).
 
 <div style="text-align: center;">
