@@ -72,6 +72,10 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 - Les arbres des participants passent par [src/components/arbre.js](src/components/arbre.js) : `arbre(chemins, {height, marginTop, marginBottom})`, un identifiant de dégradé par arbre. La courbe garde un décalage vertical de 0,001 px : sans lui, le lien horizontal d'un arbre à nombre impair de personnes a une boîte de hauteur nulle et le dégradé ne se dessine pas. Ne pas la remplacer par `curve: "bump-x"`.
 
+## Néguanthropocène
+
+- Les 7 images de la page (schéma et photos) sont dans [src/images/neguanthropocene/](src/images/neguanthropocene/) depuis le 2026-11-19, réduites à 1 200 px de large. Elles étaient avant sur imgur.
+
 ## Respect des communs utilisés (relecture du 2026-11-17)
 
 Déjà en place :
@@ -100,7 +104,6 @@ Déjà en place :
 - **Raleway via Google Fonts** : chaque visiteur envoie son adresse IP à Google. Raleway est sous licence OFL, on peut donc l'héberger dans le dépôt, à la fois dans le site et dans la vue 3D.
 - Pas de `meta description` ni de balises Open Graph : en ajouter une par page avec `head:` dans l'en-tête du fichier .md.
 - Remplacer le favicon Observable.
-- Photos de Néguanthropocène hébergées sur imgur : les rapatrier dans `src/`.
 - Le style `.hero` est recopié dans 3 pages, et le convertisseur a son propre style (émojis, dégradé violet/rouge codé en dur).
 
 ## À faire / idées

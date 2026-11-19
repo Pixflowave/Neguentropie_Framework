@@ -85,7 +85,7 @@ Trop souvent asservie aux logiques de rentabilité financière et d'automatisati
 Conçu comme un laboratoire de **recherche culturelle et de sciences participatives**, *Néguanthropocène* s'articule autour de la co-construction de l'œuvre-lieu et de la dialectique des savoirs.
 
 <div style="text-align: center; margin: 1.5rem 0;">
-  <img src="https://i.imgur.com/fvkM8Mb.png" alt="Schéma conceptuel Néguanthropocène" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+  <img src="images/neguanthropocene/schema-conceptuel.png" alt="Schéma conceptuel Néguanthropocène" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
 </div>
 
 ### Les 3 rôles de l'écosystème contributif
@@ -100,9 +100,9 @@ La démarche se déploie en cycles d'ateliers participatifs :
 * **Co-construction de l'œuvre finale :** Reconstruction d'un module spatial habitable (maison de mots, refuge ou dôme) laissé au territoire comme trace pérenne.
 
 <div class="grid grid-cols-3" style="gap: 0.75rem; margin: 1.5rem 0;">
-  <img src="https://i.imgur.com/6ERQd66.jpg" alt="Atelier Paper Planet 1" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
-  <img src="https://i.imgur.com/SkEwass.jpg" alt="Atelier Paper Planet 2" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
-  <img src="https://i.imgur.com/FKdfnsY.jpg" alt="Atelier Paper Planet 3" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
+  <img src="images/neguanthropocene/atelier-paper-planet-1.jpg" alt="Atelier Paper Planet 1" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
+  <img src="images/neguanthropocene/atelier-paper-planet-2.jpg" alt="Atelier Paper Planet 2" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
+  <img src="images/neguanthropocene/atelier-paper-planet-3.jpg" alt="Atelier Paper Planet 3" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
 </div>
 
 ---
@@ -117,9 +117,9 @@ Le projet mobilise conjointement des techniques constructives low-tech, des stan
 * **Mobilier Paper Planet :** Gamme de mobilier (tabourets, tables basses polygonales) matérialisant les projections du monde développées par Philippe Rivière.
 
 <div class="grid grid-cols-3" style="gap: 0.75rem; margin: 1.5rem 0;">
-  <img src="https://i.imgur.com/ae5tglG.jpg" alt="Prototype structure 1" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
-  <img src="https://i.imgur.com/HZxhlHq.jpg" alt="Prototype structure 2" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
-  <img src="https://i.imgur.com/mrEkB9X.jpg" alt="Prototype structure 3" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
+  <img src="images/neguanthropocene/prototype-structure-1.jpg" alt="Prototype structure 1" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
+  <img src="images/neguanthropocene/prototype-structure-2.jpg" alt="Prototype structure 2" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
+  <img src="images/neguanthropocene/prototype-structure-3.jpg" alt="Prototype structure 3" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px;">
 </div>
 
 ### DATA & Économie contributive : les Open Badges
