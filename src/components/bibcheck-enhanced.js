@@ -1,7 +1,7 @@
 // Bibcheck Enhanced - Advanced bibliography verification
 // Extends bibliography-verifier.js with Bibcheck-inspired features
 
-import { calculateSimilarity, cleanTitle, extractLastName } from './bibliography-verifier.js';
+import { calculateSimilarity, cleanTitle } from './bibliography-verifier.js';
 
 /**
  * Clean and normalize a DOI string
@@ -271,138 +271,89 @@ async function searchCrossRefBibliographic(refString) {
  */
 
 
+// Types de mise à jour Crossref (champ `type` de `updated-by` / `update-to`).
+// Seuls ceux-ci retirent l'article ; une correction ou un erratum non.
+const TYPES_RETRAIT = new Set(["retraction", "partial_retraction", "withdrawal", "removal"]);
+const TYPES_ALERTE = new Set(["expression_of_concern"]);
+const LIBELLES = {
+    retraction: "rétractation",
+    partial_retraction: "rétractation partielle",
+    withdrawal: "retrait",
+    removal: "suppression",
+    expression_of_concern: "avis de préoccupation"
+};
+
 /**
- * Check if an article has been retracted
- * Uses CrossRef API to detect retraction notices (includes Retraction Watch data since 2023)
+ * Lit, dans une notice Crossref, si l'article a été rétracté.
+ * - `updated-by` : notices publiées contre cet article (rétractation,
+ *   correction…), y compris celles de Retraction Watch (source
+ *   « retraction-watch ») ;
+ * - `update-to` : cet enregistrement est lui-même un avis portant sur un autre.
+ * Exportée pour les tests.
  */
-export async function checkRetraction(doi, title, author) {
-    const checks = [];
+export function lireRetraction(work) {
+    const pasDeRetraction = {retracted: false, concern: false, method: 'Crossref', details: 'Aucune rétractation connue'};
+    if (!work) return pasDeRetraction;
 
-    // Clean DOI before lookup
+    const avis = (work['updated-by'] || []).filter((u) => TYPES_RETRAIT.has(u.type));
+    if (avis.length) {
+        const u = avis[avis.length - 1];
+        const rw = u.source === 'retraction-watch';
+        const annee = u.updated?.['date-parts']?.[0]?.[0];
+        return {
+            retracted: true,
+            concern: false,
+            method: rw ? 'Retraction Watch Database' : 'Publisher Notice',
+            source: u.source || 'publisher',
+            retractionDOI: u.DOI,
+            details: `${LIBELLES[u.type] || u.type}${annee ? ` (${annee})` : ''}, signalée par ${rw ? 'Retraction Watch' : "l'éditeur"} via Crossref`
+        };
+    }
+
+    const notice = (work['update-to'] || []).find((u) => TYPES_RETRAIT.has(u.type));
+    if (notice) {
+        return {
+            retracted: true,
+            concern: false,
+            method: 'Avis de rétractation',
+            source: 'crossref',
+            retractionDOI: notice.DOI,
+            details: `Cette référence est elle-même un avis de ${LIBELLES[notice.type] || notice.type} (portant sur ${notice.DOI})`
+        };
+    }
+
+    const titre = work.title?.[0] || '';
+    if (/^\s*(RETRACTED|WITHDRAWN)\b|\[RETRACTED\]/i.test(titre)) {
+        return {retracted: true, concern: false, method: 'Titre Crossref', source: 'crossref', details: `Titre marqué « ${titre.slice(0, 60)}… » dans Crossref`};
+    }
+
+    const alerte = (work['updated-by'] || []).find((u) => TYPES_ALERTE.has(u.type));
+    if (alerte) {
+        return {retracted: false, concern: true, method: 'Crossref', retractionDOI: alerte.DOI, details: `${LIBELLES[alerte.type]} publié (${alerte.DOI})`};
+    }
+    return pasDeRetraction;
+}
+
+/**
+ * L'article a-t-il été rétracté ? Interroge Crossref par DOI seulement :
+ * sans DOI (livres, pages web), on ne peut rien dire, et on ne devine pas.
+ * Les données de Retraction Watch sont intégrées à Crossref depuis 2023.
+ */
+export async function checkRetraction(doi) {
     const cleanedDOI = cleanDOI(doi);
-
-    // Method 1: CrossRef API (if DOI available) - Now includes Retraction Watch Database!
-    if (cleanedDOI) {
-        try {
-            const response = await fetch(`https://api.crossref.org/works/${cleanedDOI}`);
-
-            if (response.ok) {
-                const data = await response.json();
-                const work = data.message;
-
-                // Check for retraction notice (update-to field)
-                if (work['update-to']) {
-                    const updateInfo = work['update-to'][0];
-                    const source = updateInfo?.source || 'publisher';
-                    const isRetractionWatch = source === 'retraction-watch';
-
-                    return {
-                        retracted: true,
-                        confidence: isRetractionWatch ? 100 : 95,
-                        method: isRetractionWatch ? 'Retraction Watch Database' : 'Publisher Notice',
-                        source: source,
-                        retractionDOI: updateInfo?.DOI,
-                        details: isRetractionWatch
-                            ? '🔴 Article signalé par Retraction Watch Database (via CrossRef)'
-                            : 'Article rétracté par l\'éditeur (via CrossRef)',
-                        badge: isRetractionWatch ? 'retraction-watch' : 'publisher'
-                    };
-                }
-
-                // Check if this IS a retraction notice
-                if (work.type === 'retraction') {
-                    return {
-                        retracted: true,
-                        confidence: 100,
-                        method: 'CrossRef type',
-                        source: 'crossref',
-                        details: 'Cette entrée est elle-même un avis de rétractation',
-                        badge: 'retraction-notice'
-                    };
-                }
-
-                // Check if CrossRef title starts with "RETRACTED:" 
-                // (common format for retracted articles in CrossRef)
-                const crossrefTitle = work.title?.[0] || '';
-                if (crossrefTitle.toUpperCase().startsWith('RETRACTED:') ||
-                    crossrefTitle.toUpperCase().includes('[RETRACTED]')) {
-                    return {
-                        retracted: true,
-                        confidence: 95,
-                        method: 'CrossRef title',
-                        source: 'crossref',
-                        details: '🔴 Article marqué RETRACTED dans CrossRef',
-                        badge: 'crossref-retracted',
-                        crossrefTitle: crossrefTitle
-                    };
-                }
-            }
-        } catch (error) {
-            // Silently handle CrossRef errors
-        }
+    if (!cleanedDOI) {
+        return {retracted: false, concern: false, checked: false, method: 'Pas de DOI', details: 'Pas de DOI : rétractation non vérifiable'};
     }
-
-    // Method 2: Title analysis
-    if (title) {
-        const retractionKeywords = [
-            'retraction',
-            'retracted',
-            'withdrawn',
-            'correction',
-            'erratum',
-            'expression of concern'
-        ];
-
-        const lowerTitle = title.toLowerCase();
-        const foundKeyword = retractionKeywords.find(kw => lowerTitle.includes(kw));
-
-        if (foundKeyword) {
-            return {
-                retracted: true,
-                confidence: 70,
-                method: 'Title analysis',
-                keyword: foundKeyword,
-                details: `Title contains retraction keyword: "${foundKeyword}"`
-            };
+    try {
+        const response = await fetch(`https://api.crossref.org/works/${encodeURIComponent(cleanedDOI)}`);
+        if (!response.ok) {
+            return {retracted: false, concern: false, checked: false, method: 'Crossref', details: `DOI inconnu de Crossref (${response.status})`};
         }
+        const data = await response.json();
+        return {...lireRetraction(data.message), checked: true};
+    } catch (error) {
+        return {retracted: false, concern: false, checked: false, method: 'Crossref', details: 'Crossref injoignable'};
     }
-
-    // Method 3: Search for retraction notices (if we have author and title)
-    if (title && author) {
-        try {
-            const searchQuery = `${cleanTitle(title)} retraction ${extractLastName(author)}`;
-            const response = await fetch(
-                `https://api.crossref.org/works?query=${encodeURIComponent(searchQuery)}&rows=3`
-            );
-
-            if (response.ok) {
-                const data = await response.json();
-                const retractionNotice = data.message?.items?.find(item =>
-                    item.type === 'retraction' &&
-                    calculateSimilarity(item.title?.[0] || '', title) > 60
-                );
-
-                if (retractionNotice) {
-                    return {
-                        retracted: true,
-                        confidence: 80,
-                        method: 'Retraction notice search',
-                        retractionDOI: retractionNotice.DOI,
-                        details: 'Found a retraction notice for this article'
-                    };
-                }
-            }
-        } catch (error) {
-            console.warn('Retraction notice search failed:', error);
-        }
-    }
-
-    return {
-        retracted: false,
-        confidence: 0,
-        method: 'No retraction detected',
-        details: 'No evidence of retraction found'
-    };
 }
 
 /**
@@ -771,11 +722,7 @@ export async function generateQualityReport(entries, verificationResults) {
 
         // Retraction check (only for verified entries with DOI or good confidence)
         if (result.verified && (result.verified.doi || result.verified.confidence > 70)) {
-            const retractionCheck = await checkRetraction(
-                result.verified.doi,
-                result.verified.title,
-                result.verified.author
-            );
+            const retractionCheck = await checkRetraction(result.verified.doi);
 
             if (retractionCheck.retracted) {
                 report.integrity.retracted++;

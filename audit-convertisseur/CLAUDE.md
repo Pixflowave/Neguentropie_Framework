@@ -51,14 +51,21 @@ Cocher chaque point une fois corrigé et vérifié, avec la date.
 
 ## 🟠 Vérification peu fiable
 
-- [ ] **5. Les rétractations sont lues au mauvais endroit** (bibcheck-enhanced.js:294). Le code lit `update-to`, mais Crossref publie les rétractations dans `updated-by` (`type: "retraction"`, `source: "retraction-watch"`) ; `update-to` figure sur l'avis lui-même, donc un erratum serait compté comme une rétractation.
+Idée relevée à l'essai du lot 2 : quand une référence a un DOI, la vérifier directement par ce DOI (`api.crossref.org/works/{DOI}`) plutôt que par une recherche. Pour Wakefield, la recherche Crossref renvoie d'abord l'avis de rétractation (auteur « The Editors of The Lancet », écarté à juste titre), si bien que la référence reste « incertaine ».
+Le texte brut extrait le DOI d'une adresse `doi.org` ou d'un « doi: 10.… » (2026-11-20).
+
+- [x] **5. Les rétractations sont lues au mauvais endroit** (bibcheck-enhanced.js:294). Le code lit `update-to`, mais Crossref publie les rétractations dans `updated-by` (`type: "retraction"`, `source: "retraction-watch"`) ; `update-to` figure sur l'avis lui-même, donc un erratum serait compté comme une rétractation.
   - Vérifié sur l'article de Wakefield, `10.1016/S0140-6736(97)11096-0` : `update-to` absent, `updated-by` contient une correction (2004) et une rétractation (2010). Il n'est détecté aujourd'hui que grâce au « RETRACTED: » de son titre.
   - Le mot-clé `correction` (ainsi que `withdrawn`, `erratum`) dans un titre suffit à déclarer l'article rétracté (lignes 347-367) : faux positifs sur des titres français.
   - Encoder le DOI dans l'adresse (`encodeURIComponent`).
-- [ ] **6. La 3ᵉ méthode de détection des rétractations ne s'exécute jamais** (bibcheck-enhanced.js:373) : `extractLastName` reçoit le tableau d'auteurs CSL au lieu d'un texte. L'erreur `authorString.split is not a function` est interceptée en silence.
-- [ ] **7. Une apostrophe fait échouer la requête SPARQL de la BnF** (verifier.js:634-638). `cleanForSparql` ne retire que les guillemets doubles.
+  - Corrigé (2026-11-20) : `lireRetraction` lit `updated-by` (types retraction, partial_retraction, withdrawal, removal ; expression_of_concern à part, sans compter comme rétractation) et `update-to` (la référence est elle-même un avis). Plus de mots-clés dans le titre, sauf un titre Crossref qui commence par « RETRACTED ». `checkRetraction(doi)` n'interroge que par DOI (celui de la référence, ou celui d'une référence **vérifiée**) ; sans DOI : « non vérifiable ». Vérifié en réel : Wakefield rétracté (Retraction Watch, 2010), son avis reconnu, Bender non rétracté, DOI inconnu signalé.
+- [x] **6. La 3ᵉ méthode de détection des rétractations ne s'exécute jamais** (bibcheck-enhanced.js:373) : `extractLastName` reçoit le tableau d'auteurs CSL au lieu d'un texte. L'erreur `authorString.split is not a function` est interceptée en silence.
+  - Corrigé (2026-11-20) : méthode supprimée (on ne devine plus sans DOI).
+- [x] **7. Une apostrophe fait échouer la requête SPARQL de la BnF** (verifier.js:634-638). `cleanForSparql` ne retire que les guillemets doubles.
   - Cas réel : « L'obsolescence de l'homme » donne une erreur 500 de Virtuoso (`XM029 syntax error`). La requête « La technique et le temps » + « Stiegler » ne renvoie aucun résultat.
   - Revoir la requête (échapper ou retirer `'`, chercher par mots plutôt que par phrase), et la tester sur une dizaine de titres français connus.
+  - Corrigé (2026-11-20, `requeteSparqlBnF`) : mots du **titre principal** (avant `. `, `: `), **accents gardés** (« societe » ne trouve pas « société »), mots précédés d'une apostrophe ignorés (data.bnf.fr indexe « l'homme » d'un bloc), réunis par `AND` ; auteur par `foaf:familyName` (l'ancienne requête passait par `foaf:name` et ne trouvait rien) ; délai maximal 8 s (`AbortController`) ; adresses en https sans `#about`. Sur 9 titres connus : 5 trouvés (Société automatique, Essai sur le don, Échographies, Gouvernance par les nombres, L'Être et le Néant). La couverture des œuvres de data.bnf.fr est partielle : le catalogue SRU (qui gère bien les apostrophes) rattrape Arendt, Anders…
+  - Nouvelle comparaison des titres `similariteTitres` (tous les catalogues) : tolère un sous-titre ou un tome présent d'un seul côté (« La Société automatique. Tome I : … » / « La société automatique » = 100), mais plafonne à 50 quand les numéros de tome diffèrent (`numeroTome`).
 - [ ] **8. Le risque d'hallucination est compté deux fois et presque jamais affiché.**
   - Une référence introuvable reçoit +50 dans `detectHallucinationRisk`, puis encore +20 (converter.md:233-243), sans que son niveau soit recalculé : elle reste « moyen ». L'alerte « élevé » ne se déclenche presque jamais.
   - Quand elle se déclenche, elle affiche les mauvais titres : `.filter(...).map((h, i) => results[i])` (converter.md:356-359) utilise l'indice dans la liste filtrée.
@@ -80,7 +87,7 @@ Cocher chaque point une fois corrigé et vérifié, avec la date.
   - `searchCrossRefBibliographic`, `matchCriteria`, `buildRefString`, `findDOI`, `extractCrossRefInfo`, `partialRatio`, `uniformize` ;
   - les imports inutilisés en converter.md:64 ;
   - le commentaire d'en-tête obsolète de verifier.js (« Uses OpenLibrary API »).
-- [ ] Environ 8 `console.log` par entrée côté BnF (verifier.js:525, 579-588, 683-697) : à retirer.
+- [x] (2026-11-20) Environ 8 `console.log` par entrée côté BnF (verifier.js:525, 579-588, 683-697) : à retirer.
 - [ ] Le score affiché (converter.md:307-318) et `calculateQualityScore` ne suivent pas la même formule. N'en garder qu'une.
 
 ## 🎨 Style (déjà signalé dans le CLAUDE.md principal)
@@ -111,7 +118,7 @@ Le nettoyage du graphe est un lot à part : demander à Erwan quelle version gar
 ## Ordre de correction proposé
 
 1. ~~Points 1 à 4 : fusion sûre et aperçu des changements avant téléchargement.~~ Fait le 2026-11-19.
-2. Points 5 et 7 : rétractations et SPARQL.
+2. ~~Points 5 et 7 : rétractations et SPARQL.~~ Fait le 2026-11-20 (avec le point 6).
 3. Points 6, 8 et 9 : affichage du risque d'hallucination et déclenchement au clic.
 4. Robustesse, code mort, style.
 5. Nettoyage du graphe existant.

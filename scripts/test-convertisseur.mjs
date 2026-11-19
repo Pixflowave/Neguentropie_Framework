@@ -154,6 +154,9 @@ test("texte : article de presse avec adresse", () => {
   assert.equal(e.URL, "https://www.lemonde.fr/economie/article/2020/05/08/x.html");
   assert.deepEqual(e.issued, {"date-parts": [[2020]]});
 });
+test("texte : DOI tiré d'une adresse doi.org", () => {
+  assert.equal(ref("P. Krugman, \"The Theory of interstellar trade\", (1978), 2010, Economic Inquiry (en ligne) : https://doi.org/10.1111/j.1465-7295.2009.00225").DOI, "10.1111/j.1465-7295.2009.00225");
+});
 test("texte : apostrophes dans un titre entre guillemets droits", () => {
   assert.equal(ref("N. Klein, \"AI machines aren't 'hallucinating'. But their makers are\", The Guardian, May 8th 2023").title, "AI machines aren't 'hallucinating'. But their makers are");
 });
@@ -191,6 +194,43 @@ if (fs.existsSync(scan)) {
     assert.equal(r.lignes.filter((l) => l.doutes.length).length, 20);
   });
 }
+
+// Lot 2 : rétractations (réponses Crossref réelles, relevées le 2026-11-20) et BnF
+const {lireRetraction, checkRetraction} = await import("../src/components/bibcheck-enhanced.js");
+const {requeteSparqlBnF, similariteTitres, numeroTome} = await import("../src/components/bibliography-verifier.js");
+test("5. rétractation lue dans updated-by (Wakefield, Retraction Watch)", () => {
+  const r = lireRetraction({type: "journal-article", title: ["RETRACTED: Ileal-lymphoid-nodular hyperplasia…"], "updated-by": [
+    {DOI: "10.1016/s0140-6736(04)15715-2", type: "correction", source: "retraction-watch", updated: {"date-parts": [[2004, 3, 6]]}},
+    {DOI: "10.1016/s0140-6736(10)60175-4", type: "retraction", source: "retraction-watch", updated: {"date-parts": [[2010, 2, 6]]}}]});
+  assert.equal(r.retracted, true);
+  assert.equal(r.method, "Retraction Watch Database");
+  assert.equal(r.retractionDOI, "10.1016/s0140-6736(10)60175-4");
+});
+test("5. un avis de rétractation est reconnu comme tel ; une correction ne compte pas", () => {
+  assert.equal(lireRetraction({"update-to": [{type: "retraction", DOI: "10.1016/s0140-6736(97)11096-0"}]}).method, "Avis de rétractation");
+  assert.equal(lireRetraction({title: ["La correction fraternelle"], "updated-by": [{type: "correction", DOI: "x"}]}).retracted, false);
+  assert.equal(lireRetraction({"updated-by": [{type: "expression_of_concern", DOI: "x"}]}).concern, true);
+});
+const sansDoi = await checkRetraction(null);
+test("5. sans DOI : non vérifiable, aucune requête", () => {
+  assert.equal(sansDoi.checked, false);
+  assert.equal(sansDoi.retracted, false);
+});
+test("7. requête SPARQL BnF : ni apostrophe ni guillemet, titre principal, accents gardés", () => {
+  const q = requeteSparqlBnF("L'obsolescence de l'homme. Sur l'âme à l'époque de la deuxième révolution industrielle", "G. Anders");
+  assert.equal(q, null, "« l'obsolescence » et « l'homme » ignorés : plus aucun mot");
+  const q2 = requeteSparqlBnF("La Société automatique. Tome I : L'Avenir du travail", "B. Stiegler");
+  assert.match(q2, /bif:contains '"automatique" AND "société"'/);
+  assert.match(q2, /= "stiegler"/);
+  assert.ok(!/["']\w*['’]\w/.test(q2.split("bif:contains")[1].split("\n")[0]));
+});
+test("titres : sous-titre toléré, tome différent refusé, faux ami bas", () => {
+  assert.equal(similariteTitres("La Société automatique. Tome I : L'Avenir du travail", "La société automatique"), 100);
+  assert.equal(similariteTitres("La Gouvernance par les nombres", "La gouvernance par les nombres, cours au Collège de France, 2012-2014"), 100);
+  assert.equal(similariteTitres("La Technique et le Temps. Tome II : La Désorientation", "La technique et le temps. 1"), 50);
+  assert.ok(similariteTitres("Le capital au XXIe siècle", "Capitalism and Freedom") < 70);
+  assert.deepEqual([numeroTome("Tome IV"), numeroTome("Bifurquer. Il n'y a pas")], [4, null]);
+});
 
 // verifyEntry avec de fausses réponses de catalogue (pas de réseau).
 // Open Library renvoie le bon titre, mais selon le cas le bon ou un autre auteur.

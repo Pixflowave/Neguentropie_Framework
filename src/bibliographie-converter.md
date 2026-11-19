@@ -224,16 +224,16 @@ const cslVerificationResults = cslVerificationTriggered && cslInput
       // 5. Vérification des rétractations (CrossRef API + Retraction Watch)
       yield { loading: true, progress: { current: total, total }, message: "Vérification des rétractations..." };
       const retractionChecks = [];
+      // Par DOI seulement : celui de la référence, ou celui d'une référence
+      // vérifiée (jamais celui d'un résultat incertain, qui peut être un autre article).
+      let appels = 0;
       for (let i = 0; i < cslData.length; i++) {
-        const entry = cslData[i];
-        
-        // Use checkRetraction from bibcheck-enhanced.js (queries CrossRef)
-        const doi = entry.DOI || entry.doi;
-        const result = await checkRetraction(doi, entry.title, entry.author);
-        retractionChecks.push({
-            index: i,
-            ...result
-        });
+        const entry = cslData[i] || {};
+        const v = verificationResults[i];
+        const doi = entry.DOI || entry.doi || (v?.status === 'verified' ? v.verified?.doi : null);
+        if (doi && appels++ > 0) await new Promise(r => setTimeout(r, 200));
+        const result = await checkRetraction(doi);
+        retractionChecks.push({ index: i, ...result });
       }
       
       // 6. Enrichir les résultats de vérification
@@ -340,26 +340,16 @@ if (cslVerificationResults.loading) {
   const alerts = [];
   
   if (stats.retracted > 0) {
-    const retractionDetails = meta.retractionChecks.filter(r => r.retracted).map(r => {
-      const sourceLabel = r.method === 'Retraction Watch Database' 
-        ? '🔴 Retraction Watch' 
-        : r.method === 'Publisher Notice' 
-          ? '📋 Éditeur' 
-          : '🔍 Analyse titre';
-      return {
-        title: results[r.index]?.original?.title || 'Titre inconnu',
-        warnings: [
-          `Source: ${sourceLabel}`,
-          r.details || `Mot-clé: "${r.keyword || 'N/A'}"`
-        ]
-      };
-    });
+    const retractionDetails = meta.retractionChecks.filter(r => r.retracted).map(r => ({
+      title: results[r.index]?.original?.title || 'Titre inconnu',
+      warnings: [r.details, r.retractionDOI ? `Avis : https://doi.org/${r.retractionDOI}` : null].filter(Boolean)
+    }));
     
     alerts.push({
       type: 'danger',
       icon: '🚨',
       title: 'Articles rétractés détectés',
-      message: `${stats.retracted} article(s) potentiellement rétracté(s)`,
+      message: `${stats.retracted} article(s) rétracté(s) selon Crossref`,
       details: retractionDetails
     });
   }
@@ -471,7 +461,7 @@ if (cslVerificationResults.loading) {
       "Confiance": r.verified ? `${r.verified.confidence}%` : "-",
       "Risque IA": meta.hallucinationAnalysis[i]?.level === 'high' ? '🚨 Élevé' : 
                    meta.hallucinationAnalysis[i]?.level === 'medium' ? '⚠️ Moyen' : '✅ Faible',
-      "Rétracté": meta.retractionChecks[i]?.retracted ? '⚠️ Oui' : '✅ Non'
+      "Rétracté": meta.retractionChecks[i]?.retracted ? '🚨 Oui' : meta.retractionChecks[i]?.concern ? '⚠️ Avis de préoccupation' : meta.retractionChecks[i]?.checked ? 'Non' : '— (pas de DOI)'
   }));
   
   display(Inputs.table(tableData, {

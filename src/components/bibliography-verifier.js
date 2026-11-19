@@ -41,6 +41,44 @@ export function calculateSimilarity(str1, str2) {
 }
 
 /**
+ * Ressemblance (0-100) entre le titre cité et le titre trouvé dans un
+ * catalogue, qui tolère un sous-titre ou un tome présent d'un seul côté :
+ * « La Société automatique. Tome I : L'Avenir du travail » et
+ * « La société automatique » valent 100. Le titre complet compte aussi.
+ */
+export function similariteTitres(cite, trouve) {
+    if (!cite || !trouve) return 0;
+    const principal = (t) => normaliserTexte(cleanTitle(t).split(/\s*[.:;,]\s/)[0]);
+    const pc = principal(cite);
+    const pt = principal(trouve);
+    let score = calculateSimilarity(cite, trouve);
+    score = Math.max(score, calculateSimilarity(pc, pt));
+    // l'un commence par l'autre (au moins deux mots) : « La gouvernance par
+    // les nombres, cours au Collège de France » / « La gouvernance par les nombres »
+    const [court, long] = pc.length <= pt.length ? [pc, pt] : [pt, pc];
+    if (court.split(' ').length >= 2 && long.startsWith(court + ' ')) score = Math.max(score, 90);
+    // tomes différents (« Tome II » / « . 1 ») : pas la même œuvre
+    const tc = numeroTome(cite);
+    const tt = numeroTome(trouve);
+    if (tc && tt && tc !== tt) score = Math.min(score, 50);
+    return score;
+}
+
+const ROMAINS = {I: 1, V: 5, X: 10};
+/** Numéro de tome ou de volume d'un titre (« Tome II », « vol. 3 », « . 1, »), ou null. */
+export function numeroTome(titre) {
+    const m = String(titre).match(/(?:\b(?:[Tt]ome|[Tt]\.|[Vv]ol\.?|[Vv]olume|[Ll]ivre)\s*|\.\s+)([IVX]{1,4}|\d{1,2})(?=\b|$)/);
+    if (!m) return null;
+    if (/^\d+$/.test(m[1])) return Number(m[1]);
+    let n = 0;
+    for (let i = 0; i < m[1].length; i++) {
+        const v = ROMAINS[m[1][i]], suivant = ROMAINS[m[1][i + 1]] || 0;
+        n += v < suivant ? -v : v;
+    }
+    return n;
+}
+
+/**
  * Extract the last name of the first author for better search results
  */
 export function extractLastName(authorString) {
@@ -336,7 +374,7 @@ export async function searchOpenLibrary(title, author) {
 
         // Get best match
         const bestMatch = data.docs[0];
-        const similarity = calculateSimilarity(title, bestMatch.title || '');
+        const similarity = similariteTitres(title, bestMatch.title || '');
 
         return {
             title: bestMatch.title,
@@ -382,7 +420,7 @@ export async function searchCrossRef(title, author) {
 
         const bestMatch = data.message.items[0];
         const matchTitle = bestMatch.title?.[0] || '';
-        const similarity = calculateSimilarity(title, matchTitle);
+        const similarity = similariteTitres(title, matchTitle);
 
         // Extract authors
         const authorStr = bestMatch.author?.map(a => `${a.given || ''} ${a.family || ''}`).join(', ') || '';
@@ -433,7 +471,7 @@ export async function searchOpenAlex(title, author) {
 
         const bestMatch = data.results[0];
         const matchTitle = bestMatch.title || '';
-        const similarity = calculateSimilarity(title, matchTitle);
+        const similarity = similariteTitres(title, matchTitle);
 
         // Extract authors
         const authorStr = bestMatch.authorships?.map(a => a.author?.display_name).filter(Boolean).join(', ') || '';
@@ -489,7 +527,7 @@ export async function searchHAL(title, author) {
         // Get best match
         const bestMatch = data.response.docs[0];
         const matchTitle = bestMatch.title_s?.[0] || bestMatch.en_title_s?.[0] || '';
-        const similarity = calculateSimilarity(title, matchTitle);
+        const similarity = similariteTitres(title, matchTitle);
 
         // Extract author name
         const authorName = bestMatch.authFullName_s?.join(", ") || "";
@@ -540,7 +578,6 @@ function cleanAuthorName(name) {
     // Normalize spaces and trim
     cleaned = cleaned.replace(/\s+/g, ' ').trim();
 
-    console.log('[BnF] Cleaned author name:', name, '->', cleaned);
 
     return cleaned;
 }
@@ -589,21 +626,18 @@ export async function searchBnF(title, author) {
         const matchPublisher = getTag(bestRecord, "dc:publisher");
         const matchIdentifier = getTag(bestRecord, "dc:identifier"); // Usually ISBN or URI
 
-        const similarity = calculateSimilarity(title, matchTitle);
+        const similarity = similariteTitres(title, matchTitle);
 
         // Clean the record identifier - it might already contain ark:/12148/
         let recordId = bestRecord.getElementsByTagName("srw:recordIdentifier")[0]?.textContent || '';
 
-        console.log('[BnF SRU] Original recordId:', recordId);
 
         // Remove ark:/12148/ prefix if it exists (we'll add it back)
         recordId = recordId.replace(/^ark:\/12148\//, '');
 
-        console.log('[BnF SRU] Cleaned recordId:', recordId);
 
         const bnfUrl = `https://catalogue.bnf.fr/ark:/12148/${recordId}`;
 
-        console.log('[BnF SRU] Final URL:', bnfUrl);
 
         return {
             title: matchTitle,
@@ -622,120 +656,87 @@ export async function searchBnF(title, author) {
     }
 }
 
+// Mots vides ignorés dans la recherche plein texte de data.bnf.fr
+const MOTS_VIDES = new Set([
+    "les", "des", "une", "aux", "par", "pour", "dans", "sur", "avec", "sans", "sous", "vers", "entre", "comme", "est",
+    "que", "qui", "quoi", "son", "ses", "leur", "leurs", "nos", "vos", "the", "and", "for", "with", "from", "into", "that", "this"
+]);
+
+/**
+ * Requête SPARQL pour data.bnf.fr, ou null si le titre ou l'auteur manque.
+ * Recherche par mots (accents gardés : « societe » ne trouve pas
+ * « société »), réunis par AND, et auteur par nom de famille. Les mots ne
+ * contiennent que des lettres : ni apostrophe ni guillemet ne peuvent
+ * casser la requête (« L'obsolescence » faisait une erreur 500).
+ * Exportée pour les tests.
+ */
+export function requeteSparqlBnF(title, author) {
+    // Titre principal seulement : un sous-titre ou un tome ajoute des mots
+    // absents du titre de l'œuvre à la BnF (« Essai sur le don. Forme et… »).
+    const principal = cleanTitle(title).split(/\s*[.:;]\s/)[0];
+    // Mots précédés d'une apostrophe ignorés : data.bnf.fr indexe
+    // « l'homme » d'un bloc, « homme » ne le trouve pas.
+    const candidats = principal.toLowerCase().split(/\s+/).filter((m) => !/['’]/.test(m)).join(' ');
+    const mots = [...new Set((candidats.match(/\p{L}{3,}/gu) || []).filter((m) => !MOTS_VIDES.has(m)))]
+        .sort((x, y) => y.length - x.length)
+        .slice(0, 6);
+    const nom = (extractLastName(author).match(/\p{L}[\p{L}-]*/gu) || []).pop();
+    if (!mots.length || !nom) return null;
+    const recherche = mots.map((m) => `"${m}"`).join(" AND ");
+    return `PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+SELECT DISTINCT ?work ?title ?family ?given ?date WHERE {
+  ?work dcterms:title ?title .
+  ?title bif:contains '${recherche}' .
+  ?work dcterms:creator ?creator .
+  ?creator foaf:familyName ?family .
+  FILTER(LCASE(STR(?family)) = "${nom.toLowerCase()}")
+  OPTIONAL { ?creator foaf:givenName ?given }
+  OPTIONAL { ?work dcterms:date ?date }
+} LIMIT 5`;
+}
+
 /**
  * Search BnF via SPARQL endpoint (data.bnf.fr)
- * Optimized with bif:contains for full-text search performance
+ * La couverture des œuvres y est partielle : le catalogue (SRU) prend le
+ * relais quand rien n'est trouvé.
  */
 export async function searchBnFSparql(title, author) {
+    const query = requeteSparqlBnF(title, author);
+    if (!query) return null;
+    const arret = new AbortController();
+    const minuteur = setTimeout(() => arret.abort(), 8000);
     try {
-        // Clean and escape for SPARQL
-        // We remove special characters that might break the query or aren't useful for search
-        const cleanForSparql = (str) => {
-            return str.replace(/["]/g, ' ')  // Remove quotes
-                .replace(/\s+/g, ' ')   // Normalize spaces
-                .trim();
-        };
-
-        const cleanedTitle = cleanForSparql(cleanTitle(title));
-        const lastName = cleanForSparql(extractLastName(author));
-
-        if (!cleanedTitle || !lastName) return null;
-
-        // Use bif:contains for fast full-text search
-        // Note: We use 'AND' implicitly in bif:contains by just listing words
-        const query = `
-        PREFIX dcterms: <http://purl.org/dc/terms/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        
-        SELECT DISTINCT ?work ?title ?creatorName ?date ?publisher WHERE {
-          ?work dcterms:title ?title .
-          ?title bif:contains "'${cleanedTitle}'" .
-          
-          ?work dcterms:creator ?creator .
-          ?creator foaf:name ?creatorName .
-          ?creatorName bif:contains "'${lastName}'" .
-          
-          OPTIONAL { ?work dcterms:date ?date }
-          OPTIONAL { ?work dcterms:publisher ?publisher }
-        } LIMIT 3
-        `;
-
         const url = `https://data.bnf.fr/sparql?query=${encodeURIComponent(query)}&format=json`;
-
-        // Create a timeout promise (5 seconds)
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('SPARQL request timed out')), 5000)
-        );
-
-        // Race between fetch and timeout
-        const response = await Promise.race([
-            fetch(url),
-            timeoutPromise
-        ]);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        const response = await fetch(url, {signal: arret.signal});
+        if (!response.ok) return null;
         const data = await response.json();
 
-        if (!data.results?.bindings || data.results.bindings.length === 0) {
-            return null;
-        }
-
-        // Find best match
         let bestMatch = null;
-        let maxSimilarity = 0;
-
-        for (const result of data.results.bindings) {
+        for (const result of data.results?.bindings || []) {
             const resultTitle = result.title.value;
-            const similarity = calculateSimilarity(title, resultTitle);
-
-            if (similarity > maxSimilarity) {
-                maxSimilarity = similarity;
-
-                // Clean the BnF URL - the SPARQL endpoint sometimes returns malformed URIs
-                // with duplicate ARK prefixes like "https://catalogue.bnf.fr/ark:/12148/ark:/12148/cb412050783"
-                let workUrl = result.work.value;
-
-                console.log('[BnF SPARQL] Original URL:', workUrl);
-
-                // Remove any duplicate ark:/12148/ patterns (keep only the last occurrence)
-                // This handles cases like: /ark:/12148/ark:/12148/ -> /ark:/12148/
-                workUrl = workUrl.replace(/(ark:\/12148\/)+/g, 'ark:/12148/');
-
-                console.log('[BnF SPARQL] After dedup:', workUrl);
-
-                // If the URL is just an ARK identifier (starts with "ark:"), prepend the catalogue base
-                if (workUrl.startsWith('ark:/')) {
-                    workUrl = `https://catalogue.bnf.fr/${workUrl}`;
-                    console.log('[BnF SPARQL] Added base URL:', workUrl);
-                }
-
-                console.log('[BnF SPARQL] Final URL:', workUrl);
-
-                bestMatch = {
-                    title: resultTitle,
-                    author: cleanAuthorName(result.creatorName.value),
-                    year: result.date?.value,
-                    publisher: result.publisher?.value,
-                    url: workUrl,
-                    confidence: similarity,
-                    source: 'BnF (SPARQL)',
-                    found: true
-                };
-            }
+            const similarity = similariteTitres(title, resultTitle);
+            if (bestMatch && similarity <= bestMatch.confidence) continue;
+            // Adresse en https, sans préfixe ARK en double ni fragment « #about »
+            const workUrl = result.work.value
+                .replace(/^http:/, 'https:')
+                .replace(/(ark:\/12148\/)+/g, 'ark:/12148/')
+                .replace(/#about$/, '');
+            bestMatch = {
+                title: resultTitle,
+                author: [result.given?.value, result.family.value].filter(Boolean).join(' '),
+                year: result.date?.value,
+                url: workUrl,
+                confidence: similarity,
+                source: 'BnF (SPARQL)',
+                found: true
+            };
         }
-
         return bestMatch;
-
     } catch (error) {
-        // Log error but don't crash, allow fallback to other methods
-        // Only warn for non-500 errors (500 is common for BnF SPARQL)
-        if (!error.message.includes('500')) {
-            console.warn('BnF SPARQL search failed or timed out:', error.message);
-        }
-        return null;
+        return null; // délai dépassé ou service indisponible : le catalogue SRU prend le relais
+    } finally {
+        clearTimeout(minuteur);
     }
 }
 

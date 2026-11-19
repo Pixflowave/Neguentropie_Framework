@@ -364,6 +364,9 @@ export function analyserReference(ligne) {
   if (dir) entree.note = "dir.";
   if (annee) entree.issued = {"date-parts": [[annee]]};
   if (url) entree.URL = url;
+  // DOI : adresse doi.org, ou « doi: 10.… » dans le texte
+  const doi = (url.match(/doi\.org\/(10\.\d{4,}\/\S+)/i) || ligne.match(/\bdoi:\s*(10\.\d{4,}\/[^\s,;]+)/i) || [])[1];
+  if (doi) entree.DOI = doi.replace(/[.,;)]+$/, "");
   const mp = suite.match(/\bpp?\.\s?(\d+\s?[-–]\s?\d+)/);
   if (mp) entree.page = mp[1].replace(/\s/g, "").replace("–", "-");
   const mv = suite.match(/\bvol\.?\s?([\dIVXL]+)/i);
