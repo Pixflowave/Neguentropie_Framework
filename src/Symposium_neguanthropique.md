@@ -12,6 +12,8 @@ title: Symposium Néguanthropique
 </div>
 <script async src='https://pol.is/embed.js'></script>
 
+Voir la [synthèse des avis](https://pol.is/report/r2tmct3f9ykfavrc6tshv) (rapport Pol.is).
+
 ---
 
 #### Erwan BOZEC - Philippe Rivière - Luc Léger - Aline Perdereau, Néguentropie
