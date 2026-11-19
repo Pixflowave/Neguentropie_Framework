@@ -15,6 +15,7 @@ https://pixflowave.github.io/Neguentropie_Framework/
   - `globalStylesheets: []` empêche Framework de charger Source Serif 4 chez Google.
   - Les caractères hors du jeu latin (« ł » polonais, par exemple) s'affichent dans la police du système.
 - **Favicon** (2026-11-19) : icosaèdre vu par un sommet, avec le dégradé violet → rouge → or des arbres de l'accueil. [src/favicon.svg](src/favicon.svg), plus [src/favicon.png](src/favicon.png) en 32 px pour les navigateurs qui ne lisent pas le SVG (rendu avec Chrome sans fenêtre).
+- **`head` commun, description et Open Graph** (2026-11-19) : dans [observablehq.config.js](observablehq.config.js), `head` est une fonction `({title, path})` qui écrit le script `lang`, le favicon, `meta description` et les balises `og:` / `twitter:`. Les descriptions sont dans l'objet `DESCRIPTIONS`, indexé par adresse (`/index`, `/rencontres`…), car Framework 1.13 ignore les champs inconnus de l'en-tête des pages : ajouter une ligne pour toute nouvelle page. Ne jamais mettre `head:` dans l'en-tête d'une page, il remplacerait tout le `head` commun. L'image de partage est `src/Neguentropie.png`, lue sur raw.githubusercontent.com (adresse fixe, sans empreinte) : elle n'est donc à jour qu'après le push.
 - **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »
@@ -107,7 +108,6 @@ Déjà en place :
 - Carte Leaflet : `map.invalidateSize()` avant chaque `fitBounds` (elle s'était ouverte une fois au zoom 0). Les textes venant des données (`p.name`, `p.type`, `p.tourism`, `t.genre`) passent par `esc()` avant d'être insérés en HTML.
 
 À corriger :
-- Pas de `meta description` ni de balises Open Graph : en ajouter une par page avec `head:` dans l'en-tête du fichier .md.
 - Le style `.hero` est recopié dans 3 pages, et le convertisseur a son propre style (émojis, dégradé violet/rouge codé en dur).
 
 ## À faire / idées

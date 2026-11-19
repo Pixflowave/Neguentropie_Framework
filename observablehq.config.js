@@ -1,5 +1,21 @@
 // See https://observablehq.com/framework/config for documentation.
 import MarkdownItFootnote from "markdown-it-footnote";
+
+// Adresses fixes pour les balises Open Graph (les fichiers du site ont une
+// empreinte dans leur nom, l'image de partage est donc prise sur GitHub).
+const SITE = "https://pixflowave.github.io/Neguentropie_Framework";
+const IMAGE = "https://raw.githubusercontent.com/Pixflowave/Neguentropie_Framework/main/src/Neguentropie.png";
+const DESCRIPTION = "Néguentropie, installation artistique sous Licence Art Libre : cartographie, construction collective et bifurcations.";
+// Description de chaque page (Framework 1.13 ignore les champs inconnus de l'en-tête des pages).
+const DESCRIPTIONS = {
+  "/index": "Néguentropie, installation artistique sous Licence Art Libre : une invitation à la recherche du point gris, entre cartographie, construction collective et bifurcations.",
+  "/neguanthropocene": "Néguanthropocène (2021) : une démarche participative pour interroger l'activité humaine et s'émanciper par le collectif.",
+  "/Symposium_neguanthropique": "Symposium néguanthropique : consultation ouverte sur Polis autour des projets issus de Néguentropie.",
+  "/enveloppe-icosaedrique-3d": "Enveloppe icosaédrique de 3 750 m³ portant la carte Airocean : vue 3D de la montgolfière et carte des sites de vol autour de Cossonay.",
+  "/bibliographie-converter": "Outil pour vérifier des bibliographies CSL-JSON (BnF, HAL, Crossref, Open Library) et les fusionner avec le graphe Néguentropie.",
+  "/rencontres": "Rencontres, ateliers, résidences et publications de Néguentropie depuis 2021, dont l'article paru dans Cartes & Géomatique (2024)."
+};
+const attr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 export default {
   // The app’s title; used in the sidebar and webpage titles.
   title: "Néguentropie",
@@ -22,10 +38,30 @@ export default {
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
-  // Framework 1.13 écrit <html> sans langue : on déclare le français au chargement.
-  head: `<script>document.documentElement.lang="fr"</script>
+  // Commun à toutes les pages. Framework 1.13 écrit <html> sans langue : on
+  // déclare le français au chargement. Description et Open Graph : voir
+  // DESCRIPTIONS. Ne pas mettre de « head » dans l'en-tête d'une page : il
+  // remplacerait celui-ci.
+  head: ({title, path}) => {
+    const titre = title ? `${title} · Néguentropie` : "Néguentropie";
+    const description = DESCRIPTIONS[path] ?? DESCRIPTION;
+    const url = SITE + path.replace(/(^|\/)index$/, "$1");
+    return `<script>document.documentElement.lang="fr"</script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="icon" href="favicon.png" type="image/png" sizes="32x32">`,
+<link rel="icon" href="favicon.png" type="image/png" sizes="32x32">
+<meta name="description" content="${attr(description)}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Néguentropie">
+<meta property="og:title" content="${attr(titre)}">
+<meta property="og:description" content="${attr(description)}">
+<meta property="og:url" content="${attr(url)}">
+<meta property="og:image" content="${IMAGE}">
+<meta property="og:image:width" content="1920">
+<meta property="og:image:height" content="1080">
+<meta property="og:image:alt" content="L'enveloppe icosaédrique Néguentropie, modélisée avec Blender">
+<meta name="twitter:card" content="summary_large_image">`;
+  },
 
   // Thème par défaut + Raleway hébergée dans le dépôt (src/style.css).
   // Pas de feuille globale : Framework chargerait sinon Source Serif 4 chez Google.
