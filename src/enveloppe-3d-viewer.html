@@ -18,8 +18,16 @@ body{background:var(--bg);color:var(--fg);font-family:Raleway,system-ui,sans-ser
 #ld polyline{fill:none;stroke:var(--fg);stroke-opacity:.45;stroke-width:1}
 #ld circle{fill:var(--fg);fill-opacity:.7}
 #hint{padding:4px 12px 8px;font-size:12px;opacity:.7}
+#reg{display:none;font:inherit;font-size:13px;padding:6px 12px;border:1px solid #7a7a7a;border-radius:6px;background:none;color:var(--fg);cursor:pointer}
+/* Écran étroit : réglages et aide repliés derrière le bouton « Réglages et aide », pour laisser la place à la 3D */
+@media (max-width:600px){#reg{display:inline-block}
+ body:not(.ouvert) #ui label,body:not(.ouvert) #vinfo,body:not(.ouvert) #hint{display:none}
+ #ui{gap:6px 12px}}
+#fermer{font:inherit;font-weight:600;font-size:13px;padding:6px 12px;border:0;border-radius:6px;background:#ffc536;color:var(--bg);cursor:pointer}
 </style></head><body>
 <div id="ui">
+<button type="button" id="fermer" hidden>✕ Fermer le plein écran</button>
+<button type="button" id="reg" aria-expanded="false">Réglages et aide ▾</button>
 <label><input type="checkbox" data-g="env" checked>Enveloppe</label>
 <label><input type="checkbox" data-g="tapes" checked>Sangles</label>
 <label><input type="checkbox" data-g="crown" checked>Couronne + soupape</label>
@@ -187,22 +195,34 @@ function setValve(rv){rtCur=rv;const t2=rv/1.618034/(R-hh);PT.forEach((p,i)=>p.c
 const rvEl=document.getElementById('rv');rvEl.oninput=()=>setValve(+rvEl.value);
 
 const host=document.getElementById('c'),ren=new THREE.WebGLRenderer({antialias:true,alpha:true});
+ren.setPixelRatio(Math.min(devicePixelRatio||1,2));// image nette sur les écrans haute densité
 host.appendChild(ren.domElement);
 const cam=new THREE.PerspectiveCamera(35,1,.1,500);
+{const b=document.getElementById('reg');b.onclick=()=>{const o=document.body.classList.toggle('ouvert');b.setAttribute('aria-expanded',o);b.textContent=o?'Masquer les réglages ▴':'Réglages et aide ▾'}}
 const els=LB.map(l=>{const d=document.createElement('div');d.className='lb';d.textContent=l[0];host.appendChild(d);return d});
 function theme(){const dk=matchMedia('(prefers-color-scheme: dark)').matches&&document.documentElement.dataset.theme!=='light'||document.documentElement.dataset.theme==='dark';
  mats.line.color.set(dk?0xe6e6e6:0x222222);mats.face.color.set(dk?0x8fa3b8:0xa9bdd0);}
 theme();matchMedia('(prefers-color-scheme: dark)').addEventListener('change',theme);
-function size(){const w=host.clientWidth,h=host.clientHeight;ren.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
-addEventListener('resize',size);size();
+// Cadrage : à l'écran large, la hauteur commande (position d'origine) ; en portrait, la caméra recule
+// pour que l'enveloppe (≈ 13 m de demi-largeur) tienne en largeur. Tant qu'on n'a pas touché à la vue.
+const CAM0=V(0,8.5,57.4);let touche=false,ctlR=null;
+function cadrer(){const k=Math.max(1,13/(Math.tan(17.5*Math.PI/180)*cam.aspect)/CAM0.length());
+ const p=CAM0.clone().multiplyScalar(k);if(ctlR){ctlR.position0.copy(p);if(touche)return}cam.position.copy(p)}
+function size(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;ren.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();cadrer()}
+new ResizeObserver(size).observe(host);size();
 const on={};document.querySelectorAll('[data-g]').forEach(c=>{on[c.dataset.g]=true;c.onchange=()=>{on[c.dataset.g]=c.checked;G[c.dataset.g].visible=c.checked}});
 let showL=true;document.getElementById('lbt').onchange=e=>showL=e.target.checked;
 // Caméra libre : tourner dans tous les sens (dessous compris), pincer/molette pour zoomer, clic droit ou deux doigts pour déplacer
-cam.position.set(0,8.5,57.4);sc.add(cam);cam.add(sun);sun.position.set(10,20,15);
+cadrer();sc.add(cam);cam.add(sun);sun.position.set(10,20,15);
 const ctl=new THREE.OrbitControls(cam,ren.domElement);
 Object.assign(ctl,{enableDamping:true,dampingFactor:.08,rotateSpeed:.8,zoomSpeed:1.2,minDistance:4,maxDistance:150,minPolarAngle:0,maxPolarAngle:Math.PI,screenSpacePanning:true,autoRotate:true,autoRotateSpeed:.6});
-ctl.saveState();ctl.addEventListener('start',()=>{ctl.autoRotate=false;host.style.cursor='grabbing'});ctl.addEventListener('end',()=>host.style.cursor='');
+ctl.saveState();ctlR=ctl;ctl.addEventListener('start',()=>{ctl.autoRotate=false;touche=true;host.style.cursor='grabbing'});ctl.addEventListener('end',()=>host.style.cursor='');
 host.addEventListener('dblclick',()=>ctl.reset());
+// Bouton « Fermer » : seulement quand la vue est ouverte seule (lien « Ouvrir en plein écran »), pas dans l'iframe.
+// Ferme l'onglet si le navigateur l'accepte, sinon revient à la page (publiée un niveau au-dessus de /_file/).
+if(window.self===window.top){const fb=document.getElementById('fermer');fb.hidden=false;
+ const sortir=()=>{window.close();setTimeout(()=>{location.href=new URL('../enveloppe-icosaedrique-3d',location.href).href},150)};
+ fb.onclick=sortir;addEventListener('keydown',e=>{if(e.key==='Escape')sortir()})}
 document.getElementById('mp').onchange=e=>gm.visible=e.target.checked;
 const applyTex=()=>{mapMat.map=(useP?photoTexs:mapTexs)[curK];mapMat.opacity=useP?.92:.78;mapMat.needsUpdate=true};
 document.querySelectorAll('input[name=m]').forEach(r=>r.onchange=()=>{curK=+r.value;applyTex();setCfg(curK);const mv=Math.floor(MARG[curK]*20)/20;rvEl.value=mv;setValve(mv)});
