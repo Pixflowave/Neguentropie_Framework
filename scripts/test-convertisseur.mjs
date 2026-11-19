@@ -55,6 +55,11 @@ test("2. sous-titre gardé, nom d'auteur collé retiré", () => {
   assert.equal(titreNoeud("Condition de l'homme moderne, Hannah Arendt", [{family: "Arendt", given: "Hannah"}]), "Condition de l'homme moderne");
   assert.equal(cleanTitle("Capital: Critique of Political Economy"), "Capital", "la recherche, elle, simplifie toujours");
 });
+test("2. le nœud prend la date de première parution", () => {
+  const r = fusion([{title: "Théorie générale de l'emploi, de l'intérêt et de la monnaie", author: [{family: "Keynes", given: "J. M."}],
+    issued: {"date-parts": [[2017]]}, "original-date": {"date-parts": [[1936]]}}]);
+  assert.equal(r.nodes.find((x) => x.id.startsWith("Théorie générale")).year, 1936);
+});
 test("2. année en nombre", () => {
   assert.equal(annee("DL 2015"), 2015);
   assert.equal(annee(1962), 1962);

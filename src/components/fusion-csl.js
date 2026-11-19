@@ -208,7 +208,9 @@ export function mergeCSL(cslText, graphe, sourceId, verifications = [], complete
     if (recupere) rapport.avertissements.push({n, titre: titreFinal, message: "Titre retrouvé parmi les auteurs"});
 
     let url = typeof entry.URL === "string" ? entry.URL.trim() : "";
-    let an = annee(entry.issued?.["date-parts"]?.[0]?.[0]);
+    // Date de première parution si elle est connue (« Condition de l'homme
+    // moderne (1958), Pocket, 2002 » → 1958), sinon date de l'édition citée.
+    let an = annee(entry["original-date"]?.["date-parts"]?.[0]?.[0]) ?? annee(entry.issued?.["date-parts"]?.[0]?.[0]);
     let auteurs = auteursCSL.flatMap((a) => separerAuteurs(nomComplet(a)));
 
     // Compléter depuis le catalogue : seulement une référence vérifiée,

@@ -24,6 +24,7 @@ Cocher chaque point une fois corrigé et vérifié, avec la date.
 - Fusion : nouvel avertissement « titre proche d'un nœud existant » (`titreProche`), sans rapprochement automatique : « Bifurquer » / « Bifurquer. Il n'y a pas d'alternative », tomes de *La Technique et le Temps* et du *Geste et la Parole*, « Simondon et Derrida » / « Derrida et Simondon »… 13 cas sur le scan d'essai.
 - La règle « personne = source d'une arête Livre, Article… » se trompe parfois sur le graphe actuel (« Bifurquer » → « Vocabulaire de l'Internation » en Article, « Les Liens qui Libèrent » → « Bifurquer » en Livre). Pour les titres, un nœud cible d'une telle arête compte toujours comme œuvre.
 - Le graphe contient un nœud mal formé : « Condition de l'homme moderne (1958 » (parenthèse non fermée). À traiter avec le nettoyage du graphe.
+- Un nouveau nœud prend la date de première parution (`original-date`, lue dans le texte brut : « (1958) ») plutôt que celle de l'édition citée (2026-11-20).
 
 ## Règles pour les corrections
 
