@@ -39,6 +39,7 @@ https://pixflowave.github.io/Neguentropie_Framework/
     - Les données du graphe ne changent en ligne qu'après un push.
   - L'ancien `components/notebook.js` (runtime Observable 5.9.9 depuis jsDelivr) a été supprimé. `npm:@observablehq/runtime` ne convient pas : Framework le remplace par son runtime interne, sans `Library`.
 - **Pol.is (page Symposium)** : pas de thème sombre, et son iframe ne peut pas être stylée depuis le site. Le module est encadré (`.polis-cadre` dans `style.css` : liseré or, coins arrondis) ; la bordure de Pol.is est retirée avec `data-border='none'`, `data-border_radius='0'` et `data-padding='0'`. La conversation a un champ `bgcolor` (vide), mais l'interface d'administration ne le propose plus : l'onglet Configure n'a aucun réglage de couleur (vérifié par Erwan le 2026-11-19). En capture Chrome sans fenêtre, l'iframe ne se charge pas : vérifier dans un vrai navigateur.
+  - `data-parent_url` donne l'adresse définitive de la page Symposium (sinon, Pol.is reçoit l'adresse courante, y compris `localhost` en aperçu). Le champ « Embedded on » de l'onglet Distribute contenait encore l'ancienne adresse `pixflowave.observablehq.cloud/techne/exemple%20index` (403). C'est elle qui sert aux e-mails de suivi. Après la mise en ligne, regarder si Pol.is l'a remplacée ; ne pas recréer la conversation pour ça (9 participants, votes et commentaires perdus).
 - **Largeur du texte** : Framework limite volontairement les paragraphes et les titres à 640 px. C'est normal, ce n'est pas un bug.
 
 ## Page « Enveloppe icosaédrique 3D »

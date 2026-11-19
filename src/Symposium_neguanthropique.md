@@ -8,7 +8,7 @@ title: Symposium Néguanthropique
 </div>
 
 <div class="polis-cadre">
-  <div class='polis' data-conversation_id='2f5mfrhdp4' data-border='none' data-border_radius='0' data-padding='0'></div>
+  <div class='polis' data-conversation_id='2f5mfrhdp4' data-parent_url='https://pixflowave.github.io/Neguentropie_Framework/Symposium_neguanthropique' data-border='none' data-border_radius='0' data-padding='0'></div>
 </div>
 <script async src='https://pol.is/embed.js'></script>
 
