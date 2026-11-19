@@ -6,30 +6,39 @@ Données : [src/data/neguentropie_Graph.json](../src/data/neguentropie_Graph.jso
 
 Ce dossier est hors de `src/` exprès : Framework publierait tout fichier `.md` placé dans `src/` comme une page du site.
 
-Rien n'a encore été corrigé. Cocher chaque point une fois corrigé et vérifié, avec la date et le commit.
+Cocher chaque point une fois corrigé et vérifié, avec la date.
+
+## Où en est-on
+
+**Lot 1 (2026-11-19) : fusion sûre, points 1 à 4.**
+- La fusion est sortie de la page et mise dans [src/components/fusion-csl.js](../src/components/fusion-csl.js) (`mergeCSL`, `recupererTitre`, `titreNoeud`, `trouverPersonne`, `annee`, `separerAuteurs`). Elle renvoie `{nodes, edges, stats, rapport}`. La page affiche le rapport (entrées écartées, à vérifier, rapprochements, complétées, nouvelles œuvres, nouveaux auteurs), et le JSON téléchargé ne contient que `nodes` et `edges`.
+- `cleanTitle` est coupé en deux dans bibliography-verifier.js : `retirerAuteurDuTitre` (titre complet, pour nommer un nœud) et la simplification pour la recherche.
+- `verifyEntry` compare aussi l'auteur (`auteurCorrespond`, champ `authorMatch` sur le résultat). Les recherches ne renvoient plus l'auteur d'origine quand le catalogue n'en a pas.
+- Tests : `npm run test:convertisseur` ([scripts/test-convertisseur.mjs](../scripts/test-convertisseur.mjs)), sans réseau, 16 cas dont tous ceux ci-dessous. Vérifié aussi dans Chrome sans fenêtre (rapport affiché, JSON téléchargé correct).
+- Option de la page renommée : « Compléter avec les références vérifiées (adresse, année, auteurs manquants) ».
 
 ## Règles pour les corrections
 
 - Répondre en français. Commit local à chaque étape, push seulement avec l'accord d'Erwan, une fois le lot terminé.
 - Le principe : **ne jamais modifier les données de l'utilisateur sans le montrer**. Toute entrée écartée, renommée ou rattachée à un nœud existant doit apparaître dans un aperçu avant le téléchargement.
-- Vérifier chaque correction sur les cas de test listés ci-dessous (résultats obtenus le 2026-11-19, avant correction).
+- Vérifier chaque correction sur les cas de test listés ci-dessous (résultats obtenus le 2026-11-19, avant correction), et ajouter chaque nouveau cas à `scripts/test-convertisseur.mjs`.
 - Les numéros de ligne datent de l'audit. Ils bougeront.
 
 ## 🔴 Critique : le graphe peut être corrompu
 
-- [ ] **1. Un résultat incertain remplace les données.** `verifyEntry` renvoie un résultat même avec une confiance faible (`status: 'uncertain'`, verifier.js:785-789). La fusion l'utilise sans regarder le statut (converter.md:515 et :730, `verifiedData.found` vaut toujours `true`). L'option « données vérifiées » est cochée par défaut. La confiance ne compare que les titres, jamais l'auteur.
+- [x] **1. Un résultat incertain remplace les données.** `verifyEntry` renvoie un résultat même avec une confiance faible (`status: 'uncertain'`, verifier.js:785-789). La fusion l'utilise sans regarder le statut (converter.md:515 et :730, `verifiedData.found` vaut toujours `true`). L'option « données vérifiées » est cochée par défaut. La confiance ne compare que les titres, jamais l'auteur.
   - Cas : Piketty, « Le capital au XXIe siècle », rapproché à 22 % de « Capitalism and Freedom ». Résultat actuel : nœuds « Capitalism and Freedom » et « Milton Friedman », reliés à Technè. Attendu : données d'origine conservées.
-  - Correction : n'utiliser que `status === 'verified'`, et exiger aussi la correspondance de l'auteur.
-- [ ] **2. `cleanTitle` sert à la fois à la recherche et à nommer les nœuds** (converter.md:736, :785). Il coupe les sous-titres, les parenthèses et les tomes.
+  - Corrigé (2026-11-19) : seul `status === 'verified'` complète, et seulement ce qui manque (adresse, année, auteurs). Le titre et les auteurs d'origine restent. Un résultat dont l'auteur diffère est au mieux « uncertain ».
+- [x] **2. `cleanTitle` sert à la fois à la recherche et à nommer les nœuds** (converter.md:736, :785). Il coupe les sous-titres, les parenthèses et les tomes.
   - Cas : « La technique et le temps, tome 2 » et « …, tome 3 » deviennent tous deux « La technique et le temps, » (un seul nœud, virgule en trop) ; « Capital: Critique of Political Economy » devient « Capital ».
-  - Correction : garder le titre d'origine comme identifiant, et réserver `cleanTitle` aux requêtes.
-- [ ] **3. Des entrées disparaissent sans message.** Un titre fait de mots à majuscule, sans année ni URL, est jeté comme « liste de noms » (regex de converter.md:816).
+  - Corrigé (2026-11-19) : le nœud prend le titre d'origine, sans le nom d'auteur collé ni la ponctuation finale (`titreNoeud`).
+- [x] **3. Des entrées disparaissent sans message.** Un titre fait de mots à majuscule, sans année ni URL, est jeté comme « liste de noms » (regex de converter.md:816).
   - Cas : « Silent Spring » (Rachel Carson) donne 0 nœud.
-  - Correction : compter et afficher les entrées écartées, avec la raison.
-- [ ] **4. Les auteurs peuvent être rattachés au titre d'une œuvre.** `findMatchingNode` (converter.md:567-598) compare l'auteur à tous les nœuds, œuvres comprises, et le premier nœud trouvé l'emporte.
+  - Corrigé (2026-11-19) : la règle « mots à majuscule » ne fait plus qu'un avertissement. Les seules entrées écartées (vide, sans titre, titre = noms des auteurs) sont listées avec leur raison.
+- [x] **4. Les auteurs peuvent être rattachés au titre d'une œuvre.** `findMatchingNode` (converter.md:567-598) compare l'auteur à tous les nœuds, œuvres comprises, et le premier nœud trouvé l'emporte.
   - Cas : l'auteur « P. Stiegler » est rattaché à « Penser avec Bernard Stiegler ».
   - Autre défaut : les titres ne sont comparés qu'à l'identique. Cas : « La Gouvernance par les nombres » (avec une majuscule) crée un doublon de « La gouvernance par les nombres ».
-  - Correction : ne comparer qu'aux nœuds qui sont des personnes (source d'une arête Livre, Article, Individu…) et comparer les titres sans casse ni accents. En cas d'ambiguïté, le signaler dans l'aperçu plutôt que de choisir.
+  - Corrigé (2026-11-19) : les auteurs ne sont comparés qu'aux personnes du graphe (source d'une arête Livre, Article, Site Web, Rapport, Traduction, Colloque ; cible d'une arête Individu ou Contributeur·se). Deux candidats ou plus : nouveau nœud et avertissement. Les titres sont comparés sans casse, accents ni ponctuation. Chaque rapprochement figure au rapport.
 
 ## 🟠 Vérification peu fiable
 
@@ -51,11 +60,11 @@ Rien n'a encore été corrigé. Cocher chaque point une fois corrigé et vérifi
 
 ## 🟡 Robustesse et code
 
-- [ ] Heuristique « titre manquant récupéré dans les auteurs » en deux copies qui ont divergé (converter.md:84-144 et :681-707 ; la seconde a une condition `family.length > 20` en plus). En faire une seule fonction. `validateCSLFormat`, qui lit le CSL brut, signale « Titre manquant » même pour un titre récupéré.
-- [ ] JSON qui n'est pas un tableau, ou entrée `null` : `cslData.map is not a function`, la page casse. Valider l'entrée une seule fois, avec un message clair.
-- [ ] `_verification` est calculé (converter.md:495-512) mais jamais enregistré : seuls `id`, `url` et `year` passent dans le nœud. Le garder ou le supprimer.
-- [ ] Année tantôt nombre, tantôt texte (la BnF renvoie parfois « DL 2015 ») : n'enregistrer que l'année sur 4 chiffres, en nombre.
-- [ ] Le remplacement par les données vérifiées est fait deux fois (converter.md:515-527, puis :730-781). Le premier découpe l'auteur au dernier espace (« Stiegler, Bernard » devient `family: "Bernard"`).
+- [x] (2026-11-19, `recupererTitre`) Heuristique « titre manquant récupéré dans les auteurs » en deux copies qui ont divergé (converter.md:84-144 et :681-707 ; la seconde a une condition `family.length > 20` en plus). En faire une seule fonction. `validateCSLFormat`, qui lit le CSL brut, signale « Titre manquant » même pour un titre récupéré.
+- [x] (2026-11-19, côté fusion) JSON qui n'est pas un tableau, ou entrée `null` : `cslData.map is not a function`, la page casse. Valider l'entrée une seule fois, avec un message clair.
+- [x] (2026-11-19, supprimé) `_verification` est calculé (converter.md:495-512) mais jamais enregistré : seuls `id`, `url` et `year` passent dans le nœud. Le garder ou le supprimer.
+- [x] (2026-11-19, `annee()`, pour les nouveaux nœuds) Année tantôt nombre, tantôt texte (la BnF renvoie parfois « DL 2015 ») : n'enregistrer que l'année sur 4 chiffres, en nombre.
+- [x] (2026-11-19) Le remplacement par les données vérifiées est fait deux fois (converter.md:515-527, puis :730-781). Le premier découpe l'auteur au dernier espace (« Stiegler, Bernard » devient `family: "Bernard"`).
 - [ ] Code mort à supprimer :
   - `verifyBibliography` ;
   - `generateQualityReport`, `calculateQualityScore` ;
@@ -92,7 +101,7 @@ Le nettoyage du graphe est un lot à part : demander à Erwan quelle version gar
 
 ## Ordre de correction proposé
 
-1. Points 1 à 4 : fusion sûre et aperçu des changements avant téléchargement.
+1. ~~Points 1 à 4 : fusion sûre et aperçu des changements avant téléchargement.~~ Fait le 2026-11-19.
 2. Points 5 et 7 : rétractations et SPARQL.
 3. Points 6, 8 et 9 : affichage du risque d'hallucination et déclenchement au clic.
 4. Robustesse, code mort, style.

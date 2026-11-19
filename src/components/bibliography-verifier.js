@@ -82,12 +82,26 @@ export function extractLastName(authorString) {
 }
 
 /**
- * Clean title by removing subtitles and punctuation that might confuse search
+ * Simplifie un titre pour l'envoyer aux catalogues : retire le nom d'auteur,
+ * le sous-titre, les parenthèses, les tomes, les prix… Ne sert qu'aux
+ * requêtes et aux comparaisons : pour nommer un nœud du graphe, utiliser
+ * retirerAuteurDuTitre, qui garde le titre complet.
  */
 export function cleanTitle(title, authorName = null) {
     if (!title) return '';
+    return simplifierPourRecherche(retirerAuteurDuTitre(title, authorName));
+}
 
-    let cleaned = title;
+/**
+ * Normalise les espaces, supprime une répétition « A. A » et retire le nom
+ * de l'auteur collé au titre (« Arendt, Condition de l'homme moderne » ou
+ * « Condition de l'homme moderne, Hannah Arendt »). Garde le sous-titre et
+ * le numéro de tome.
+ */
+export function retirerAuteurDuTitre(title, authorName = null) {
+    if (!title) return '';
+
+    let cleaned = String(title);
 
     // NORMALIZE WHITESPACE: Fix double spaces which mess up splitting
     cleaned = cleaned.replace(/\s+/g, ' ').trim();
@@ -249,6 +263,10 @@ export function cleanTitle(title, authorName = null) {
         }
     }
 
+    return cleaned.trim();
+}
+
+function simplifierPourRecherche(cleaned) {
     // 2. Remove standard suffixes
 
     // Remove subtitle (text after : or . or - if surrounded by spaces)
@@ -322,7 +340,7 @@ export async function searchOpenLibrary(title, author) {
 
         return {
             title: bestMatch.title,
-            author: bestMatch.author_name?.[0] || author,
+            author: bestMatch.author_name?.join(", ") || "",
             year: bestMatch.first_publish_year,
             isbn: bestMatch.isbn?.[0],
             publisher: bestMatch.publisher?.[0],
@@ -367,7 +385,7 @@ export async function searchCrossRef(title, author) {
         const similarity = calculateSimilarity(title, matchTitle);
 
         // Extract authors
-        const authorStr = bestMatch.author?.map(a => `${a.given || ''} ${a.family || ''}`).join(', ') || author;
+        const authorStr = bestMatch.author?.map(a => `${a.given || ''} ${a.family || ''}`).join(', ') || '';
 
         return {
             title: matchTitle,
@@ -418,7 +436,7 @@ export async function searchOpenAlex(title, author) {
         const similarity = calculateSimilarity(title, matchTitle);
 
         // Extract authors
-        const authorStr = bestMatch.authorships?.map(a => a.author?.display_name).filter(Boolean).join(', ') || author;
+        const authorStr = bestMatch.authorships?.map(a => a.author?.display_name).filter(Boolean).join(', ') || '';
 
         return {
             title: matchTitle,
@@ -474,7 +492,7 @@ export async function searchHAL(title, author) {
         const similarity = calculateSimilarity(title, matchTitle);
 
         // Extract author name
-        const authorName = bestMatch.authFullName_s?.[0] || author;
+        const authorName = bestMatch.authFullName_s?.join(", ") || "";
 
         return {
             title: matchTitle,
@@ -589,7 +607,7 @@ export async function searchBnF(title, author) {
 
         return {
             title: matchTitle,
-            author: cleanAuthorName(matchCreator) || author,
+            author: cleanAuthorName(matchCreator) || "",
             year: matchDate,
             isbn: matchIdentifier, // This might be a URI, but often contains ISBN
             publisher: matchPublisher,
@@ -727,66 +745,72 @@ export async function searchBnFSparql(title, author) {
 /**
  * Verify a single bibliography entry
  */
+/**
+ * Texte sans accents, sans ponctuation, en minuscules.
+ */
+export function normaliserTexte(s) {
+    return String(s ?? '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, ' ')
+        .trim();
+}
+
+/**
+ * Le nom de famille de l'auteur d'origine figure-t-il parmi les auteurs
+ * trouvés ? true / false, ou null quand on ne peut pas le savoir (pas
+ * d'auteur d'origine, ou nom trop court).
+ */
+export function auteurCorrespond(auteurOriginal, auteurTrouve) {
+    if (!auteurOriginal) return null;
+    // Dernier mot du nom : « de Beauvoir » → « beauvoir », que le catalogue
+    // écrive « Simone de Beauvoir » ou « Beauvoir, Simone de ».
+    const nom = normaliserTexte(extractLastName(auteurOriginal)).split(' ').pop();
+    if (!nom || nom.length < 2) return null;
+    if (!auteurTrouve) return null;
+    return ` ${normaliserTexte(auteurTrouve)} `.includes(` ${nom} `);
+}
+
+// Catalogues interrogés dans l'ordre. On passe au suivant tant qu'aucun
+// résultat n'atteint le seuil.
+const CATALOGUES = [
+    [searchBnFSparql, 70],   // BnF (data.bnf.fr) : livres en français
+    [searchHAL, 80],         // HAL : articles scientifiques français
+    [searchBnF, 70],         // BnF (catalogue, SRU)
+    [searchOpenLibrary, 70], // livres
+    [searchCrossRef, 70],    // articles (DOI)
+    [searchOpenAlex, 70]     // tout le reste
+];
+
+/**
+ * Verify a single bibliography entry
+ *
+ * La confiance ne mesure que la ressemblance des titres. Un résultat dont
+ * l'auteur ne correspond pas n'est jamais retenu comme vérifié : il n'est
+ * gardé, au statut « uncertain », que si rien d'autre n'a été trouvé.
+ */
 export async function verifyEntry(entry) {
-    let bestResult = null;
+    let bestResult = null;   // meilleur résultat dont l'auteur n'est pas contredit
+    let autreAuteur = null;  // meilleur résultat dont l'auteur diffère
 
-    // 1. Try BnF SPARQL (Highest quality for French works)
-    const bnfSparqlResult = await searchBnFSparql(entry.title, entry.author);
-    if (bnfSparqlResult && bnfSparqlResult.confidence >= 70) {
-        bestResult = bnfSparqlResult;
-    }
-
-    // 2. Try HAL (Best for French academic papers)
-    if (!bestResult || bestResult.confidence < 80) {
-        const halResult = await searchHAL(entry.title, entry.author);
-        if (halResult && (!bestResult || halResult.confidence > bestResult.confidence)) {
-            bestResult = halResult;
+    for (const [chercher, seuil] of CATALOGUES) {
+        if (bestResult && bestResult.confidence >= seuil) continue;
+        const result = await chercher(entry.title, entry.author);
+        if (!result) continue;
+        result.authorMatch = auteurCorrespond(entry.author, result.author);
+        if (result.authorMatch === false) {
+            if (!autreAuteur || result.confidence > autreAuteur.confidence) autreAuteur = result;
+        } else if (!bestResult || result.confidence > bestResult.confidence) {
+            bestResult = result;
         }
     }
 
-    // 3. Try BnF SRU (Fallback for books if SPARQL missed)
-    if (!bestResult || bestResult.confidence < 70) {
-        // Small delay if we are chaining requests, but here we handle one entry
-        // The caller should handle delays between entries if needed
-        const bnfResult = await searchBnF(entry.title, entry.author);
+    const verified = bestResult || autreAuteur;
+    let status = 'not_found';
+    if (bestResult && bestResult.confidence >= 70) status = 'verified';
+    else if (verified) status = 'uncertain';
 
-        if (bnfResult && (!bestResult || bnfResult.confidence > bestResult.confidence)) {
-            bestResult = bnfResult;
-        }
-    }
-
-    // 4. Try OpenLibrary (General books)
-    if (!bestResult || bestResult.confidence < 70) {
-        const openLibResult = await searchOpenLibrary(entry.title, entry.author);
-
-        if (openLibResult && (!bestResult || openLibResult.confidence > bestResult.confidence)) {
-            bestResult = openLibResult;
-        }
-    }
-
-    // 5. Try CrossRef (Articles)
-    if (!bestResult || bestResult.confidence < 70) {
-        const crossRefResult = await searchCrossRef(entry.title, entry.author);
-
-        if (crossRefResult && (!bestResult || crossRefResult.confidence > bestResult.confidence)) {
-            bestResult = crossRefResult;
-        }
-    }
-
-    // 6. Try OpenAlex (Broad coverage fallback)
-    if (!bestResult || bestResult.confidence < 70) {
-        const openAlexResult = await searchOpenAlex(entry.title, entry.author);
-
-        if (openAlexResult && (!bestResult || openAlexResult.confidence > bestResult.confidence)) {
-            bestResult = openAlexResult;
-        }
-    }
-
-    return {
-        original: entry,
-        verified: bestResult,
-        status: bestResult ? (bestResult.confidence >= 70 ? 'verified' : 'uncertain') : 'not_found'
-    };
+    return { original: entry, verified, status };
 }
 
 /**

@@ -61,7 +61,8 @@ const cslInput = view(Inputs.textarea({
 Vérifiez les références avant de les fusionner.
 
 ```js
-import {verifyBibliography, verifyEntry, calculateSimilarity, cleanTitle} from "./components/bibliography-verifier.js";
+import {verifyEntry} from "./components/bibliography-verifier.js";
+import {mergeCSL, recupererTitre} from "./components/fusion-csl.js";
 import {
   checkRetraction,
   detectHallucinationRisk,
@@ -86,38 +87,7 @@ function extractCSLEntries(jsonText) {
   try {
     const data = JSON.parse(jsonText);
     return data.map(entry => {
-      let title = entry.title;
-      let authorsList = entry.author || [];
-      
-      // Heuristic for missing title recovery
-      // If title is missing and we have authors, check if one might be the title
-      if ((!title || title.trim() === "") && authorsList.length > 0) {
-          // Check the last "author" entry (or the only one)
-          const candidate = authorsList[authorsList.length - 1];
-          
-          // Construct full name to check for "The ...", "Le ...", etc.
-          const candName = candidate.literal || (candidate.family ? (candidate.given ? `${candidate.given} ${candidate.family}` : candidate.family) : "");
-          
-          // Conditions to treat as title:
-          // 1. Has explicit particle field
-          // 2. Family has spaces ("Grande Transformation") -> Previous heuristic
-          // 3. Full name starts with known article (The, Le, La, L', Des, Les)
-          // 4. Contains "Review" or "Rapport" if it's the only element?
-          
-          const startsWithArticle = /^(The |Le |La |L'|Les |Des |Un |Une )/i.test(candName);
-          const looksLikeReport = /(Review|Rapport|Report|Commission)/i.test(candName);
-          
-          if (candidate.particle || (candidate.family && candidate.family.includes(' ')) || startsWithArticle || looksLikeReport) {
-              // It's likely a title
-              title = candName;
-              if (candidate.particle && candidate.family) {
-                   title = `${candidate.particle} ${candidate.family}`;
-              }
-              
-              // Remove this candidate from authors list
-              authorsList = authorsList.slice(0, -1);
-          }
-      }
+      const {titre: title, auteurs: authorsList} = recupererTitre(entry);
 
       let author = "";
       if (authorsList.length > 0) {
@@ -127,7 +97,7 @@ function extractCSLEntries(jsonText) {
       }
       
       let year = "";
-      if (entry.issued && entry.issued["date-parts"] && entry.issued["date-parts"][0]) {
+      if (entry?.issued?.["date-parts"]?.[0]) {
         year = entry.issued["date-parts"][0][0];
       }
 
@@ -135,7 +105,7 @@ function extractCSLEntries(jsonText) {
         title: title,
         author: author,
         year: year,
-        originalUrl: entry.URL
+        originalUrl: entry?.URL
       };
     });
   } catch (e) {
@@ -450,6 +420,7 @@ if (cslVerificationResults.loading) {
       "Titre": r.original.title,
       "Auteur": r.original.author,
       "Source": r.verified?.source || "-",
+      "Auteur trouvé": !r.verified ? "-" : `${r.verified.authorMatch === false ? "✗ " : r.verified.authorMatch ? "✓ " : ""}${r.verified.author || "?"}`,
       "Confiance": r.verified ? `${r.verified.confidence}%` : "-",
       "Risque IA": meta.hallucinationAnalysis[i]?.level === 'high' ? '🚨 Élevé' : 
                    meta.hallucinationAnalysis[i]?.level === 'medium' ? '⚠️ Moyen' : '✅ Faible',
@@ -457,7 +428,7 @@ if (cslVerificationResults.loading) {
   }));
   
   display(Inputs.table(tableData, {
-    columns: ["Index", "Statut", "Titre", "Auteur", "Source", "Confiance", "Risque IA", "Rétracté"],
+    columns: ["Index", "Statut", "Titre", "Auteur", "Source", "Auteur trouvé", "Confiance", "Risque IA", "Rétracté"],
     width: "100%",
     rows: 15
   }));
@@ -469,11 +440,11 @@ if (cslVerificationResults.loading) {
 <div class="output-section">
 
 ```js
-const useVerifiedData = view(Inputs.toggle({label: "Utiliser les données vérifiées pour la fusion (remplace les données CSL)", value: true}));
+const useVerifiedData = view(Inputs.toggle({label: "Compléter avec les références vérifiées (adresse, année, auteurs manquants)", value: true}));
 ```
 
 ### 3. Fusionner
-Une fois les données CSL collées et vérifiées, cliquez ci-dessous pour générer le fichier JSON fusionné.
+La fusion garde vos titres et vos auteurs. Une référence vérifiée (titre et auteur retrouvés dans un catalogue) ne fait que compléter ce qui manque. Relisez le rapport ci-dessous avant de télécharger le fichier.
 
 ```js
 const mergedGraph = (cslInput) 
@@ -481,411 +452,12 @@ const mergedGraph = (cslInput)
   : graphData;
 ```
 
-```js
-function mergeCSL(cslText, currentGraph, sourceId, verificationResults = [], useVerified = false) {
-  if (!cslText || cslText.trim() === "") return currentGraph;
-  
-  let cslData;
-  try {
-    cslData = JSON.parse(cslText);
-  } catch (e) {
-    return { ...currentGraph, error: "Invalid JSON: " + e.message };
-  }
-
-  // Enrichir chaque entrée CSL avec les métadonnées Bibcheck
-  const enrichedCSL = cslData.map((entry, i) => {
-    const verification = verificationResults[i];
-    if (!verification) return entry;
-    
-    const enrichedEntry = {
-      ...entry,
-      _verification: {
-        verified: verification.status === 'verified',
-        confidence: verification.verified?.confidence || 0,
-        source: verification.verified?.source || 'none',
-        hallucinationRisk: verification.verification?.hallucinationRisk || 'unknown',
-        hallucinationScore: verification.verification?.hallucinationScore || 0,
-        retracted: verification.verification?.retracted || false,
-        isDuplicate: verification.verification?.isDuplicate || false,
-        formatIssues: verification.verification?.formatIssues || []
-      }
-    };
-    
-    // Si useVerified, remplacer les données CSL par les données vérifiées
-    if (useVerified && verification.verified) {
-      enrichedEntry.title = verification.verified.title;
-      if (verification.verified.author) {
-        const authorParts = verification.verified.author.split(' ');
-        enrichedEntry.author = [{
-          family: authorParts[authorParts.length - 1],
-          given: authorParts.slice(0, -1).join(' ')
-        }];
-      }
-      if (verification.verified.url) {
-        enrichedEntry.URL = verification.verified.url;
-      }
-    }
-    
-    return enrichedEntry;
-  });
-
-  // Deep copy to avoid mutating original
-  const newGraph = JSON.parse(JSON.stringify(currentGraph));
-  const nodeIds = new Set(newGraph.nodes.map(n => n.id));
-  
-  let newNodesCount = 0;
-  let newEdgesCount = 0;
-
-  // Helper to parse name into { first, last, isInitial }
-  function parseName(name) {
-    if (!name) return null;
-    
-    // Handle "A.Surname" (no space)
-    // Regex: Starts with 1 letter, dot, then rest of name
-    const noSpaceMatch = name.match(/^([A-Z])\.([A-Z][a-z\u00C0-\u00FF]+)$/);
-    if (noSpaceMatch) {
-      return { 
-        first: noSpaceMatch[1], 
-        last: noSpaceMatch[2], 
-        isInitial: true 
-      };
-    }
-
-    const parts = name.split(/\s+/);
-    if (parts.length < 2) return null;
-
-    const last = parts[parts.length - 1];
-    const first = parts.slice(0, -1).join(' ');
-    
-    // Check if first name looks like an initial (1 char or ends with dot)
-    const isInitial = first.length === 1 || first.endsWith('.');
-    
-    return { first, last, isInitial };
-  }
-
-  // Helper to find matching node (handles "A. Name" vs "Anne Name", "A.Name", and "Name, First" vs "First Name")
-  function findMatchingNode(name, existingIds) {
-    if (existingIds.has(name)) return name;
-
-    const parsedName = parseName(name);
-    if (!parsedName) return null;
-
-    for (const id of existingIds) {
-      const parsedId = parseName(id);
-      if (!parsedId) continue;
-      
-      // Last name must match exactly (case-insensitive)
-      if (parsedName.last.toLowerCase() !== parsedId.last.toLowerCase()) continue;
-
-      // Check initials/first name
-      const nameFirstChar = parsedName.first.charAt(0).toLowerCase();
-      const idFirstChar = parsedId.first.charAt(0).toLowerCase();
-      
-      // If either is an initial, compare just the first letter
-      if (parsedName.isInitial || parsedId.isInitial) {
-        if (nameFirstChar === idFirstChar) {
-          return id; // Match found!
-        }
-      } else {
-        // Both are full names, must match exactly (or close enough?)
-        // For now, assume if full names differ, they are different people
-        // unless one is a substring of the other?
-        // Let's stick to strict equality for full names to avoid false positives
-        if (parsedName.first.toLowerCase() === parsedId.first.toLowerCase()) {
-          return id;
-        }
-      }
-    }
-    
-    // Additional check: handle "Nom, Prénom" vs "Prénom Nom" format
-    // If name contains a comma, try to match with inverted format
-    if (name.includes(',')) {
-      const parts = name.split(',').map(p => p.trim());
-      if (parts.length === 2) {
-        const [lastName, firstName] = parts;
-        const invertedName = `${firstName} ${lastName}`;
-        if (existingIds.has(invertedName)) {
-          return invertedName;
-        }
-      }
-    } else {
-      // If name doesn't have comma, check if any existing ID has comma with same parts
-      for (const id of existingIds) {
-        if (id.includes(',')) {
-          const parts = id.split(',').map(p => p.trim());
-          if (parts.length === 2) {
-            const [lastName, firstName] = parts;
-            const invertedId = `${firstName} ${lastName}`;
-            if (invertedId.toLowerCase() === name.toLowerCase()) {
-              return id;
-            }
-          }
-        }
-      }
-    }
-    
-    return null;
-  }
-
-  // Helper to split combined authors like "S.Bichler J. Nitzan" or "Michał Krzykawski Anne Alombert"
-  function splitCombinedAuthors(name) {
-    if (!name) return [];
-    
-    // 1. Explicit separators common in dirty data
-    if (name.includes(';') || name.includes(' & ') || name.includes(' and ')) {
-        return name.split(/;| & | and /).map(n => n.trim()).filter(n => n);
-    }
-    
-    // 2. Commas: "Bateman, Duvendack, Loubere" (3 parts)
-    if (name.includes(',')) {
-        const parts = name.split(',').map(n => n.trim());
-        const hasSpaces = parts.every(p => p.includes(' '));
-        // If > 2 parts OR (2 parts AND both have spaces -> likely "Name Name, Name Name")
-        if (parts.length > 2 || (parts.length === 2 && hasSpaces)) {
-             return parts;
-        }
-    }
-
-    // 3. Initials Pattern (Existing)
-    // Matches: "S.Bichler", "J. Nitzan", "M.-P. Virard"
-    const namePattern = /[A-Z]\.(?:[- ][A-Z]\.)?\s*[A-Z][a-z\u00C0-\u00FF]+/g;
-    
-    const matches = name.match(namePattern);
-    
-    // If we found multiple matches, return them
-    if (matches && matches.length > 1) {
-      return matches;
-    }
-    
-    // 4. "Name Name Name Name" (Aggressive Heuristic)
-    // "Michał Krzykawski Anne Alombert" -> 4 words, capitalized, no commas
-    if (!name.includes(',') && !name.includes('.')) {
-        const words = name.split(/\s+/);
-        // If exactly 4 words and all start with uppercase
-        if (words.length === 4 && words.every(w => /^[A-Z]/.test(w))) {
-             // Assume 2 names of 2 words
-             const p1 = words.slice(0, 2).join(' ');
-             const p2 = words.slice(2).join(' ');
-             return [p1, p2];
-        }
-    }
-    
-    // Otherwise return the original name as a single-item array
-    return [name];
-  }
-
-  enrichedCSL.forEach((entry, index) => {
-    // Determine data source (Original vs Verified)
-    let entryTitle = entry.title;
-    
-    // START TITLE RESCUE LOGIC (Synced with extractCSLEntries)
-    let entryRawAuthors = entry.author || []; 
-    
-    // Heuristic for missing title recovery
-    // If title is missing and we have authors, check if one might be the title
-    if ((!entryTitle || entryTitle.trim() === "") && entryRawAuthors.length > 0) {
-        // Check the last "author" entry (or the only one)
-        const candidate = entryRawAuthors[entryRawAuthors.length - 1];
-        
-        // Construct full name to check for "The ...", "Le ...", etc.
-        const candName = candidate.literal || (candidate.family ? (candidate.given ? `${candidate.given} ${candidate.family}` : candidate.family) : "");
-        
-        // Conditions to treat as title:
-        const startsWithArticle = /^(The |Le |La |L'|Les |Des |Un |Une )/i.test(candName);
-        const looksLikeReport = /(Review|Rapport|Report|Commission)/i.test(candName);
-        const hasParticleOrSpaces = candidate.particle || (candidate.family && (candidate.family.includes(' ') || candidate.family.length > 20));
-
-        if (hasParticleOrSpaces || startsWithArticle || looksLikeReport) {
-             entryTitle = candName;
-             if (candidate.particle && candidate.family) {
-                  entryTitle = `${candidate.particle} ${candidate.family}`;
-             }
-             // Remove this candidate from authors list for this entry processing
-             entryRawAuthors = entryRawAuthors.slice(0, -1);
-        }
-    }
-    // END TITLE RESCUE LOGIC
-
-    let entryUrl = entry.URL || "";
-    let entryYear = (entry.issued && entry.issued["date-parts"] && entry.issued["date-parts"][0]) 
-                    ? entry.issued["date-parts"][0][0] 
-                    : null;
-    let entryAuthors = [];
-
-    // Check for verification result
-    // We assume the order matches because we extract from the same input
-    // Ideally we should match by title/author but index is safer if list hasn't changed
-    const verifiedData = (useVerified && verificationResults && verificationResults[index]) 
-                         ? verificationResults[index].verified 
-                         : null;
-
-    const authorFull = (entryRawAuthors && entryRawAuthors[0]) ? (entryRawAuthors[0].literal || (entryRawAuthors[0].family ? (entryRawAuthors[0].given ? `${entryRawAuthors[0].given} ${entryRawAuthors[0].family}` : entryRawAuthors[0].family) : "")) : null;
-    const authorObj = (entryRawAuthors && entryRawAuthors[0]) ? entryRawAuthors[0] : null;
-    
-    // Prepare author candidates for cleaning (Original Data)
-    const cleaningCandidates = [];
-    if (authorObj) cleaningCandidates.push(authorObj);
-    if (authorFull) cleaningCandidates.push(authorFull);
-
-    if (verifiedData && verifiedData.found) {
-      // Use verified data, but clean the title to remove " / Author" or "Author, Title" artifacts
-      
-      // Add verified author to candidates
-      if (verifiedData.author) cleaningCandidates.push(verifiedData.author);
-      
-      entryTitle = cleanTitle(verifiedData.title, cleaningCandidates); 
-      entryUrl = verifiedData.url || entryUrl;
-      entryYear = verifiedData.year || entryYear;
-      
-      // Verified author handling...
-      if (verifiedData.author) {
-         let authStr = verifiedData.author;
-         
-         // 1. Split by semicolon (explicit list)
-         if (authStr.includes(';')) {
-             authStr.split(';').forEach(p => {
-                 const clean = p.trim();
-                 if (clean) entryAuthors.push(clean);
-             });
-         } 
-         // 2. Split by comma
-         else if (authStr.includes(',')) {
-            const parts = authStr.split(',');
-            
-            // Heuristic: 
-            // - If > 2 parts ("A, B, C"), assume list of authors.
-            // - If 2 parts:
-            //    - If both have spaces ("John Doe, Jane Smith"), assume list.
-            //    - If no spaces ("Doe, John"), assume Last, First.
-            
-            const partsHaveSpaces = parts.every(p => p.trim().includes(' '));
-            
-            if (parts.length > 2 || (parts.length === 2 && partsHaveSpaces)) {
-                // Treat as list of authors
-                parts.forEach(p => {
-                    const clean = p.trim();
-                    if (clean) entryAuthors.push(clean);
-                });
-            } else if (parts.length === 2) {
-                // Treat as "Last, First" -> "First Last"
-                // Also handles "Family, Given"
-                entryAuthors.push(`${parts[1].trim()} ${parts[0].trim()}`);
-            } else {
-                // Fallback (length 1?)
-                entryAuthors.push(authStr);
-            }
-         } else {
-            // Single author, no separator
-            entryAuthors.push(authStr);
-         }
-      }
-    } else {
-      // Use original CSL data
-      // APPLY CLEANING HERE TOO using Original Author candidates
-      entryTitle = cleanTitle(entryTitle, cleaningCandidates);
-      
-      if (entryRawAuthors && entryRawAuthors.length > 0) {
-        entryRawAuthors.forEach(a => {
-          let name = null;
-          if (a.literal) name = a.literal;
-          else if (a.family) name = a.given ? `${a.given} ${a.family}` : a.family;
-          
-          if (name) {
-            const splitNames = splitCombinedAuthors(name);
-            entryAuthors.push(...splitNames);
-          }
-        });
-      }
-    }
-    
-    // GARBAGE FILTERING
-    // 1. If title is empty -> Skip
-    if (!entryTitle) return;
-    
-    // 2. If title looks like an author list (e.g. "Author1 Author2") AND we have no year/URL
-    // Heuristic: specific regex or if title equals concatenated authors
-    if (!entryYear && (!entryUrl || entryUrl.trim() === "")) {
-         const quickAuthorCheck = entryAuthors.join(" ").replace(/[,.]/g, "");
-         const quickTitleCheck = entryTitle.replace(/[,.]/g, "");
-         
-         // If title is roughly equal to authors, it's likely a parsing error (just authors)
-         if (quickTitleCheck.length > 5 && quickAuthorCheck.includes(quickTitleCheck)) return;
-         
-         // Logic for "Name Name Name": If title is just capitalized words with no connectors
-         // and matches the author pattern strongly
-         if (/^([A-Z][a-z\u00C0-\u00FF]+\s?){2,}$/.test(entryTitle)) {
-             // It's just a list of names?
-             // If we have no year and no URL, assume it's garbage
-             return;
-         }
-    }
-    
-    // Add Work Node
-    if (!nodeIds.has(entryTitle)) {
-      const workNode = { id: entryTitle, url: entryUrl };
-      if (entryYear) {
-        workNode.year = entryYear;
-      }
-      newGraph.nodes.push(workNode);
-      nodeIds.add(entryTitle);
-      newNodesCount++;
-    }
-
-    // Process each author
-    entryAuthors.forEach(authorName => {
-      // Resolve Author Node (check for duplicates)
-      let resolvedAuthorName = authorName;
-      
-      const match = findMatchingNode(authorName, nodeIds);
-      if (match) {
-        resolvedAuthorName = match; // Use existing node
-      } else if (!nodeIds.has(authorName)) {
-        newGraph.nodes.push({ id: authorName, url: "" });
-        nodeIds.add(authorName);
-        newNodesCount++;
-      }
-
-      // Add Edge: Author -> Work
-      if (resolvedAuthorName) {
-        // Check if edge exists
-        const edgeExists = newGraph.edges.some(e => e.source === resolvedAuthorName && e.target === entryTitle);
-        if (!edgeExists) {
-          newGraph.edges.push({
-            source: resolvedAuthorName,
-            target: entryTitle,
-            type: entry.type === "webpage" ? "Site Web" : 
-                  entry.type === "report" ? "Rapport" : 
-                  entry.type === "article-journal" ? "Article" : "Livre"
-          });
-          newEdgesCount++;
-        }
-      }
-    });
-
-    // Add Edge: Work -> Source Book (if selected)
-    if (sourceId) {
-      const edgeExists = newGraph.edges.some(e => e.source === entryTitle && e.target === sourceId);
-      if (!edgeExists) {
-        newGraph.edges.push({
-          source: entryTitle,
-          target: sourceId,
-          type: "Référence"
-        });
-        newEdgesCount++;
-      }
-    }
-  });
-
-  return { ...newGraph, stats: { newNodes: newNodesCount, newEdges: newEdgesCount } };
-}
-
-
-```
 
 
 ### 📊 Résultat de la fusion
 
 ```js
+const rapport = mergedGraph.rapport;
 display(mergedGraph.error ? html`<div class="error-box">❌ ${mergedGraph.error}</div>` : html`
 <div class="stats-grid">
   <div class="stat-card">
@@ -897,11 +469,35 @@ display(mergedGraph.error ? html`<div class="error-box">❌ ${mergedGraph.error}
     <div class="stat-label">Nouvelles Relations</div>
   </div>
   <div class="stat-card">
+    <div class="stat-number">${rapport ? rapport.ecartees.length : 0}</div>
+    <div class="stat-label">Entrées écartées</div>
+  </div>
+  <div class="stat-card">
     <div class="stat-number">${mergedGraph.nodes.length}</div>
     <div class="stat-label">Total Nœuds</div>
   </div>
 </div>
 `);
+```
+
+```js
+// Rapport : tout ce que la fusion a écarté, rapproché ou complété.
+function partie(titre, lignes, colonnes, ouvert = false) {
+  if (!lignes?.length) return "";
+  return html`<details class="rapport" open=${ouvert}>
+    <summary>${titre} (${lignes.length})</summary>
+    ${Inputs.table(lignes, {columns: Object.keys(colonnes), header: colonnes, width: {n: 48}, rows: 12, select: false})}
+  </details>`;
+}
+if (rapport) display(html`<div>
+  <h3>Rapport de fusion</h3>
+  ${partie("Entrées écartées", rapport.ecartees, {n: "N°", titre: "Titre", raison: "Raison"}, true)}
+  ${partie("À vérifier", rapport.avertissements, {n: "N°", titre: "Titre", message: "Remarque"}, true)}
+  ${partie("Rapprochées d'un nœud existant", rapport.rapprochements, {n: "N°", genre: "Nature", saisi: "Dans le CSL", noeud: "Nœud du graphe"}, true)}
+  ${partie("Complétées depuis un catalogue", rapport.completees, {n: "N°", titre: "Titre", champs: "Champs ajoutés", source: "Source"})}
+  ${partie("Nouvelles œuvres", rapport.oeuvres, {n: "N°", titre: "Titre", annee: "Année", url: "Adresse"})}
+  ${partie("Nouveaux auteurs", rapport.auteurs, {n: "N°", nom: "Nom"})}
+</div>`);
 ```
 
 </div>
@@ -911,7 +507,7 @@ display(mergedGraph.error ? html`<div class="error-box">❌ ${mergedGraph.error}
 ## 💾 JSON Fusionné
 
 ```js
-const mergedJsonOutput = JSON.stringify(mergedGraph, (key, value) => key === 'stats' ? undefined : value, 2);
+const mergedJsonOutput = JSON.stringify({nodes: mergedGraph.nodes, edges: mergedGraph.edges}, null, 2);
 ```
 
 ```js
@@ -1171,6 +767,20 @@ h3 {
   color: var(--theme-foreground-muted);
   font-style: italic;
   font-size: 0.9rem;
+}
+
+details.rapport {
+  margin: 0.75rem 0;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--theme-foreground-faintest);
+  border-radius: 8px;
+  background: var(--theme-background-b);
+}
+
+details.rapport summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--theme-foreground-focus);
 }
 
 /* Bibcheck Styles */

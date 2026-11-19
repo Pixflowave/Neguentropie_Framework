@@ -12,7 +12,8 @@
     "aerodromes": "node scripts/generer-aerodromes.mjs",
     "reliefs": "node scripts/generer-reliefs.mjs",
     "police": "node scripts/generer-police.mjs",
-    "airocean": "node scripts/generer-airocean.mjs"
+    "airocean": "node scripts/generer-airocean.mjs",
+    "test:convertisseur": "node scripts/test-convertisseur.mjs"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",
