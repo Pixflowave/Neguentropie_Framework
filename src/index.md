@@ -49,6 +49,10 @@ La vidéo *Reboute #07 — Le projet Néguentropie* est sur la page [Rencontres 
 
 ---
 
+```js
+import {arbre} from "./components/arbre.js";
+```
+
 ### Néguentropie - 2020
 #### Résidence artistique - Artéfacts
 
@@ -62,26 +66,7 @@ const Néguentropie = [
 ```
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 25,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(Néguentropie, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
-  ]
-    })
-         
+arbre(Néguentropie)
 ```
 
 ## Rencontres
@@ -91,92 +76,10 @@ Plot.plot({
 [Récit « 360 »](https://tekhne.neguentropie.art/+neguentropie/neguentropie-frontiere/publications/recit-360-de-la-premiere-rencontre-neguentropie-frontiere?display=slides)
 
 ```js
-const curveBumpX = () => {
-  class Bump {
-    constructor(context, x) {
-      this._context = context;
-      this._x = x;
-    }
-    areaStart() {
-      this._line = 0;
-    }
-    areaEnd() {
-      this._line = NaN;
-    }
-    lineStart() {
-      this._point = 0;
-    }
-    lineEnd() {
-      if (this._line || (this._line !== 0 && this._point === 1))
-        this._context.closePath();
-      this._line = 1 - this._line;
-    }
-    point(x, y) {
-      (x = +x), (y = +y);
-      switch (this._point) {
-        case 0: {
-          this._point = 1;
-          if (this._line) this._context.lineTo(x, y);
-          else this._context.moveTo(x, y);
-          break;
-        }
-        case 1:
-          this._point = 2; // falls through
-        default: {
-          if (this._x)
-            this._context.bezierCurveTo(
-              (this._x0 = (this._x0 + x) / 2),
-              this._y0 + 1e-3,
-              this._x0,
-              y,
-              x,
-              y
-            );
-          else
-            this._context.bezierCurveTo(
-              this._x0 + 1e-3,
-              (this._y0 = (this._y0 + y) / 2),
-              x,
-              this._y0,
-              x,
-              y
-            );
-          break;
-        }
-      }
-      (this._x0 = x), (this._y0 = y);
-    }
-  }
-
-  return function bumpX(context) {
-    return new Bump(context, true);
-  };
-}
+arbre(NéguentropieFrontière)
 ```
 ```js
-// Cell 2: Create the plot using curveBumpX
-Plot.plot({
-  axis: null,
-  margin: 25,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(NéguentropieFrontiére, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)", curve: curveBumpX()}),
-  ]
-})
-```
-```js
-const NéguentropieFrontiére = [
+const NéguentropieFrontière = [
   "Néguentropie Frontière/Mélissa Plet-Whyckhuyse",
   "Néguentropie Frontière/Aline Perdereau",
   "Néguentropie Frontière/Erwan Bozec",
@@ -187,28 +90,7 @@ const NéguentropieFrontiére = [
 #### La Fabrique de Blois - 2021
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 75,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 75,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(NéguentropieLaFabriqueDeBlois2021, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
-  ]
-    })
-    
-  
-
+arbre(NéguentropieLaFabriqueDeBlois2021, {marginTop: 75, marginBottom: 75})
 ```
 
 ```js
@@ -222,26 +104,7 @@ const NéguentropieLaFabriqueDeBlois2021 = [
 #### La Fabrique de Blois - 2022
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 25,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(NéguentropieLaFabriqueDeBlois, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
-  ]
-    })
-         
+arbre(NéguentropieLaFabriqueDeBlois)
 ```
 
 ```js
@@ -258,35 +121,7 @@ const NéguentropieLaFabriqueDeBlois = [
 #### Si. — Séance inaugurale - La méthodologie de la singularité - Paris
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 75,
-  height: 150,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(Néguanthropique, {
-      dx: -5,
-      dy: -10,
-      fontSize: 12,
-      textLayout: 'normal',
-      treeAnchor: 'right',
-      strokeWidth: 2,
-      stroke: "grey",
-      strokeOpacity: 0.5,
-      stroke: "url(#gradient)",
-      curve: curveBumpX()}),
-  ]
-    })
+arbre(Néguanthropique, {height: 150, marginTop: 75})
 ```
 
 ```js
@@ -300,26 +135,7 @@ const Néguanthropique = [
 #### Maison des Sciences de l'Homme - Val de Loire
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 25,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(MétaHumus, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
-  ]
-    })
-         
+arbre(MétaHumus)
 ```
 
 ```js
@@ -336,26 +152,7 @@ const MétaHumus = [
 ### [Néguanthropocène](neguanthropocene) - 2021
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 25,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(Néguanthropocéne, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)"}),
-  ]
-    })
-         
+arbre(Néguanthropocéne)
 ```
 
 ```js
@@ -372,28 +169,7 @@ const Néguanthropocéne = [
 ### Habitus - 2021
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 25,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(Habitus, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
-  ]
-    })
-    
-  
-
+arbre(Habitus)
 ```
 
 ```js
@@ -409,25 +185,7 @@ const Habitus = [
 ### Humus - 2022
 
 ```js
-Plot.plot({
-  axis: null,
-  margin: 25,
-  height: 250,
-  width: 1000,
-  marginRight: 10,
-  marginLeft: 150,
-  marginBottom: 25,
-  marks: [
-    () => htl.svg`<defs>
-      <linearGradient id="gradient" gradientTransform="rotate(90)">
-        <stop offset="15%" stop-color="purple" />
-        <stop offset="75%" stop-color="red" />
-        <stop offset="100%" stop-color="gold" />
-      </linearGradient>
-    </defs>`,
-    Plot.tree(Humus, {dx: -5, dy: -10, fontSize:12, textLayout: 'normal' ,treeAnchor: 'right', strokeWidth: 2,stroke: "grey",strokeOpacity: 0.5 ,stroke: "url(#gradient)",curve: curveBumpX()}),
-  ]
-    })
+arbre(Humus)
 ```
 
 ```js
