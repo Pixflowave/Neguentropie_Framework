@@ -32,7 +32,7 @@ const LONGUEUR_MAX = 34;     // caractères avant « … »
 const POLICE = "Raleway, system-ui, sans-serif";
 const GRAISSE = 300;
 const GRAISSE_CIBLE = 600; // résultat de recherche courant
-const LISERE = 1;          // px à l'écran autour des lettres (demande d'Erwan, 2026-11-20)
+const LISERE = 0.8;        // px à l'écran autour des lettres, noms et types (demande d'Erwan, 2026-11-20)
 const VUE = 1200;            // viewBox carré, centré sur 0
 
 export async function graphe({hauteur = "100%"} = {}) {
@@ -223,7 +223,7 @@ export async function graphe({hauteur = "100%"} = {}) {
       .attr("font-weight", (d) => (d === cible ? GRAISSE_CIBLE : null))
       .attr("display", (d) => (noeuds.has(d) ? null : "none"));
     linkLabel
-      .attr("font-size", TAILLE_TYPE / a).attr("stroke-width", (LISERE * 0.8) / a)
+      .attr("font-size", TAILLE_TYPE / a).attr("stroke-width", LISERE / a)
       .attr("display", (l) => (liens.has(l) ? null : "none"));
     cercle
       .attr("stroke", (d) => (d === cible ? "#ffffff" : resultats.has(d) ? "#e7eeff" : null))
