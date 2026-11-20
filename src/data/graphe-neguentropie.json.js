@@ -2,7 +2,8 @@
 // Mêmes forces que le notebook @pixflowave/graph_neguentropie ; la simulation
 // tourne ici, au build, et le navigateur affiche directement les positions finales.
 import {readFileSync} from "node:fs";
-import {forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, max, scaleSqrt} from "d3";
+import * as d3 from "d3";
+import {appliquerForces} from "../graphiques/forces.js";
 
 const data = JSON.parse(readFileSync("src/data/neguentropie_Graph.json", "utf8"));
 
@@ -23,19 +24,14 @@ for (const {source, target} of links) {
 }
 for (const n of nodes) {
   n.degre = n.enfants + n.parents;
-  n.charge = -Math.max(n.enfants * n.parents ** 2, 400);
 }
 
-const rayon = scaleSqrt().domain([0, max(nodes, (d) => d.degre)]).range([4, 12]);
-const simulation = forceSimulation(nodes)
-  .force("link", forceLink(links.map((l) => ({...l}))).id((d) => d.id).distance(350).strength(1.5))
-  .force("charge", forceManyBody().strength((d) => d.charge).theta(0.8))
-  .force("center", forceCenter(0, 0))
-  .force("collide", forceCollide().radius((d) => rayon(d.degre)).iterations(2))
-  .stop();
+// Forces partagées avec graphiques/graphe.js. Disposition de départ
+// déterministe (spirale de d3), donc résultat reproductible d'un build à l'autre.
+const simulation = appliquerForces(d3, d3.forceSimulation(nodes), nodes, links.map((l) => ({...l}))).stop();
 for (let i = 0, n = Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i) simulation.tick();
 
 process.stdout.write(JSON.stringify({
-  nodes: nodes.map(({id, url, enfants, parents, degre, charge, x, y}) => ({id, url, enfants, parents, degre, charge, x: Math.round(x), y: Math.round(y)})),
+  nodes: nodes.map(({id, url, enfants, parents, degre, x, y}) => ({id, url, enfants, parents, degre, x: Math.round(x), y: Math.round(y)})),
   links
 }));
