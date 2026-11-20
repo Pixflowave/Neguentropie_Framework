@@ -25,6 +25,14 @@ const FOND = "#565656";
 const TAILLE_ETIQUETTE = 11; // px à l'écran
 const TAILLE_TYPE = 9;       // px à l'écran, type des liens
 const LONGUEUR_MAX = 34;     // caractères avant « … »
+// Raleway nommée explicitement : les champs de formulaire n'héritent pas de
+// la police de la page, et un site qui importe le module n'a pas forcément
+// la variable --sans-serif. Graisse 300 (comme le grand titre du site) et
+// liseré fin couleur du fond : lettres plus déliées.
+const POLICE = "Raleway, system-ui, sans-serif";
+const GRAISSE = 300;
+const GRAISSE_CIBLE = 600; // résultat de recherche courant
+const LISERE = 2;          // px à l'écran autour des lettres
 const VUE = 1200;            // viewBox carré, centré sur 0
 
 export async function graphe({hauteur = "100%"} = {}) {
@@ -54,7 +62,8 @@ export async function graphe({hauteur = "100%"} = {}) {
     .style("display", "flex").style("align-items", "center").style("gap", "10px");
   const zoneChamp = searchContainer.append("div").style("position", "relative");
 
-  const champ = (sel) => sel.style("background", "rgba(86, 86, 86, 0.9)").style("color", "#fff8e7").style("font-size", "14px");
+  const champ = (sel) => sel.style("background", "rgba(86, 86, 86, 0.9)").style("color", "#fff8e7").style("font-size", "14px")
+    .style("font-family", POLICE);
   const searchInput = champ(zoneChamp.append("input"))
     .attr("type", "search").attr("placeholder", "Rechercher un point...").attr("aria-label", "Rechercher un point du graphe")
     .attr("autocomplete", "off").attr("role", "combobox").attr("aria-expanded", "false").attr("aria-controls", "graphe-suggestions")
@@ -64,7 +73,7 @@ export async function graphe({hauteur = "100%"} = {}) {
     .style("position", "absolute").style("top", "100%").style("left", "0").style("margin", "4px 0 0").style("padding", "0")
     .style("list-style", "none").style("width", "320px").style("max-height", "260px").style("overflow-y", "auto")
     .style("background", "rgba(77, 77, 77, 0.97)").style("border", "1px solid #7a7a7a").style("border-radius", "4px")
-    .style("font-size", "13px").style("display", "none");
+    .style("font-size", "13px").style("font-family", POLICE).style("font-weight", GRAISSE).style("display", "none");
   const resultCounter = champ(searchContainer.append("div"))
     .style("padding", "10px").style("font-weight", "bold").style("display", "none").text("0/0");
   const navButtons = searchContainer.append("div").style("display", "none").style("gap", "5px").style("flex-direction", "column");
@@ -84,7 +93,8 @@ export async function graphe({hauteur = "100%"} = {}) {
     // aux SVG, le graphe devenait carré et débordait du cadre (zoom décentré)
     .style("width", "100%").style("height", "100%")
     .style("display", "block")
-    .style("font-family", "var(--sans-serif, sans-serif)");
+    .style("font-family", POLICE)
+    .style("font-weight", GRAISSE);
   const g = svg.append("g");
 
   svg.append("defs").selectAll("marker").data(types).join("marker")
@@ -208,12 +218,12 @@ export async function graphe({hauteur = "100%"} = {}) {
     const {noeuds, liens} = placerEtiquettes(a);
     etiquette
       .attr("font-size", TAILLE_ETIQUETTE / a)
-      .attr("stroke-width", 3 / a)
+      .attr("stroke-width", LISERE / a)
       .attr("x", (d) => rayon(d.degre) + 3 / a)
-      .attr("font-weight", (d) => (d === cible ? "bold" : null))
+      .attr("font-weight", (d) => (d === cible ? GRAISSE_CIBLE : null))
       .attr("display", (d) => (noeuds.has(d) ? null : "none"));
     linkLabel
-      .attr("font-size", TAILLE_TYPE / a).attr("stroke-width", 2.5 / a)
+      .attr("font-size", TAILLE_TYPE / a).attr("stroke-width", (LISERE * 0.8) / a)
       .attr("display", (l) => (liens.has(l) ? null : "none"));
     cercle
       .attr("stroke", (d) => (d === cible ? "#ffffff" : resultats.has(d) ? "#e7eeff" : null))
