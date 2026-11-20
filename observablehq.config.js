@@ -4,7 +4,12 @@ import MarkdownItFootnote from "markdown-it-footnote";
 // Adresses fixes pour les balises Open Graph (les fichiers du site ont une
 // empreinte dans leur nom, l'image de partage est donc prise sur GitHub).
 const SITE = "https://framework.neguentropie.art";
-const IMAGE = "https://raw.githubusercontent.com/Pixflowave/Neguentropie_Framework/main/src/partage-lorenz.png";
+const BRUT = "https://raw.githubusercontent.com/Pixflowave/Neguentropie_Framework/main/src/";
+// Vignettes de partage (1200 × 630) : une par défaut, d'autres propres à certaines pages.
+const IMAGE = {fichier: "partage-lorenz.png", alt: "Attracteur étrange de Lorenz tracé sur la carte Airocean, terres aux couleurs du logo du Fediverse"};
+const IMAGES = {
+  "/enveloppe-icosaedrique-3d": {fichier: "partage-enveloppe.png", alt: "La montgolfière à enveloppe icosaédrique en 3D, carte Airocean aux couleurs du logo du Fediverse"}
+};
 const DESCRIPTION = "Néguentropie, installation artistique sous Licence Art Libre : cartographie, construction collective et bifurcations.";
 // Description de chaque page (Framework 1.13 ignore les champs inconnus de l'en-tête des pages).
 const DESCRIPTIONS = {
@@ -50,6 +55,7 @@ export default {
   head: ({title, path}) => {
     const titre = title ? `${title} · Néguentropie` : "Néguentropie";
     const description = DESCRIPTIONS[path] ?? DESCRIPTION;
+    const image = IMAGES[path] ?? IMAGE;
     const url = SITE + path.replace(/(^|\/)index$/, "$1");
     return `<script>document.documentElement.lang="fr"</script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -61,10 +67,10 @@ export default {
 <meta property="og:title" content="${attr(titre)}">
 <meta property="og:description" content="${attr(description)}">
 <meta property="og:url" content="${attr(url)}">
-<meta property="og:image" content="${IMAGE}">
+<meta property="og:image" content="${BRUT + image.fichier}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Attracteur étrange de Lorenz tracé sur la carte Airocean, terres aux couleurs du logo du Fediverse">
+<meta property="og:image:alt" content="${attr(image.alt)}">
 <meta name="twitter:card" content="summary_large_image">`;
   },
 
