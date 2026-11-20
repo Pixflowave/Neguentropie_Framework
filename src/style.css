@@ -140,3 +140,37 @@ h4, h5, h6 { font-size: 15px; }
 .polis-cadre iframe {
   display: block;
 }
+
+/* Accueil : image Blender et export PNG du graphique Lorenz côte à côte.
+   Les flex (1.778 et 2) suivent les proportions 16:9 et 2:1 pour que les deux
+   images aient la même hauteur ; elles s'empilent sur écran étroit. */
+.accueil-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  max-width: none;
+}
+.accueil-images figure {
+  margin: 0;
+  min-width: min(100%, 320px);
+  max-width: none;
+}
+.accueil-images img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.accueil-images figcaption {
+  margin-top: .5rem;
+  color: var(--theme-foreground-muted);
+  font-size: .9rem;
+}
+
+/* Petite image à la taille du texte (logo du Fediverse après le mot) */
+img.emoji {
+  display: inline;
+  height: 1.1em;
+  width: auto;
+  vertical-align: -.2em;
+  margin: 0 .1em;
+}

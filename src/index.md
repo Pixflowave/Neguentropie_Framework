@@ -14,8 +14,16 @@ import {lorenz} from "./graphiques/lorenz.js";
 </div>
 
 ```html
-  <img src=${await FileAttachment("Neguentropie.png").url()}>
-  <figcaption><span>Image <a href="https://pixflowave.fr/">Erwan Bozec</a> réalisée avec <a href="https://www.blender.org/">Blender</a></span></figcaption>
+<div class="accueil-images">
+  <figure style="flex: 1.778">
+    <img src=${await FileAttachment("Neguentropie.png").url()} alt="Néguentropie, image de synthèse">
+    <figcaption>Image <a href="https://pixflowave.fr/">Erwan Bozec</a> réalisée avec <a href="https://www.blender.org/">Blender</a></figcaption>
+  </figure>
+  <figure style="flex: 2">
+    <img src=${await FileAttachment("lorenz-fediverse.png").url()} alt="Attracteur étrange de Lorenz tracé sur la carte Airocean, terres aux couleurs du logo du Fediverse">
+    <figcaption>Attracteur de Lorenz sur la carte Airocean, aux couleurs du Fediverse <img class="emoji" src=${await FileAttachment("fediverse.svg").url()} alt=""></figcaption>
+  </figure>
+</div>
 ```
 ## Œuvre
 
@@ -244,6 +252,7 @@ Copyleft : sauf mention contraire, cette œuvre est libre, vous pouvez la copier
 
 **Sources et crédits de cette page**
 - Image d'accueil : Erwan Bozec, réalisée avec [Blender](https://www.blender.org/).
+- Couleurs du graphique Lorenz (terres et petit logo) : logo du [Fediverse](https://fr.wikipedia.org/wiki/Fediverse) <img class="emoji" src="fediverse.svg" alt="">, Eukombos et Dr. Quadragon (domaine public).
 - Projection Airocean et attracteur de Lorenz, graphe réticulé : Pixflowave, d'après ses notebooks [ObservableHQ](https://observablehq.com/) ([Airocean × Lorenz](https://observablehq.com/@pixflowave/airocean-attracteur-de-lorenz), [graphe Néguentropie](https://observablehq.com/@pixflowave/graph_neguentropie)), portés dans Framework. Carte : Philippe Rivière ([pavage de l'icosaèdre](https://observablehq.com/@fil/triangular-tiling-of-icosahedron), [projection Airocean](https://observablehq.com/@fil/airocean-projection)), contours [Natural Earth](https://www.naturalearthdata.com/) ; attracteur : Edward N. Lorenz (1963).
 - Arbres des participants : [Observable Plot](https://observablehq.com/plot/).
 

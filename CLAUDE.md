@@ -41,6 +41,8 @@ https://framework.neguentropie.art/
     - Nettoyé le 2026-11-20 (452 nœuds, 681 arêtes, 0 arête pendante ni doublon) par [scripts/nettoyer-graphe.mjs](scripts/nettoyer-graphe.mjs), qui contient la liste des décisions d'Erwan et peut être relancé sans effet. `npm run diagnostic:graphe` ([scripts/diagnostic-graphe.mjs](scripts/diagnostic-graphe.mjs)) liste ce qui cloche, sans rien modifier.
     - **Piège du cache** : Framework ne relance le chargeur `graphe-neguentropie.json.js` que si le chargeur lui-même change, pas quand `neguentropie_Graph.json` est modifié. En local, supprimer `src/.observablehq/cache/data/graphe-neguentropie.json` avant `npm run build` ou `npm run dev`. Le déploiement GitHub n'est pas concerné (pas de cache Framework en CI).
   - [src/graphiques/lorenz.js](src/graphiques/lorenz.js) : attracteur de Lorenz (Runge-Kutta 4, réglages du notebook dans `REGLAGES`) sur la carte Airocean découpée en 500 triangles. Ils apparaissent un par un toutes les 20 ms, comme dans le notebook.
+    - **Style Fediverse** (2026-11-20, par défaut ; `lorenz({style: "doree"})` redonne l'ancienne version or) : terres en dégradé horizontal circulaire des 5 couleurs des nœuds du logo (`FEDI_NOEUDS`, les mêmes que `FEDI.noeud` de la vue 3D), chacune pure au centre de son cinquième de largeur, bords sur l'orange `#ff6500`. Petite mention en bas à gauche, précédée du logo original (`FEDI_LOGO`, tracés de Fediverse_logo_proposal.svg, Wikimedia Commons, domaine public). Le même logo est dans [src/fediverse.svg](src/fediverse.svg), affiché en petite image (`img.emoji`) après le mot « Fediverse » dans la légende et les crédits de l'accueil.
+    - **Export PNG pour l'accueil** : `npm run lorenz-png` ([scripts/exporter-lorenz.mjs](scripts/exporter-lorenz.mjs)) exécute `lorenz.js` avec un mini-DOM et écrit [src/lorenz-fediverse.png](src/lorenz-fediverse.png) (2000 × 1000, via `rsvg-convert`). À relancer après toute modification du graphique.
     - La découpe est précalculée par `npm run airocean` ([scripts/generer-airocean.mjs](scripts/generer-airocean.mjs)) dans [src/data/airocean-triangles.json](src/data/airocean-triangles.json) (100 Ko, environ 4 min de calcul).
     - Le script utilise d3-geo-polygon 2.0.1, d3-geo-projection 4.0.0, polybooljs 1.2.2 et visionscarto-world-atlas 0.0.6 (110m), en dépendances de développement.
     - Ne le relancer que si la projection, la subdivision ou la carte changent.
@@ -122,6 +124,7 @@ C'est un fichier HTML autonome qui utilise three.js r128 (cdnjs) et OrbitControl
 
 ## Accueil
 
+- **Images en duo** (2026-11-20, validé par Erwan) : l'image Blender (`Neguentropie.png`, 16:9) et l'export PNG du graphique Lorenz (`lorenz-fediverse.png`, 2:1) sont côte à côte sous le titre (`.accueil-images` dans style.css, `flex: 1.778` et `flex: 2` pour une même hauteur), empilées sur écran étroit. L'image de partage Open Graph reste `Neguentropie.png`.
 - Les arbres des participants passent par [src/components/arbre.js](src/components/arbre.js) : `arbre(chemins, {height, marginTop, marginBottom})`, un identifiant de dégradé par arbre. La courbe garde un décalage vertical de 0,001 px : sans lui, le lien horizontal d'un arbre à nombre impair de personnes a une boîte de hauteur nulle et le dégradé ne se dessine pas. Ne pas la remplacer par `curve: "bump-x"`.
 
 ## Néguanthropocène

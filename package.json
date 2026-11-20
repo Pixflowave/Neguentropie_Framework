@@ -14,7 +14,8 @@
     "police": "node scripts/generer-police.mjs",
     "airocean": "node scripts/generer-airocean.mjs",
     "test:convertisseur": "node scripts/test-convertisseur.mjs",
-    "diagnostic:graphe": "node scripts/diagnostic-graphe.mjs"
+    "diagnostic:graphe": "node scripts/diagnostic-graphe.mjs",
+    "lorenz-png": "node scripts/exporter-lorenz.mjs"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",
