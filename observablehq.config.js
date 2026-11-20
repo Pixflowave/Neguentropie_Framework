@@ -37,7 +37,7 @@ export default {
     {
       name: "Outils",
       pages: [
-        { name: "Convertisseur Bibliographie CSL-JSON", path: "/bibliographie-converter" }
+        { name: "Convertisseur bibliographique", path: "/bibliographie-converter" }
       ]
     }
   ],

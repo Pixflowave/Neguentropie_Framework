@@ -1,11 +1,11 @@
 ---
-title: Convertisseur Bibliographie CSL-JSON
+title: Convertisseur bibliographique
 toc: false
 ---
 
 <div class="hero">
-  <h1>Convertisseur Bibliographie CSL-JSON</h1>
-  <h2>Importez vos bibliographies au format CSL-JSON et fusionnez-les avec le graphique Néguentropie</h2>
+  <h1>Convertisseur bibliographique</h1>
+  <h2>Importez une bibliographie, en texte brut ou en CSL-JSON, vérifiez-la et fusionnez-la avec le graphe Néguentropie</h2>
 </div>
 
 <div class="converter-container">
