@@ -4,7 +4,7 @@ import MarkdownItFootnote from "markdown-it-footnote";
 // Adresses fixes pour les balises Open Graph (les fichiers du site ont une
 // empreinte dans leur nom, l'image de partage est donc prise sur GitHub).
 const SITE = "https://framework.neguentropie.art";
-const IMAGE = "https://raw.githubusercontent.com/Pixflowave/Neguentropie_Framework/main/src/Neguentropie.png";
+const IMAGE = "https://raw.githubusercontent.com/Pixflowave/Neguentropie_Framework/main/src/partage-lorenz.png";
 const DESCRIPTION = "Néguentropie, installation artistique sous Licence Art Libre : cartographie, construction collective et bifurcations.";
 // Description de chaque page (Framework 1.13 ignore les champs inconnus de l'en-tête des pages).
 const DESCRIPTIONS = {
@@ -62,9 +62,9 @@ export default {
 <meta property="og:description" content="${attr(description)}">
 <meta property="og:url" content="${attr(url)}">
 <meta property="og:image" content="${IMAGE}">
-<meta property="og:image:width" content="1920">
-<meta property="og:image:height" content="1080">
-<meta property="og:image:alt" content="L'enveloppe icosaédrique Néguentropie, modélisée avec Blender">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Attracteur étrange de Lorenz tracé sur la carte Airocean, terres aux couleurs du logo du Fediverse">
 <meta name="twitter:card" content="summary_large_image">`;
   },
 

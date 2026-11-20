@@ -1,5 +1,8 @@
-// Exporte le graphique Lorenz (état final de l'animation) en PNG pour l'accueil :
-// src/lorenz-fediverse.png, 2000 × 1000 px. Nécessite rsvg-convert (brew install librsvg).
+// Exporte le graphique Lorenz (état final de l'animation) en PNG :
+// - src/lorenz-fediverse.png, 2000 × 1000 px, pour l'accueil ;
+// - src/partage-lorenz.png, 1200 × 630 px, vignette de partage sur les réseaux
+//   (Open Graph), avec une bande de fond gris en haut et en bas.
+// Nécessite rsvg-convert (brew install librsvg).
 //   npm run lorenz-png
 // Le module src/graphiques/lorenz.js est exécuté tel quel avec un mini-DOM.
 import {readFileSync, writeFileSync, mkdtempSync} from "node:fs";
@@ -11,6 +14,7 @@ const racine = new URL("..", import.meta.url).pathname;
 const modulePath = join(racine, "src/graphiques/lorenz.js");
 const dataPath = join(racine, "src/data/airocean-triangles.json");
 const sortie = join(racine, "src/lorenz-fediverse.png");
+const sortiePartage = join(racine, "src/partage-lorenz.png");
 
 const echappe = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 class Element {
@@ -38,5 +42,14 @@ svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
 const svgPath = join(mkdtempSync(join(tmpdir(), "lorenz-")), "lorenz.svg");
 writeFileSync(svgPath, svg.toString());
-execFileSync("rsvg-convert", ["-w", "2000", "-b", "#565656", svgPath, "-o", sortie], {stdio: ["ignore", "ignore", "ignore"]});
+const rendre = (args) => execFileSync("rsvg-convert", ["-b", "#565656", ...args], {stdio: ["ignore", "ignore", "ignore"]});
+writeFileSync(svgPath, svg.toString());
+rendre(["-w", "2000", svgPath, "-o", sortie]);
 console.log("Écrit :", sortie);
+
+// Vignette 1200 × 630 (rapport 1,905) : on élargit la boîte de vue en hauteur (1000 × 525)
+const largeur = 1000, hauteur = 500, hauteurPartage = largeur * 630 / 1200;
+svg.setAttribute("viewBox", `0 ${-(hauteurPartage - hauteur) / 2} ${largeur} ${hauteurPartage}`);
+writeFileSync(svgPath, svg.toString());
+rendre(["-w", "1200", "-h", "630", svgPath, "-o", sortiePartage]);
+console.log("Écrit :", sortiePartage);
