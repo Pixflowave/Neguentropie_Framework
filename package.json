@@ -13,7 +13,8 @@
     "reliefs": "node scripts/generer-reliefs.mjs",
     "police": "node scripts/generer-police.mjs",
     "airocean": "node scripts/generer-airocean.mjs",
-    "test:convertisseur": "node scripts/test-convertisseur.mjs"
+    "test:convertisseur": "node scripts/test-convertisseur.mjs",
+    "diagnostic:graphe": "node scripts/diagnostic-graphe.mjs"
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.2",

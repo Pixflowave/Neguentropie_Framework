@@ -104,7 +104,16 @@ Toutes les API répondent au navigateur (CORS `*` vérifié le 2026-11-19 : cata
 - [ ] Crossref : ajouter `mailto=` pour entrer dans le « polite pool » (adresse à choisir avec Erwan, jamais une adresse personnelle sans son accord).
 - [ ] Aucun délai entre les requêtes de rétractation, et aucun délai maximal hors SPARQL : ajouter un `AbortController` (environ 8 s) pour chaque requête.
 
-## Graphe existant (état du 2026-11-19)
+## Graphe existant
+
+**Nettoyé le 2026-11-20** avec `scripts/nettoyer-graphe.mjs` (décisions d'Erwan) : 454 → 452 nœuds, 687 → 681 arêtes, 0 arête pendante, 0 doublon, 0 quasi-doublon.
+- « Critique de l'Intelligence Artificielle » séparé en deux nœuds : « … (colloque, Paris 8) », qui garde les 21 arêtes, et « … (Organoesis) », relié à Organoesis (type Projet). L'arête Anne Alombert → colloque était en double : l'une visait peut-être la page Organoesis, ce que les données ne permettent pas de savoir.
+- Fusions : « Penser l'humain… Simondon et Derrida… » (version à deux-points, adresse BnF gardée, page ENS Éditions perdue) ; « Schizophrénie numérique » (titre court, page Allia gardée, notice BnF perdue, année 2023).
+- « Condition de l'homme moderne (1958 » → « Condition de l'homme moderne », année 1958 ; « H. Arendt » → « Hannah Arendt ».
+- Arêtes pendantes raccrochées : Jacques Lacan, Michał Krzykawski, ∏Node, Art, Musique ; créés sans adresse : « Logique », « Frédéric Kaplan ».
+- Reste, sans décision pour l'instant : Psychanalyse → Jean Oury relié deux fois (École et Individu) ; 13 nœuds sans adresse ; arêtes au sens douteux (« Bifurquer » → « Vocabulaire de l'Internation » en Article, « Les Liens qui Libèrent » → « Bifurquer » en Livre).
+
+État avant nettoyage (2026-11-19) :
 
 454 nœuds, 687 arêtes. Des traces de fusions passées :
 - identifiants en double : « La projection de Lee et ses paper toys », « Critique de l'Intelligence Artificielle », « Baptiste Loreaux » ;
@@ -119,6 +128,8 @@ Le nettoyage du graphe est un lot à part : demander à Erwan quelle version gar
 
 1. ~~Points 1 à 4 : fusion sûre et aperçu des changements avant téléchargement.~~ Fait le 2026-11-19.
 2. ~~Points 5 et 7 : rétractations et SPARQL.~~ Fait le 2026-11-20 (avec le point 6).
-3. Points 6, 8 et 9 : affichage du risque d'hallucination et déclenchement au clic.
+3. Points 8 et 9 : affichage du risque d'hallucination et déclenchement au clic.
 4. Robustesse, code mort, style.
-5. Nettoyage du graphe existant.
+5. ~~Nettoyage du graphe existant.~~ Fait le 2026-11-20.
+
+**Lot 3 (contributions) : repoussé** (décision d'Erwan, 2026-11-20). Idée : la page exporte une contribution (ajouts, rapprochements, avertissements, texte d'origine, contributeur, date) et un script `npm run contribution` la fusionne sur le graphe à jour. Remarque d'Erwan : une bibliographie ne dit pas *comment* un livre en cite un autre ; la seule relation qu'elle donne est « ce livre cite cette œuvre ».

@@ -209,10 +209,6 @@
       "url": "https://www.visionscarto.net/la-recette-des-planetes-de-papier"
     },
     {
-      "id": "La projection de Lee et ses paper toys",
-      "url": "https://www.visionscarto.net/projection-de-lee"
-    },
-    {
       "id": "ObservableHQ",
       "url": "https://observablehq.com"
     },
@@ -577,12 +573,9 @@
       "url": "https://organoesis.org/anne-alombert"
     },
     {
-      "id": "Penser l'humain et la technique Simondon et Derrida après la métaphysique",
-      "url": "http://catalogue-editions.ens-lyon.fr/fr/livre/?GCOI=29021100646930&fa=author&person_id=7523"
-    },
-    {
       "id": "Schizophrénie numérique",
-      "url": "https://www.editions-allia.com/fr/livre/961/schizophrenie-numerique"
+      "url": "https://www.editions-allia.com/fr/livre/961/schizophrenie-numerique",
+      "year": 2023
     },
     {
       "id": "Penser avec Bernard Stiegler",
@@ -601,7 +594,7 @@
       "url": "https://www.fayard.fr/livre/le-capital-que-je-ne-suis-pas-9782213727240/"
     },
     {
-      "id": "Critique de l’Intelligence Artificielle",
+      "id": "Critique de l’Intelligence Artificielle (Organoesis)",
       "url": "https://organoesis.org/recherches/critique-de-lintelligence-artificielle"
     },
     {
@@ -1026,7 +1019,7 @@
       "url": "https://www.seuil.com/ouvrage/le-tacite-l-humain-catherine-perret/9782021452389"
     },
     {
-      "id": "art",
+      "id": "Art",
       "url": "https://fr.wikipedia.org/wiki/Art"
     },
     {
@@ -1458,7 +1451,7 @@
       "url": "https://www.puf.com/"
     },
     {
-      "id": "Critique de l’Intelligence Artificielle",
+      "id": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "url": "https://llcp.univ-paris8.fr/colloque-international-critique-de-l-intelligence-artificielle-enjeux"
     },
     {
@@ -1522,11 +1515,11 @@
       "url": "https://scanr.enseignementsup-recherche.gouv.fr/authors/idref184240077"
     },
     {
-      "id": "CITERS | Université de Tours",
+      "id": "CITERS | Université de Tours",
       "url": "https://citeres.univ-tours.fr"
     },
     {
-      "id": "Néguentropie | Université de Tours",
+      "id": "Néguentropie | Université de Tours",
       "url": "https://tekhne.neguentropie.art/+neguentropie/neguentropie-universite-de-tours/publications/ufr-art-sciences-humaines?display=section"
     },
     {
@@ -1694,10 +1687,6 @@
       "url": "https://p-node.org/broadcasts/machines-a-coexister"
     },
     {
-      "id": "Baptiste Loreaux",
-      "url": "https://shs.cairn.info/publications-de-baptiste-loreaux--811742?lang=fr"
-    },
-    {
       "id": "∏Node",
       "url": "https://p-node.org"
     },
@@ -1736,35 +1725,30 @@
     {
       "id": "Capital rules : the construction of global finance",
       "url": "https://catalogue.bnf.fr/ark:/12148/cb412050783",
-      "year": "2007"
+      "year": 2007
     },
     {
       "id": "Rawi Abdelal",
       "url": ""
     },
     {
-      "id": "Schizophrénie numérique : la crise de l'esprit à l'ère des nouvelles technologies ",
-      "url": "https://catalogue.bnf.fr/ark:/12148/cb47255137n",
-      "year": "2023"
-    },
-    {
       "id": "Penser l'humain et la technique : Simondon et Derrida après la métaphysique",
       "url": "https://catalogue.bnf.fr/ark:/12148/cb473259211",
-      "year": "2023"
+      "year": 2023
     },
     {
-      "id": "Condition de l'homme moderne (1958",
+      "id": "Condition de l'homme moderne",
       "url": "",
-      "year": 2002
+      "year": 1958
     },
     {
-      "id": "H. Arendt",
+      "id": "Hannah Arendt",
       "url": ""
     },
     {
       "id": "La folie des banques centrales, pourquoi la prochaine crise sera pire",
       "url": "http://data.bnf.fr/temp-work/9e3a07e1416ee97c00e0303b8d31c30f/#about",
-      "year": "2016"
+      "year": 2016
     },
     {
       "id": "Marie-Paule Virard",
@@ -1782,7 +1766,7 @@
     {
       "id": "Un nouvel âge de ténèbres : la technologie et la fin du futur",
       "url": "https://catalogue.bnf.fr/ark:/12148/cb46974626m",
-      "year": "2022"
+      "year": 2022
     },
     {
       "id": "James Bridle",
@@ -1791,7 +1775,7 @@
     {
       "id": "Qu'est-ce que le digital labor ?",
       "url": "https://catalogue.bnf.fr/ark:/12148/cb44373525f",
-      "year": "2015"
+      "year": 2015
     },
     {
       "id": "Dominique Cardon",
@@ -1809,22 +1793,30 @@
     {
       "id": "Échographies de la télévision : entretiens filmés",
       "url": "https://catalogue.bnf.fr/ark:/12148/cb35847212h",
-      "year": "1996"
+      "year": 1996
     },
     {
       "id": "Derrida – L'enseignement (À voix nue, 1998)",
       "url": "https://tube.futuretic.fr/w/xyoi2mE7UEtbZWBnYauAZV",
-      "year": "1998"
+      "year": 1998
     },
     {
       "id": "Derrida – Enfance en Algérie (À voix nue, 1998)",
       "url": "https://tube.futuretic.fr/w/cvhRXhf3JNksikaMVkx8Ht",
-      "year": "1998"
+      "year": 1998
     },
     {
       "id": "Derrida – Littérature et philosophie (À voix nue, 1998)",
       "url": "https://tube.futuretic.fr/w/iSyhBeWAC3GXuk7pSZn1tN",
-      "year": "1998"
+      "year": 1998
+    },
+    {
+      "id": "Logique",
+      "url": ""
+    },
+    {
+      "id": "Frédéric Kaplan",
+      "url": ""
     }
   ],
   "edges": [
@@ -2705,7 +2697,7 @@
     },
     {
       "source": "Anne Alombert",
-      "target": "Penser l'humain et la technique Simondon et Derrida après la métaphysique",
+      "target": "Penser l'humain et la technique : Simondon et Derrida après la métaphysique",
       "type": "Livre"
     },
     {
@@ -2800,7 +2792,7 @@
     },
     {
       "source": "Anne Alombert",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
@@ -3464,7 +3456,7 @@
       "type": "Individu"
     },
     {
-      "source": "Jaques Lacan",
+      "source": "Jacques Lacan",
       "target": "Jean Oury",
       "type": "Individu"
     },
@@ -3580,11 +3572,11 @@
     },
     {
       "source": "Technè",
-      "target": "art",
+      "target": "Art",
       "type": "Discipline"
     },
     {
-      "source": "art",
+      "source": "Art",
       "target": "Poésie",
       "type": "Discipline"
     },
@@ -3599,7 +3591,7 @@
       "type": "Livre"
     },
     {
-      "source": "art",
+      "source": "Art",
       "target": "Architecture",
       "type": "Discipline"
     },
@@ -3664,22 +3656,22 @@
       "type": "Institution"
     },
     {
-      "source": "art",
-      "target": "musique",
+      "source": "Art",
+      "target": "Musique",
       "type": "Discipline"
     },
     {
-      "source": "musique",
+      "source": "Musique",
       "target": "Nirintsoa",
       "type": "Individu"
     },
     {
-      "source": "musique",
+      "source": "Musique",
       "target": "P'tit Louis la Planche",
       "type": "Institution"
     },
     {
-      "source": "art",
+      "source": "Art",
       "target": "Centre Pompidou",
       "type": "Institution"
     },
@@ -3689,7 +3681,7 @@
       "type": "Institution"
     },
     {
-      "source": "art",
+      "source": "Art",
       "target": "Fluxus",
       "type": "Mouvement"
     },
@@ -3777,11 +3769,6 @@
       "source": "University of Silesia",
       "target": "Michał Krzykawski",
       "type": "Individu"
-    },
-    {
-      "source": "Daniel Ross",
-      "target": "The Immense Regression. What is called caring (vol. 1)",
-      "type": "Livre"
     },
     {
       "source": "Michał Krzykawski",
@@ -4565,11 +4552,6 @@
     },
     {
       "source": "Wikipedia",
-      "target": "Cartographie",
-      "type": "Article"
-    },
-    {
-      "source": "Wikipedia",
       "target": "Démocratie",
       "type": "Article"
     },
@@ -4585,47 +4567,42 @@
     },
     {
       "source": "Université Paris 8",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Alban Leveau-Vallier",
-      "target": "Critique de l’Intelligence Artificielle",
-      "type": "Colloque"
-    },
-    {
-      "source": "Anne Alombert",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Baptiste Loreaux",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Jean Lassègue",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "David W. Bates",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Giuseppe Longo",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Pablo Jensen",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Lê Nguyen Hoang",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
@@ -4635,7 +4612,7 @@
     },
     {
       "source": "Félix Tréguer",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
@@ -4650,62 +4627,57 @@
     },
     {
       "source": "Frédéric Kaplan",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
-      "source": "Michal Krzykawski",
-      "target": "Critique de l’Intelligence Artificielle",
+      "source": "Michał Krzykawski",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Juan-Luis Gastaldi",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Pierre Cassou-Noguès",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Gwenola Wagon",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Yves Citton",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Grégory Chatonsky",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Mathieu Garling",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Anna Longo",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Antonio Somaini",
-      "target": "Critique de l’Intelligence Artificielle",
+      "target": "Critique de l’Intelligence Artificielle (colloque, Paris 8)",
       "type": "Colloque"
     },
     {
       "source": "Cartographie",
       "target": "Printemps des Cartes",
-      "type": "Festival"
-    },
-    {
-      "source": "Printemps des Cartes",
-      "target": "Néguentropie au Printemps des Cartes",
       "type": "Festival"
     },
     {
@@ -4735,11 +4707,11 @@
     },
     {
       "source": "Florence Troin",
-      "target": "CITERS | Université de Tours",
+      "target": "CITERS | Université de Tours",
       "type": "Festival"
     },
     {
-      "source": "CITERS | Université de Tours",
+      "source": "CITERS | Université de Tours",
       "target": "Université de Tours",
       "type": "Institution"
     },
@@ -4765,7 +4737,7 @@
     },
     {
       "source": "Néguentropie",
-      "target": "Néguentropie | Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
@@ -4780,17 +4752,17 @@
     },
     {
       "source": "Université de Tours",
-      "target": "Néguentropie | Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
       "source": "Festival Human Tech Days",
-      "target": "Néguentropie | Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
       "source": "Learning Planet Institute",
-      "target": "Néguentropie | Université de Tours",
+      "target": "Néguentropie | Université de Tours",
       "type": "Festival"
     },
     {
@@ -4945,7 +4917,7 @@
     },
     {
       "source": "Patch Pure Data - ∏node",
-      "target": "∏node",
+      "target": "∏Node",
       "type": "Dispositif"
     },
     {
@@ -5024,19 +4996,9 @@
       "type": "Référence"
     },
     {
-      "source": "Anne Alombert",
-      "target": "Schizophrénie numérique : la crise de l'esprit à l'ère des nouvelles technologies ",
-      "type": "Livre"
-    },
-    {
-      "source": "Schizophrénie numérique : la crise de l'esprit à l'ère des nouvelles technologies ",
+      "source": "Schizophrénie numérique",
       "target": "Le capital que je ne suis pas !",
       "type": "Référence"
-    },
-    {
-      "source": "Anne Alombert",
-      "target": "Penser l'humain et la technique : Simondon et Derrida après la métaphysique",
-      "type": "Livre"
     },
     {
       "source": "Penser l'humain et la technique : Simondon et Derrida après la métaphysique",
@@ -5044,12 +5006,12 @@
       "type": "Référence"
     },
     {
-      "source": "H. Arendt",
-      "target": "Condition de l'homme moderne (1958",
+      "source": "Hannah Arendt",
+      "target": "Condition de l'homme moderne",
       "type": "Livre"
     },
     {
-      "source": "Condition de l'homme moderne (1958",
+      "source": "Condition de l'homme moderne",
       "target": "Le capital que je ne suis pas !",
       "type": "Référence"
     },
@@ -5179,11 +5141,6 @@
       "type": "Revue"
     },
     {
-      "source": "Psychotherapie institutionnelle",
-      "target": "Association Culturelle de la Borde",
-      "type": "Institution"
-    },
-    {
       "source": "Association Culturelle de la Borde",
       "target": "Annick de MONCUIT de BOISCUILLÉ",
       "type": "Individu"
@@ -5262,6 +5219,11 @@
       "source": "Jacques Derrida",
       "target": "Derrida – Littérature et philosophie (À voix nue, 1998)",
       "type": "Émission"
+    },
+    {
+      "source": "Organoesis",
+      "target": "Critique de l’Intelligence Artificielle (Organoesis)",
+      "type": "Projet"
     }
   ]
 }
