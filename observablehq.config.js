@@ -30,11 +30,16 @@ export default {
       pages: [
         { name: "Néguanthropocène", path: "/neguanthropocene" },
         { name: "Symposium néguanthropique", path: "/Symposium_neguanthropique" },
-        { name: "Enveloppe icosaédrique", path: "/enveloppe-icosaedrique-3d" },
-        { name: "Convertisseur Bibliographie CSL-JSON", path: "/bibliographie-converter" }
+        { name: "Enveloppe icosaédrique", path: "/enveloppe-icosaedrique-3d" }
       ]
     },
-    { name: "Rencontres & Publications", path: "/rencontres" }
+    { name: "Rencontres & Publications", path: "/rencontres" },
+    {
+      name: "Outils",
+      pages: [
+        { name: "Convertisseur Bibliographie CSL-JSON", path: "/bibliographie-converter" }
+      ]
+    }
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
