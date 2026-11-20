@@ -92,6 +92,8 @@ Le texte brut extrait le DOI d'une adresse `doi.org` ou d'un « doi: 10.… » (
 
 ## 🎨 Style (déjà signalé dans le CLAUDE.md principal)
 
+**Priorité (demande d'Erwan, 2026-11-20) : enlever le rose.** Erwan n'aime pas le dégradé violet → rouge (`#9333ea` → `#dc2626`) des cartes de chiffres, des boutons, de la barre de progression et des chiffres. Le remplacer par la palette du site (or `#ffc536`, fond `#4d4d4d`, texte `#fff8e7`).
+
 - [ ] Classes utilisées mais jamais stylées : `.alert*`, `.alerts-container`, `.error-box`, `.stats-dashboard`, `.stat-verified`, `.stat-uncertain`, `.stat-notfound`.
 - [ ] Classes stylées mais jamais utilisées : `.url-*`, `.quality-score-container`, `.empty-state*`.
 - [ ] Dégradé violet → rouge, couleurs codées en dur et émojis : passer à la palette du site (`--theme-foreground-focus` or, `--theme-background-b`…). La page redéfinit aussi `h2`, `h3`, `pre` et `code` pour tout le site : à retirer.
